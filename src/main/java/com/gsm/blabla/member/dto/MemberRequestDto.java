@@ -22,7 +22,11 @@ public class MemberRequestDto {
     private String gender;
     private String countryCode;
     private String firstLang;
+
+    // TODO: Integer vs int
+    private int firstLangLevel;
     private String secondLang;
+    private int secondLangLevel;
     private boolean pushNotification;
 
     public Member toEntity() {
@@ -35,7 +39,9 @@ public class MemberRequestDto {
             .gender(gender)
             .countryCode(countryCode)
             .firstLang(firstLang)
+            .firstLangLevel(firstLangLevel)
             .secondLang(secondLang)
+            .secondLangLevel(secondLangLevel)
             .pushNotification(pushNotification)
             .build();
     }

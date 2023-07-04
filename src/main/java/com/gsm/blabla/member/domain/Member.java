@@ -36,7 +36,11 @@ public class Member extends BaseTimeEntity {
 
     private String firstLang; // 자신 있는 언어
 
+    private int firstLangLevel;
+
     private String secondLang; // 배우고 싶은 언어
+
+    private int secondLangLevel;
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER; // 역할
@@ -49,14 +53,17 @@ public class Member extends BaseTimeEntity {
     @Builder
     public Member(SocialLoginType socialLoginType, String nickname,
         LocalDate birthDate, String gender, String countryCode,
-        String firstLang, String secondLang, boolean pushNotification) {
+        String firstLang, int firstLangLevel,
+        String secondLang, int secondLangLevel, boolean pushNotification) {
         this.socialLoginType = socialLoginType;
         this.nickname = nickname;
         this.birthDate = birthDate;
         this.gender = gender;
         this.countryCode = countryCode;
         this.firstLang = firstLang;
+        this.firstLangLevel = firstLangLevel;
         this.secondLang = secondLang;
+        this.secondLangLevel = secondLangLevel;
         this.pushNotification = pushNotification;
     }
 }
