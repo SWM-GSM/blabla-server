@@ -1,6 +1,7 @@
 package com.gsm.blabla.auth.api;
 
 import com.gsm.blabla.auth.application.AuthService;
+import com.gsm.blabla.global.common.dto.DataResponseDto;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
 import com.gsm.blabla.member.domain.SocialLoginType;
@@ -25,10 +26,10 @@ public class AuthController {
     * 회원가입 API
     * */
     @PostMapping("/sign-up")
-    public ResponseEntity<JwtDto> signup(
+    public DataResponseDto<Object> signup(
         @RequestHeader("Authorization") String providerAccessToken,
         @RequestBody MemberRequestDto memberRequestDto) {
-        return ResponseEntity.ok(authService.signup(providerAccessToken, memberRequestDto));
+        return DataResponseDto.of(authService.signup(providerAccessToken, memberRequestDto));
     }
 
     /*
@@ -36,11 +37,11 @@ public class AuthController {
     * 로그인 API
     * */
     @PostMapping("/login/{socialLoginType}")
-    public ResponseEntity<Object> login(
+    public DataResponseDto<Object> login(
         @PathVariable("socialLoginType") SocialLoginType socialLoginType,
         @RequestHeader("Authorization") String providerAccessToken
     ) {
-        return ResponseEntity.ok(authService.login(socialLoginType, providerAccessToken));
+        return DataResponseDto.of(authService.login(socialLoginType, providerAccessToken));
     }
 
     /*
@@ -48,7 +49,7 @@ public class AuthController {
     * refresh token 재발급 API
     * */
     @PostMapping("/reissue")
-    public ResponseEntity<JwtDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
+    public DataResponseDto<Object> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+        return DataResponseDto.of(authService.reissue(tokenRequestDto));
     }
 }

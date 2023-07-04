@@ -1,5 +1,7 @@
 package com.gsm.blabla.jwt;
 
+import com.gsm.blabla.global.common.Code;
+import com.gsm.blabla.global.common.GeneralException;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenDto;
 import com.gsm.blabla.member.domain.Member;
@@ -98,15 +100,19 @@ public class TokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
+            throw  new GeneralException(Code.MALFORMED_JWT);
+//            log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
+            throw new GeneralException(Code.EXPIRED_JWT);
+//            log.info("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰입니다.");
+            throw new GeneralException(Code.UNSUPPORTED_JWT);
+//            log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
+            throw new GeneralException(Code.ILLEGAL_JWT);
+//            log.info("JWT 토큰이 잘못되었습니다.");
         }
-        return false;
+//        return false;
     }
 
     private Claims parseClaims(String accessToken) {
