@@ -60,10 +60,10 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
-            // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
-            .authorizeHttpRequests((authorizeRequests) ->
+            // 토큰이 없는 상태에서 요청이 가능한 API는 permitAll 설정
+            .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/oauth/**").permitAll()
+                    .requestMatchers("/oauth/**", "/common/**", "/members/nicknames/**").permitAll()
                     .requestMatchers(PathRequest.toH2Console()).permitAll() // H2-console 화면을 사용하기 위해
                     .anyRequest().authenticated()
             )
