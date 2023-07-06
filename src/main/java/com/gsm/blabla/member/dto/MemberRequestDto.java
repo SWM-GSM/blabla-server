@@ -23,7 +23,6 @@ public class MemberRequestDto {
     private String countryCode;
     private String firstLang;
 
-    // TODO: Integer vs int
     private int firstLangLevel;
     private String secondLang;
     private int secondLangLevel;
