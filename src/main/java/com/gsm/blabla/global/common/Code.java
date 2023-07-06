@@ -10,19 +10,29 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum Code {
+    /*
+     * 0번대 - 정상
+     * */
     OK(0, HttpStatus.OK, "Ok"),
 
+    /*
+     * 2000번대 - Request 관련 오류
+     * */
     BAD_REQUEST(2000, HttpStatus.BAD_REQUEST, "Bad request"),
     VALIDATION_ERROR(2001, HttpStatus.BAD_REQUEST, "Validation error"),
     DUPLICATED_NICKNAME(2002, HttpStatus.BAD_REQUEST, "Duplicate nickname"),
     INVALID_NICKNAME_LENGTH(2003, HttpStatus.BAD_REQUEST, "Invalid nickname length"),
     INVALID_LANG_LEVEL(2004, HttpStatus.BAD_REQUEST, "Invalid language level"),
 
-
+    /*
+    * 4000번대 - 서버 관련 오류
+    * */
     INTERNAL_ERROR(4000, HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
     GOOGLE_SERVER_ERROR(4001, HttpStatus.INTERNAL_SERVER_ERROR , "Google server error"),
 
-
+    /*
+     * 5000번대 - 인증 관련 오류
+     * */
     UNAUTHORIZED(5000, HttpStatus.UNAUTHORIZED, "User unauthorized"),
     NOT_REGISTERED(5001, HttpStatus.OK, "Need registration"),
     ALREADY_REGISTERED(5002, HttpStatus.BAD_REQUEST, "You're already registered"),
