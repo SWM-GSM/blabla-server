@@ -11,10 +11,12 @@ import com.gsm.blabla.jwt.domain.Jwt;
 import com.gsm.blabla.jwt.dto.GoogleAccountDto;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
+import com.gsm.blabla.member.application.MemberService;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
+import java.time.LocalDate;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -35,6 +37,7 @@ public class AuthService {
     private final RestTemplate restTemplate;
     private final TokenProvider tokenProvider;
     private final JwtService jwtService;
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final JwtRepository jwtRepository;
     private final GoogleAccountRepository googleAccountRepository;
@@ -42,6 +45,11 @@ public class AuthService {
     // 회원가입
     public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto) {
         Member member = new Member();
+
+        // Validation - 닉네임 중복 여부
+        if (memberService.isNicknameDuplicate(memberRequestDto.getNickname())) {
+            throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
+        }
 
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
