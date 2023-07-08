@@ -34,7 +34,7 @@ public class AuthController {
     public DataResponseDto<Object> signup(
         @RequestHeader("Authorization") String providerAccessToken,
         @RequestPart MemberRequestDto memberRequestDto,
-        @RequestPart MultipartFile profileImage) {
+        @RequestPart(required = false) MultipartFile profileImage) {
         // Validation - 닉네임 중복 여부
         if (memberService.isNicknameDuplicate(memberRequestDto.getNickname())) {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");

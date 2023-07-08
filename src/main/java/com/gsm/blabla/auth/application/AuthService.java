@@ -58,7 +58,9 @@ public class AuthService {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
         }
 
-        String profileUrl = s3UploaderService.uploadImage(profileImage, "profile");
+        String defaultProfileImageUrl = "https://blabla-temp.s3.ap-northeast-2.amazonaws.com/profile/default-profile.png";
+        String profileUrl = profileImage == null ? defaultProfileImageUrl
+            : s3UploaderService.uploadImage(profileImage, "profile");
 
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
