@@ -8,6 +8,8 @@ import com.gsm.blabla.jwt.dto.TokenRequestDto;
 import com.gsm.blabla.member.application.MemberService;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Tag(name = "OAuth 관련 API")
 @RestController
 @RequestMapping("/oauth")
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ public class AuthController {
     * [POST] /oauth/sign-up
     * 회원가입 API
     * */
+    @Operation(summary = "회원가입 API")
     @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<Object> signup(
         @RequestHeader("Authorization") String providerAccessToken,
@@ -62,6 +66,7 @@ public class AuthController {
     * [POST] /oauth/login
     * 로그인 API
     * */
+    @Operation(summary = "로그인 API")
     @PostMapping("/login/{socialLoginType}")
     public DataResponseDto<Object> login(
         @PathVariable("socialLoginType") SocialLoginType socialLoginType,
@@ -74,6 +79,7 @@ public class AuthController {
     * [POST] /oauth/reissue
     * refresh token 재발급 API
     * */
+    @Operation(summary = "refresh token 재발급 API")
     @PostMapping("/reissue")
     public DataResponseDto<Object> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return DataResponseDto.of(authService.reissue(tokenRequestDto));
