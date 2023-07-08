@@ -64,7 +64,7 @@ tasks.named('test') {
 
 processResources.dependsOn('copySecret')
 task copySecret(type: Copy) {
-    from './security/application.yml'
+    from './security'
     include '*.yml'
     into 'src/main/resources'
 }
