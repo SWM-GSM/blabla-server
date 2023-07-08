@@ -49,6 +49,12 @@ public class AuthController {
         if (!(levelInRange(memberRequestDto.getFirstLangLevel()) && levelInRange(memberRequestDto.getSecondLangLevel()))) {
             throw new GeneralException(Code.INVALID_LANG_LEVEL, "레벨은 1에서 5 사이여야 합니다");
         }
+
+        // Validation - 관심사는 10개까지 선택 가능
+        if (memberRequestDto.getInterests().size() > 10) {
+            throw new GeneralException(Code.INVALID_INTERESTS_LENGTH, "관심사는 10개까지 선택 가능합니다.");
+        }
+
         return DataResponseDto.of(authService.signup(providerAccessToken, memberRequestDto, profileImage));
     }
 

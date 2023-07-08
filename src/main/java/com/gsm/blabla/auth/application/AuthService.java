@@ -3,6 +3,7 @@ package com.gsm.blabla.auth.application;
 import com.gsm.blabla.global.application.S3UploaderService;
 import com.gsm.blabla.global.common.Code;
 import com.gsm.blabla.global.common.GeneralException;
+import com.gsm.blabla.global.common.enums.Interest;
 import com.gsm.blabla.jwt.TokenProvider;
 import com.gsm.blabla.jwt.application.JwtService;
 import com.gsm.blabla.jwt.dao.GoogleAccountRepository;
@@ -13,11 +14,13 @@ import com.gsm.blabla.jwt.dto.GoogleAccountDto;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
 import com.gsm.blabla.member.application.MemberService;
+import com.gsm.blabla.member.dao.MemberInterestRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
+import com.gsm.blabla.member.domain.MemberInterest;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -42,6 +45,7 @@ public class AuthService {
     private final S3UploaderService s3UploaderService;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final MemberInterestRepository memberInterestRepository;
     private final JwtRepository jwtRepository;
     private final GoogleAccountRepository googleAccountRepository;
 
@@ -71,6 +75,14 @@ public class AuthService {
             case "APPLE" -> {
                 // TODO: 추후 구현
             }
+        }
+
+        List<Interest> interests = memberRequestDto.getInterests();
+        for (Interest interest : interests) {
+            memberInterestRepository.save(MemberInterest.builder()
+                    .member(member)
+                    .interest(interest)
+                    .build());
         }
 
         return jwtService.issueJwt(member);

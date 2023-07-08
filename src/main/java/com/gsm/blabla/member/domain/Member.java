@@ -1,13 +1,16 @@
 package com.gsm.blabla.member.domain;
 
 import com.gsm.blabla.global.common.BaseTimeEntity;
+import com.gsm.blabla.global.common.enums.Interest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +47,9 @@ public class Member extends BaseTimeEntity {
 
     private int secondLangLevel;
 
+    @OneToMany(mappedBy = "member")
+    List<MemberInterest> interests;
+
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER; // 역할
 
@@ -56,7 +62,8 @@ public class Member extends BaseTimeEntity {
     public Member(SocialLoginType socialLoginType, String nickname, String profileUrl,
         LocalDate birthDate, String gender, String countryCode,
         String firstLang, int firstLangLevel,
-        String secondLang, int secondLangLevel, boolean pushNotification) {
+        String secondLang, int secondLangLevel,
+        List<MemberInterest> interests, boolean pushNotification) {
         this.socialLoginType = socialLoginType;
         this.nickname = nickname;
         this.profileUrl = profileUrl;
@@ -67,6 +74,7 @@ public class Member extends BaseTimeEntity {
         this.firstLangLevel = firstLangLevel;
         this.secondLang = secondLang;
         this.secondLangLevel = secondLangLevel;
+        this.interests = interests;
         this.pushNotification = pushNotification;
     }
 }
