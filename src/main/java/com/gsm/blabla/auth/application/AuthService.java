@@ -1,5 +1,6 @@
 package com.gsm.blabla.auth.application;
 
+import com.gsm.blabla.global.application.S3UploaderService;
 import com.gsm.blabla.global.common.Code;
 import com.gsm.blabla.global.common.GeneralException;
 import com.gsm.blabla.jwt.TokenProvider;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -37,13 +39,14 @@ public class AuthService {
     private final RestTemplate restTemplate;
     private final TokenProvider tokenProvider;
     private final JwtService jwtService;
+    private final S3UploaderService s3UploaderService;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final JwtRepository jwtRepository;
     private final GoogleAccountRepository googleAccountRepository;
 
     // 회원가입
-    public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto) {
+    public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto, MultipartFile profileImage) {
         Member member = new Member();
 
         // Validation - 닉네임 중복 여부
@@ -51,11 +54,13 @@ public class AuthService {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
         }
 
+        String profileUrl = s3UploaderService.uploadImage(profileImage, "profile");
+
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
 
-                member = memberRepository.save(memberRequestDto.toEntity());
+                member = memberRepository.save(memberRequestDto.toEntity(profileUrl));
 
                 googleAccountRepository.save(GoogleAccount.builder()
                     .id(googleAccountDto.getId())

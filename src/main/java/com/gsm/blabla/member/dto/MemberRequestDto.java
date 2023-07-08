@@ -28,12 +28,13 @@ public class MemberRequestDto {
     private int secondLangLevel;
     private boolean pushNotification;
 
-    public Member toEntity() {
+    public Member toEntity(String profileUrl) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         return Member.builder()
             .socialLoginType(SocialLoginType.valueOf(socialLoginType))
             .nickname(nickname)
+            .profileUrl(profileUrl)
             .birthDate(LocalDate.parse(birthDate, formatter))
             .gender(gender)
             .countryCode(countryCode)

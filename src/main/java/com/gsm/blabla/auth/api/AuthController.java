@@ -8,14 +8,16 @@ import com.gsm.blabla.jwt.dto.TokenRequestDto;
 import com.gsm.blabla.member.application.MemberService;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/oauth")
@@ -28,10 +30,11 @@ public class AuthController {
     * [POST] /oauth/sign-up
     * 회원가입 API
     * */
-    @PostMapping("/sign-up")
+    @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<Object> signup(
         @RequestHeader("Authorization") String providerAccessToken,
-        @RequestBody MemberRequestDto memberRequestDto) {
+        @RequestPart MemberRequestDto memberRequestDto,
+        @RequestPart MultipartFile profileImage) {
         // Validation - 닉네임 중복 여부
         if (memberService.isNicknameDuplicate(memberRequestDto.getNickname())) {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
@@ -46,7 +49,7 @@ public class AuthController {
         if (!(levelInRange(memberRequestDto.getFirstLangLevel()) && levelInRange(memberRequestDto.getSecondLangLevel()))) {
             throw new GeneralException(Code.INVALID_LANG_LEVEL, "레벨은 1에서 5 사이여야 합니다");
         }
-        return DataResponseDto.of(authService.signup(providerAccessToken, memberRequestDto));
+        return DataResponseDto.of(authService.signup(providerAccessToken, memberRequestDto, profileImage));
     }
 
     /*

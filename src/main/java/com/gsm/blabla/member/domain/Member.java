@@ -28,6 +28,8 @@ public class Member extends BaseTimeEntity {
 
     private String nickname; // 닉네임
 
+    private String profileUrl;
+
     private LocalDate birthDate; // 생년월일
 
     private String gender; // 성별
@@ -51,12 +53,13 @@ public class Member extends BaseTimeEntity {
     private boolean pushNotification; // 푸시 알림 허용 여부
 
     @Builder
-    public Member(SocialLoginType socialLoginType, String nickname,
+    public Member(SocialLoginType socialLoginType, String nickname, String profileUrl,
         LocalDate birthDate, String gender, String countryCode,
         String firstLang, int firstLangLevel,
         String secondLang, int secondLangLevel, boolean pushNotification) {
         this.socialLoginType = socialLoginType;
         this.nickname = nickname;
+        this.profileUrl = profileUrl;
         this.birthDate = birthDate;
         this.gender = gender;
         this.countryCode = countryCode;
