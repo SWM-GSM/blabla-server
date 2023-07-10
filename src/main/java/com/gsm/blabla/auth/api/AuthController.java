@@ -1,7 +1,7 @@
 package com.gsm.blabla.auth.api;
 
 import com.gsm.blabla.auth.application.AuthService;
-import com.gsm.blabla.global.common.Code;
+import com.gsm.blabla.global.common.enums.Code;
 import com.gsm.blabla.global.common.GeneralException;
 import com.gsm.blabla.global.common.dto.DataResponseDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
@@ -54,8 +54,8 @@ public class AuthController {
             throw new GeneralException(Code.INVALID_LANG_LEVEL, "레벨은 1에서 5 사이여야 합니다");
         }
 
-        // Validation - 관심사는 10개까지 선택 가능
-        if (memberRequestDto.getInterests().size() > 10) {
+        // Validation - 키워드는 10개까지 선택 가능
+        if (memberRequestDto.getKeywords().size() > 10) {
             throw new GeneralException(Code.INVALID_INTERESTS_LENGTH, "관심사는 10개까지 선택 가능합니다.");
         }
 
