@@ -1,4 +1,4 @@
-package com.gsm.blabla.global.common.enums.api;
+package com.gsm.blabla.global.common.api;
 
 import com.gsm.blabla.global.common.dto.DataResponseDto;
 import com.gsm.blabla.global.common.enums.Interest;
