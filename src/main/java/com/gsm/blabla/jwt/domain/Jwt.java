@@ -1,6 +1,6 @@
 package com.gsm.blabla.jwt.domain;
 
-import com.gsm.blabla.global.common.BaseTimeEntity;
+import com.gsm.blabla.global.domain.BaseTimeEntity;
 import com.gsm.blabla.member.domain.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

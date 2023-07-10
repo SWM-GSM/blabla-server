@@ -1,15 +1,13 @@
 package com.gsm.blabla.auth.api;
 
 import com.gsm.blabla.auth.application.AuthService;
-import com.gsm.blabla.global.common.enums.Code;
-import com.gsm.blabla.global.common.GeneralException;
-import com.gsm.blabla.global.common.dto.DataResponseDto;
+import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
-import com.gsm.blabla.member.application.MemberService;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final MemberService memberService;
 
     /*
     * [POST] /oauth/sign-up
@@ -37,28 +34,8 @@ public class AuthController {
     @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<Object> signup(
         @RequestHeader("Authorization") String providerAccessToken,
-        @RequestPart MemberRequestDto memberRequestDto,
+        @Valid @RequestPart MemberRequestDto memberRequestDto,
         @RequestPart(required = false) MultipartFile profileImage) {
-        // Validation - 닉네임 중복 여부
-        if (memberService.isNicknameDuplicate(memberRequestDto.getNickname())) {
-            throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
-        }
-
-        // Validation - 닉네임이 12자 이내인지
-        if (memberRequestDto.getNickname().length() >= 12) {
-            throw new GeneralException(Code.INVALID_NICKNAME_LENGTH, "닉네임은 12자 이내여야 합니다.");
-        }
-
-        // Validation - 스피킹 레벨이 1~5 이내인지
-        if (!(levelInRange(memberRequestDto.getFirstLangLevel()) && levelInRange(memberRequestDto.getSecondLangLevel()))) {
-            throw new GeneralException(Code.INVALID_LANG_LEVEL, "레벨은 1에서 5 사이여야 합니다");
-        }
-
-        // Validation - 키워드는 10개까지 선택 가능
-        if (memberRequestDto.getKeywords().size() > 10) {
-            throw new GeneralException(Code.INVALID_INTERESTS_LENGTH, "관심사는 10개까지 선택 가능합니다.");
-        }
-
         return DataResponseDto.of(authService.signup(providerAccessToken, memberRequestDto, profileImage));
     }
 
@@ -83,9 +60,5 @@ public class AuthController {
     @PostMapping("/reissue")
     public DataResponseDto<Object> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return DataResponseDto.of(authService.reissue(tokenRequestDto));
-    }
-
-    private boolean levelInRange(int level) {
-        return level >= 1 && level <= 5;
     }
 }

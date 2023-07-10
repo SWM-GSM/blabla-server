@@ -1,6 +1,6 @@
-package com.gsm.blabla.global.common.dto;
+package com.gsm.blabla.global.response;
 
-import com.gsm.blabla.global.common.enums.Code;
+import com.gsm.blabla.global.enums.Code;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -11,7 +11,7 @@ import lombok.ToString;
 public class ResponseDto {
 
     private final Boolean success;
-    private final Integer code;
+    private final String code;
     private final String message;
 
     public static ResponseDto of(Boolean success, Code code) {
