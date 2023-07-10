@@ -22,9 +22,6 @@ public enum Code {
     BAD_REQUEST(2000, HttpStatus.BAD_REQUEST, "Bad request"),
     VALIDATION_ERROR(2001, HttpStatus.BAD_REQUEST, "Validation error"),
     DUPLICATED_NICKNAME(2002, HttpStatus.BAD_REQUEST, "Duplicate nickname"),
-    INVALID_NICKNAME_LENGTH(2003, HttpStatus.BAD_REQUEST, "Invalid nickname length"),
-    INVALID_LANG_LEVEL(2004, HttpStatus.BAD_REQUEST, "Invalid language level"),
-    INVALID_INTERESTS_LENGTH(2005, HttpStatus.BAD_REQUEST, "Invalid interest length"),
 
     /*
     * 4000번대 - 서버 관련 오류
