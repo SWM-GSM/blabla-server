@@ -1,9 +1,9 @@
 package com.gsm.blabla.auth.application;
 
 import com.gsm.blabla.global.application.S3UploaderService;
-import com.gsm.blabla.global.common.enums.Code;
-import com.gsm.blabla.global.common.GeneralException;
-import com.gsm.blabla.global.common.enums.Keyword;
+import com.gsm.blabla.global.enums.Code;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.enums.Keyword;
 import com.gsm.blabla.jwt.TokenProvider;
 import com.gsm.blabla.jwt.application.JwtService;
 import com.gsm.blabla.jwt.dao.GoogleAccountRepository;
@@ -13,7 +13,6 @@ import com.gsm.blabla.jwt.domain.Jwt;
 import com.gsm.blabla.jwt.dto.GoogleAccountDto;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
-import com.gsm.blabla.member.application.MemberService;
 import com.gsm.blabla.member.dao.MemberInterestRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
@@ -42,7 +41,6 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final JwtService jwtService;
     private final S3UploaderService s3UploaderService;
-    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final MemberInterestRepository memberInterestRepository;
     private final JwtRepository jwtRepository;
@@ -52,17 +50,14 @@ public class AuthService {
     public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto, MultipartFile profileImage) {
         Member member = new Member();
 
-        // Validation - 닉네임 중복 여부
-        if (memberService.isNicknameDuplicate(memberRequestDto.getNickname())) {
+        if (memberRepository.findByNickname(memberRequestDto.getNickname()).isPresent()) {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
         }
 
-        // 프로필 사진
         String defaultProfileImageUrl = "https://blabla-temp.s3.ap-northeast-2.amazonaws.com/profile/default-profile.png";
         String profileUrl = profileImage == null ? defaultProfileImageUrl
             : s3UploaderService.uploadImage(profileImage, "profile");
 
-        // OAuth로부터 받아온 정보
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);

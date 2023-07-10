@@ -1,9 +1,9 @@
-package com.gsm.blabla.global.common.api;
+package com.gsm.blabla.global.enums.api;
 
-import com.gsm.blabla.global.common.dto.DataResponseDto;
-import com.gsm.blabla.global.common.dto.KeywordDto;
-import com.gsm.blabla.global.common.enums.Keyword;
-import com.gsm.blabla.global.common.enums.Level;
+import com.gsm.blabla.global.response.DataResponseDto;
+import com.gsm.blabla.global.enums.dto.KeywordDto;
+import com.gsm.blabla.global.enums.Keyword;
+import com.gsm.blabla.global.enums.Level;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

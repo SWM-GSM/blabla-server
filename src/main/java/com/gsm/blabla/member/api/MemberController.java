@@ -1,9 +1,10 @@
 package com.gsm.blabla.member.api;
 
-import com.gsm.blabla.global.common.dto.DataResponseDto;
+import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.member.application.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,10 +20,7 @@ public class MemberController {
 
     @Operation(summary = "닉네임 중복 조회 API")
     @GetMapping("/nicknames/{nickname}")
-    public DataResponseDto<String> duplicatedNickname(@PathVariable String nickname) {
-        if (memberService.isNicknameDuplicate(nickname)) {
-            return DataResponseDto.of("중복된 닉네임입니다.");
-        }
-        return DataResponseDto.of("사용 가능한 닉네임입니다.");
+    public DataResponseDto<Map<String, Boolean>> duplicatedNickname(@PathVariable String nickname) {
+        return DataResponseDto.of(memberService.isNicknameDuplicated(nickname));
     }
 }
