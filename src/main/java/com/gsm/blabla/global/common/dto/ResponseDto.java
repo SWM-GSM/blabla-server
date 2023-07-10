@@ -1,6 +1,6 @@
 package com.gsm.blabla.global.common.dto;
 
-import com.gsm.blabla.global.common.Code;
+import com.gsm.blabla.global.common.enums.Code;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

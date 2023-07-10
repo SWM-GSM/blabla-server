@@ -1,7 +1,7 @@
 package com.gsm.blabla.auth.api;
 
 import com.gsm.blabla.auth.application.AuthService;
-import com.gsm.blabla.global.common.Code;
+import com.gsm.blabla.global.common.enums.Code;
 import com.gsm.blabla.global.common.GeneralException;
 import com.gsm.blabla.global.common.dto.DataResponseDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
