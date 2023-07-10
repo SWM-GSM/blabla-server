@@ -15,29 +15,30 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CommonService {
     public Map<String, String> getLevels(String language) {
-        Map<String, String> levels = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
 
         for (Level level : Level.values()) {
             if (level.getLanguage().equals(language)) {
-                levels.put(level.getDegree(), level.getDescription());
+                result.put(level.getDegree(), level.getDescription());
             }
         }
 
-        return levels;
+        return result;
     }
 
     public Map<String, List<KeywordDto>> getKeywords(String language) {
-        Map<String, List<KeywordDto>> keywords = new HashMap<>();
+        Map<String, List<KeywordDto>> result = new HashMap<>();
 
         List<KeywordDto> entertainments = createKeywordDtos(language, "엔터테인먼트");
         List<KeywordDto> characteristics = createKeywordDtos(language, "성격");
         List<KeywordDto> hobbies = createKeywordDtos(language, "취미/관심사");
 
-        keywords.put("엔터테인먼트", entertainments);
-        keywords.put("성격", characteristics);
-        keywords.put("취미/관심사", hobbies);
+        result.put("엔터테인먼트", entertainments);
+        result.put("성격", characteristics);
+        result.put("취미/관심사", hobbies);
 
-        return keywords;
+        return result;
+    }
     }
 
     private List<KeywordDto> createKeywordDtos(String language, String category) {
