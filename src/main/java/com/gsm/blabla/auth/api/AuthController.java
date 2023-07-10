@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final MemberService memberService;
 
     /*
     * [POST] /oauth/sign-up
