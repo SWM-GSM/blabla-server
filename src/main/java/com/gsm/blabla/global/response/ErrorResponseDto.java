@@ -1,7 +1,5 @@
 package com.gsm.blabla.global.response;
 
-import com.gsm.blabla.global.enums.Code;
-
 public class ErrorResponseDto extends ResponseDto {
 
     private ErrorResponseDto(Code errorCode) {

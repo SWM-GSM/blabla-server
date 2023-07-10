@@ -1,4 +1,4 @@
-package com.gsm.blabla.global.enums;
+package com.gsm.blabla.global.response;
 
 import com.gsm.blabla.global.exception.GeneralException;
 import java.util.Arrays;

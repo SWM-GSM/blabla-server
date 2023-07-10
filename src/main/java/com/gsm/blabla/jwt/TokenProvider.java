@@ -1,6 +1,6 @@
 package com.gsm.blabla.jwt;
 
-import com.gsm.blabla.global.enums.Code;
+import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenDto;
