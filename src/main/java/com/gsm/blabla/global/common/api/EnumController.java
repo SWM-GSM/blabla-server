@@ -1,7 +1,8 @@
 package com.gsm.blabla.global.common.api;
 
 import com.gsm.blabla.global.common.dto.DataResponseDto;
-import com.gsm.blabla.global.common.enums.Interest;
+import com.gsm.blabla.global.common.dto.KeywordDto;
+import com.gsm.blabla.global.common.enums.Keyword;
 import com.gsm.blabla.global.common.enums.Level;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,12 +38,12 @@ public class EnumController {
     @Operation(summary = "키워드 조회 API")
     @Parameter(name = "language", description = "언어", example = "ko / eng")
     @GetMapping("/{language}/common/keywords")
-    public DataResponseDto<Map<String, List<String>>> getInterests(@PathVariable String language) {
-        Map<String, List<String>> map = new HashMap<>();
+    public DataResponseDto<Map<String, List<KeywordDto>>> getKeywords(@PathVariable String language) {
+        Map<String, List<KeywordDto>> map = new HashMap<>();
 
-        List<String> entertainments = makeKeywordList(language, "엔터테인먼트");
-        List<String> characteristics = makeKeywordList(language, "성격");
-        List<String> hobbies = makeKeywordList(language, "취미/관심사");
+        List<KeywordDto> entertainments = makeKeywordList(language, "엔터테인먼트");
+        List<KeywordDto> characteristics = makeKeywordList(language, "성격");
+        List<KeywordDto> hobbies = makeKeywordList(language, "취미/관심사");
 
         map.put("엔터테인먼트", entertainments);
         map.put("성격", characteristics);
@@ -52,17 +53,17 @@ public class EnumController {
 
     }
 
-    private List<String> makeKeywordList(String language, String category) {
-        List<String> keywords = new ArrayList<>();
+    private List<KeywordDto> makeKeywordList(String language, String category) {
+        List<KeywordDto> keywords = new ArrayList<>();
 
-        for (Interest interest : Interest.values()) {
+        for (Keyword keyword : Keyword.values()) {
             if (Objects.equals(language, "ko")) {
-                if (Objects.equals(interest.getCategory(), category)) {
-                    keywords.add(interest.getKoreanName());
+                if (Objects.equals(keyword.getCategory(), category)) {
+                    keywords.add(KeywordDto.of(keyword.getEmoji(), keyword.getKoreanName(), keyword.name()));
                 }
             } else {
-                if (Objects.equals(interest.getCategory(), category)) {
-                    keywords.add(interest.getEnglishName());
+                if (Objects.equals(keyword.getCategory(), category)) {
+                    keywords.add(KeywordDto.of(keyword.getEmoji(), keyword.getEnglishName(), keyword.name()));
                 }
             }
         }
