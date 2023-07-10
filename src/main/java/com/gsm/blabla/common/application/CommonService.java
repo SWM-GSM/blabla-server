@@ -1,10 +1,10 @@
 package com.gsm.blabla.common.application;
 
-import com.gsm.blabla.common.dto.CrewTagDto;
-import com.gsm.blabla.common.dto.KeywordDto;
+import com.gsm.blabla.common.dto.CommonCodeDto;
 import com.gsm.blabla.common.enums.CrewTag;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
+import com.gsm.blabla.common.enums.PreferMember;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +28,12 @@ public class CommonService {
         return result;
     }
 
-    public Map<String, List<KeywordDto>> getKeywords(String language) {
-        Map<String, List<KeywordDto>> result = new HashMap<>();
+    public Map<String, List<CommonCodeDto>> getKeywords(String language) {
+        Map<String, List<CommonCodeDto>> result = new HashMap<>();
 
-        List<KeywordDto> entertainments = createKeywordDtos(language, "엔터테인먼트");
-        List<KeywordDto> characteristics = createKeywordDtos(language, "성격");
-        List<KeywordDto> hobbies = createKeywordDtos(language, "취미/관심사");
+        List<CommonCodeDto> entertainments = createKeywordDtos(language, "엔터테인먼트");
+        List<CommonCodeDto> characteristics = createKeywordDtos(language, "성격");
+        List<CommonCodeDto> hobbies = createKeywordDtos(language, "취미/관심사");
 
         result.put("엔터테인먼트", entertainments);
         result.put("성격", characteristics);
@@ -42,15 +42,15 @@ public class CommonService {
         return result;
     }
 
-    public Map<String, List<CrewTagDto>> getCrewTags(String language) {
-        Map<String, List<CrewTagDto>> result = new HashMap<>();
+    public Map<String, List<CommonCodeDto>> getCrewTags(String language) {
+        Map<String, List<CommonCodeDto>> result = new HashMap<>();
 
-        List<CrewTagDto> crewTags = new ArrayList<>();
+        List<CommonCodeDto> crewTags = new ArrayList<>();
         for (CrewTag crewTag : CrewTag.values()) {
             if (Objects.equals(language, "ko")) {
-                crewTags.add(CrewTagDto.of(crewTag.getEmoji(), crewTag.getKoreanName(), crewTag.name()));
+                crewTags.add(CommonCodeDto.of(crewTag.getEmoji(), crewTag.getKoreanName(), crewTag.name()));
             } else {
-                crewTags.add(CrewTagDto.of(crewTag.getEmoji(), crewTag.getEnglishName(), crewTag.name()));
+                crewTags.add(CommonCodeDto.of(crewTag.getEmoji(), crewTag.getEnglishName(), crewTag.name()));
             }
         }
         result.put("tags", crewTags);
@@ -58,17 +58,35 @@ public class CommonService {
         return result;
     }
 
-    private List<KeywordDto> createKeywordDtos(String language, String category) {
-        List<KeywordDto> keywords = new ArrayList<>();
+    public Map<String, List<CommonCodeDto>> getPreferMembers(String language) {
+        Map<String, List<CommonCodeDto>> result = new HashMap<>();
+
+        List<CommonCodeDto> preferMembers = new ArrayList<>();
+        for (PreferMember preferMember : PreferMember.values()) {
+            if (Objects.equals(language, "ko")) {
+                preferMembers.add(CommonCodeDto.of(preferMember.getEmoji(), preferMember.getKoreanName(), preferMember.name()));
+            } else {
+                preferMembers.add(CommonCodeDto.of(preferMember.getEmoji(), preferMember.getEnglishName(), preferMember.name()));
+            }
+        }
+        result.put("preferMembers", preferMembers);
+
+        return result;
+    }
+
+    private List<CommonCodeDto> createKeywordDtos(String language, String category) {
+        List<CommonCodeDto> keywords = new ArrayList<>();
 
         for (Keyword keyword : Keyword.values()) {
             if (Objects.equals(language, "ko")) {
                 if (Objects.equals(keyword.getCategory(), category)) {
-                    keywords.add(KeywordDto.of(keyword.getEmoji(), keyword.getKoreanName(), keyword.name()));
+                    keywords.add(
+                        CommonCodeDto.of(keyword.getEmoji(), keyword.getKoreanName(), keyword.name()));
                 }
             } else {
                 if (Objects.equals(keyword.getCategory(), category)) {
-                    keywords.add(KeywordDto.of(keyword.getEmoji(), keyword.getEnglishName(), keyword.name()));
+                    keywords.add(
+                        CommonCodeDto.of(keyword.getEmoji(), keyword.getEnglishName(), keyword.name()));
                 }
             }
         }

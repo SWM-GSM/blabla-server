@@ -5,12 +5,12 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class KeywordDto {
+public class CommonCodeDto {
     private final String emoji;
-    private final String keyword;
+    private final String name;
     private final String tag;
 
-    public static KeywordDto of(String emoji, String keyword, String tag) {
-        return new KeywordDto(emoji, keyword, tag);
+    public static CommonCodeDto of(String emoji, String name, String tag) {
+        return new CommonCodeDto(emoji, name, tag);
     }
 }
