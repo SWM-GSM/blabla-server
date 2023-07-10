@@ -1,6 +1,6 @@
 package com.gsm.blabla.global.config;
 
-import com.gsm.blabla.global.common.Code;
+import com.gsm.blabla.global.common.enums.Code;
 import com.gsm.blabla.global.common.GeneralException;
 import com.gsm.blabla.global.common.dto.ErrorResponseDto;
 import org.hibernate.exception.ConstraintViolationException;

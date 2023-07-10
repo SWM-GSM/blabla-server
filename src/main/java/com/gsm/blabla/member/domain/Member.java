@@ -1,7 +1,6 @@
 package com.gsm.blabla.member.domain;
 
 import com.gsm.blabla.global.common.BaseTimeEntity;
-import com.gsm.blabla.global.common.enums.Interest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -48,7 +47,7 @@ public class Member extends BaseTimeEntity {
     private int secondLangLevel;
 
     @OneToMany(mappedBy = "member")
-    List<MemberInterest> interests;
+    List<MemberKeyword> keywords;
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER; // 역할
@@ -63,7 +62,7 @@ public class Member extends BaseTimeEntity {
         LocalDate birthDate, String gender, String countryCode,
         String firstLang, int firstLangLevel,
         String secondLang, int secondLangLevel,
-        List<MemberInterest> interests, boolean pushNotification) {
+        List<MemberKeyword> interests, boolean pushNotification) {
         this.socialLoginType = socialLoginType;
         this.nickname = nickname;
         this.profileUrl = profileUrl;

@@ -1,9 +1,8 @@
 package com.gsm.blabla.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gsm.blabla.global.common.enums.Interest;
+import com.gsm.blabla.global.common.enums.Keyword;
 import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.domain.MemberInterest;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -29,7 +28,7 @@ public class MemberRequestDto {
     private int firstLangLevel;
     private String secondLang;
     private int secondLangLevel;
-    private List<Interest> interests;
+    private List<Keyword> keywords;
     private boolean pushNotification;
 
     public Member toEntity(String profileUrl) {

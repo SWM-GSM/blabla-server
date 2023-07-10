@@ -1,9 +1,9 @@
 package com.gsm.blabla.auth.application;
 
 import com.gsm.blabla.global.application.S3UploaderService;
-import com.gsm.blabla.global.common.Code;
+import com.gsm.blabla.global.common.enums.Code;
 import com.gsm.blabla.global.common.GeneralException;
-import com.gsm.blabla.global.common.enums.Interest;
+import com.gsm.blabla.global.common.enums.Keyword;
 import com.gsm.blabla.jwt.TokenProvider;
 import com.gsm.blabla.jwt.application.JwtService;
 import com.gsm.blabla.jwt.dao.GoogleAccountRepository;
@@ -17,10 +17,9 @@ import com.gsm.blabla.member.application.MemberService;
 import com.gsm.blabla.member.dao.MemberInterestRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.domain.MemberInterest;
+import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -58,10 +57,12 @@ public class AuthService {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
         }
 
+        // 프로필 사진
         String defaultProfileImageUrl = "https://blabla-temp.s3.ap-northeast-2.amazonaws.com/profile/default-profile.png";
         String profileUrl = profileImage == null ? defaultProfileImageUrl
             : s3UploaderService.uploadImage(profileImage, "profile");
 
+        // OAuth로부터 받아온 정보
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
@@ -79,11 +80,11 @@ public class AuthService {
             }
         }
 
-        List<Interest> interests = memberRequestDto.getInterests();
-        for (Interest interest : interests) {
-            memberInterestRepository.save(MemberInterest.builder()
+        // 키워드
+        for (Keyword keyword : memberRequestDto.getKeywords()) {
+            memberInterestRepository.save(MemberKeyword.builder()
                     .member(member)
-                    .interest(interest)
+                    .keyword(keyword)
                     .build());
         }
 
