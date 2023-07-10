@@ -1,12 +1,11 @@
 package com.gsm.blabla.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gsm.blabla.global.common.enums.Keyword;
+import com.gsm.blabla.global.enums.Keyword;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

@@ -1,4 +1,4 @@
-package com.gsm.blabla.global.common;
+package com.gsm.blabla.global.domain;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

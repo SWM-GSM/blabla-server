@@ -1,9 +1,8 @@
 package com.gsm.blabla.auth.api;
 
 import com.gsm.blabla.auth.application.AuthService;
-import com.gsm.blabla.global.common.dto.DataResponseDto;
+import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
-import com.gsm.blabla.member.application.MemberService;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import io.swagger.v3.oas.annotations.Operation;

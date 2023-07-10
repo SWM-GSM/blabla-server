@@ -1,9 +1,9 @@
 package com.gsm.blabla.auth.application;
 
 import com.gsm.blabla.global.application.S3UploaderService;
-import com.gsm.blabla.global.common.enums.Code;
-import com.gsm.blabla.global.common.GeneralException;
-import com.gsm.blabla.global.common.enums.Keyword;
+import com.gsm.blabla.global.enums.Code;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.enums.Keyword;
 import com.gsm.blabla.jwt.TokenProvider;
 import com.gsm.blabla.jwt.application.JwtService;
 import com.gsm.blabla.jwt.dao.GoogleAccountRepository;

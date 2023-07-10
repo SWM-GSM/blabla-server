@@ -1,6 +1,6 @@
 package com.gsm.blabla.member.domain;
 
-import com.gsm.blabla.global.common.enums.Keyword;
+import com.gsm.blabla.global.enums.Keyword;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

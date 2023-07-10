@@ -1,6 +1,6 @@
-package com.gsm.blabla.global.common.dto;
+package com.gsm.blabla.global.response;
 
-import com.gsm.blabla.global.common.enums.Code;
+import com.gsm.blabla.global.enums.Code;
 
 public class ErrorResponseDto extends ResponseDto {
 

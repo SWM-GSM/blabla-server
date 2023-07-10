@@ -1,8 +1,8 @@
-package com.gsm.blabla.global.config;
+package com.gsm.blabla.global.exception;
 
-import com.gsm.blabla.global.common.enums.Code;
-import com.gsm.blabla.global.common.GeneralException;
-import com.gsm.blabla.global.common.dto.ErrorResponseDto;
+import com.gsm.blabla.global.enums.Code;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.response.ErrorResponseDto;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
