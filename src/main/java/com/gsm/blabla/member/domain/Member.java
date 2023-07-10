@@ -62,7 +62,7 @@ public class Member extends BaseTimeEntity {
         LocalDate birthDate, String gender, String countryCode,
         String firstLang, int firstLangLevel,
         String secondLang, int secondLangLevel,
-        List<MemberKeyword> interests, boolean pushNotification) {
+        List<MemberKeyword> keywords, boolean pushNotification) {
         this.socialLoginType = socialLoginType;
         this.nickname = nickname;
         this.profileUrl = profileUrl;
@@ -73,7 +73,7 @@ public class Member extends BaseTimeEntity {
         this.firstLangLevel = firstLangLevel;
         this.secondLang = secondLang;
         this.secondLangLevel = secondLangLevel;
-        this.interests = interests;
+        this.keywords = keywords;
         this.pushNotification = pushNotification;
     }
 }
