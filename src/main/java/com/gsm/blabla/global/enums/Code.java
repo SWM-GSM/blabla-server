@@ -1,6 +1,6 @@
-package com.gsm.blabla.global.common.enums;
+package com.gsm.blabla.global.enums;
 
-import com.gsm.blabla.global.common.GeneralException;
+import com.gsm.blabla.global.exception.GeneralException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;

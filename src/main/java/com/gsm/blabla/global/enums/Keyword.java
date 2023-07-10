@@ -1,4 +1,4 @@
-package com.gsm.blabla.global.common.enums;
+package com.gsm.blabla.global.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

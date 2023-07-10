@@ -1,6 +1,6 @@
 package com.gsm.blabla.member.api;
 
-import com.gsm.blabla.global.common.dto.DataResponseDto;
+import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.member.application.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

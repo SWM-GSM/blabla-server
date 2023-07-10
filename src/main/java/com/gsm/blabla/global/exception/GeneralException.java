@@ -1,6 +1,6 @@
-package com.gsm.blabla.global.common;
+package com.gsm.blabla.global.exception;
 
-import com.gsm.blabla.global.common.enums.Code;
+import com.gsm.blabla.global.enums.Code;
 import lombok.Getter;
 
 @Getter
