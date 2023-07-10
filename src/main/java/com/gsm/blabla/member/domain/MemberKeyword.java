@@ -1,6 +1,6 @@
 package com.gsm.blabla.member.domain;
 
-import com.gsm.blabla.global.common.enums.Interest;
+import com.gsm.blabla.global.common.enums.Keyword;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-public class MemberInterest {
+public class MemberKeyword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,11 +24,11 @@ public class MemberInterest {
     private Member member;
 
     @Enumerated(EnumType.STRING)
-    private Interest interest;
+    private Keyword keyword;
 
     @Builder
-    public MemberInterest(Member member, Interest interest) {
+    public MemberKeyword(Member member, Keyword keyword) {
         this.member = member;
-        this.interest = interest;
+        this.keyword = keyword;
     }
 }
