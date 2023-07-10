@@ -1,4 +1,4 @@
-package com.gsm.blabla.global.enums.dto;
+package com.gsm.blabla.common.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

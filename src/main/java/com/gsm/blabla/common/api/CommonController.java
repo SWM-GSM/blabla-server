@@ -1,9 +1,9 @@
-package com.gsm.blabla.global.enums.api;
+package com.gsm.blabla.common.api;
 
+import com.gsm.blabla.common.dto.KeywordDto;
 import com.gsm.blabla.global.response.DataResponseDto;
-import com.gsm.blabla.global.enums.dto.KeywordDto;
-import com.gsm.blabla.global.enums.Keyword;
-import com.gsm.blabla.global.enums.Level;
+import com.gsm.blabla.common.enums.Keyword;
+import com.gsm.blabla.common.enums.Level;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "공통 코드 관련 API")
 @RestController
-public class EnumController {
+public class CommonController {
 
     @Operation(summary = "레벨 별 문구 조회 API")
     @Parameter(name = "language", description = "언어", example = "ko / eng")
