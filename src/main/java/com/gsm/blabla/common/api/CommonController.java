@@ -1,6 +1,7 @@
 package com.gsm.blabla.common.api;
 
 import com.gsm.blabla.common.application.CommonService;
+import com.gsm.blabla.common.dto.CrewTagDto;
 import com.gsm.blabla.common.dto.KeywordDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.common.enums.Keyword;
@@ -25,16 +26,23 @@ public class CommonController {
     private final CommonService commonService;
 
     @Operation(summary = "레벨 별 문구 조회 API")
-    @Parameter(name = "language", description = "언어", example = "ko / eng")
+    @Parameter(name = "language", description = "언어", example = "ko / en")
     @GetMapping("{language}/common/levels")
     public DataResponseDto<Map<String, String>> getLevels(@PathVariable String language) {
         return DataResponseDto.of(commonService.getLevels(language));
     }
 
     @Operation(summary = "키워드 조회 API")
-    @Parameter(name = "language", description = "언어", example = "ko / eng")
+    @Parameter(name = "language", description = "언어", example = "ko / en")
     @GetMapping("/{language}/common/keywords")
     public DataResponseDto<Map<String, List<KeywordDto>>> getKeywords(@PathVariable String language) {
         return DataResponseDto.of(commonService.getKeywords(language));
+    }
+
+    @Operation(summary = "크루 태그 조회 API")
+    @Parameter(name = "language", description = "언어", example = "ko / en")
+    @GetMapping("/{language}/common/crew-tags")
+    public DataResponseDto<Map<String, List<CrewTagDto>>> getCrewTags(@PathVariable String language) {
+        return DataResponseDto.of(commonService.getCrewTags(language));
     }
 }

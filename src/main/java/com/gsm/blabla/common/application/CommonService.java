@@ -1,6 +1,8 @@
 package com.gsm.blabla.common.application;
 
+import com.gsm.blabla.common.dto.CrewTagDto;
 import com.gsm.blabla.common.dto.KeywordDto;
+import com.gsm.blabla.common.enums.CrewTag;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import java.util.ArrayList;
@@ -39,6 +41,21 @@ public class CommonService {
 
         return result;
     }
+
+    public Map<String, List<CrewTagDto>> getCrewTags(String language) {
+        Map<String, List<CrewTagDto>> result = new HashMap<>();
+
+        List<CrewTagDto> crewTags = new ArrayList<>();
+        for (CrewTag crewTag : CrewTag.values()) {
+            if (Objects.equals(language, "ko")) {
+                crewTags.add(CrewTagDto.of(crewTag.getEmoji(), crewTag.getKoreanName(), crewTag.name()));
+            } else {
+                crewTags.add(CrewTagDto.of(crewTag.getEmoji(), crewTag.getEnglishName(), crewTag.name()));
+            }
+        }
+        result.put("tags", crewTags);
+
+        return result;
     }
 
     private List<KeywordDto> createKeywordDtos(String language, String category) {
