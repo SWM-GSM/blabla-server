@@ -1,15 +1,18 @@
 package com.gsm.blabla.common.application;
 
 import com.gsm.blabla.common.dto.CommonCodeDto;
+import com.gsm.blabla.common.dto.KeywordDto;
 import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,16 +31,14 @@ public class CommonService {
         return result;
     }
 
-    public Map<String, List<CommonCodeDto>> getKeywords(String language) {
-        Map<String, List<CommonCodeDto>> result = new HashMap<>();
+    public Map<String, List<KeywordDto>> getKeywords(String language) {
+        Map<String, List<KeywordDto>> result = new HashMap<>();
 
-        List<CommonCodeDto> entertainments = createKeywordDtos(language, "엔터테인먼트");
-        List<CommonCodeDto> characteristics = createKeywordDtos(language, "성격");
-        List<CommonCodeDto> hobbies = createKeywordDtos(language, "취미/관심사");
-
-        result.put("엔터테인먼트", entertainments);
-        result.put("성격", characteristics);
-        result.put("취미/관심사", hobbies);
+        result.put("keywords", Arrays.asList(
+            KeywordDto.of("엔터테인먼트", createKeywordDtos(language, "엔터테인먼트")),
+            KeywordDto.of("성격", createKeywordDtos(language, "성격")),
+            KeywordDto.of("취미/관심사", createKeywordDtos(language, "취미/관심사"))
+        ));
 
         return result;
     }

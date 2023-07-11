@@ -2,6 +2,7 @@ package com.gsm.blabla.common.api;
 
 import com.gsm.blabla.common.application.CommonService;
 import com.gsm.blabla.common.dto.CommonCodeDto;
+import com.gsm.blabla.common.dto.KeywordDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,7 +30,7 @@ public class CommonController {
     @Operation(summary = "키워드 조회 API")
     @Parameter(name = "language", description = "언어", example = "ko / en")
     @GetMapping("/{language}/common/keywords")
-    public DataResponseDto<Map<String, List<CommonCodeDto>>> getKeywords(@PathVariable String language) {
+    public DataResponseDto<Map<String, List<KeywordDto>>> getKeywords(@PathVariable String language) {
         return DataResponseDto.of(commonService.getKeywords(language));
     }
 
