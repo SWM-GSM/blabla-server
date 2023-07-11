@@ -82,6 +82,11 @@ public class AuthService {
                     .keyword(keyword)
                     .build());
         }
+//        memberRequestDto.getKeywords().forEach(keyword ->
+//            memberInterestRepository.save(MemberKeyword.builder()
+//                .member(member)
+//                .keyword(keyword)
+//                .build()));
 
         return jwtService.issueJwt(member);
     }
@@ -112,7 +117,7 @@ public class AuthService {
     public JwtDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
+            throw new GeneralException(Code.INVALID_REFRESH_TOKEN, "Refresh Token이 유효하지 않습니다.");
         }
 
         // 2. Access Token 에서 Member ID 가져오기
@@ -120,9 +125,9 @@ public class AuthService {
         Long memberId = Long.parseLong(authentication.getName());
 
         Jwt jwt = jwtRepository.findOneByMemberId(memberId)
-            .orElseThrow(() -> new RuntimeException("Refresh Token이 없습니다. 다시 로그인해주세요."));
+            .orElseThrow(() -> new GeneralException(Code.REFRESH_TOKEN_NOT_FOUND, "Refresh Token이 없습니다. 다시 로그인해주세요."));
         if (!jwt.getRefreshToken().equals(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
+            throw new GeneralException(Code.INVALID_REFRESH_TOKEN, "Refresh Token이 유효하지 않습니다.");
         }
 
         jwtRepository.delete(jwt);
