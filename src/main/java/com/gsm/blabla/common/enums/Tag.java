@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum CrewTag {
+public enum Tag {
     IMPROVEMENT("\uD83D\uDCDA", "자기계발", "Improvement"),
     GAME("\uD83C\uDFAE", "게임", "Game"),
     TRAVEL("\uD83D\uDE85", "여행", "Travel"),
