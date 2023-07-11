@@ -7,9 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,9 +44,6 @@ public class Member extends BaseTimeEntity {
 
     private int secondLangLevel;
 
-    @OneToMany(mappedBy = "member")
-    List<MemberKeyword> keywords;
-
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER; // 역할
 
@@ -61,8 +56,7 @@ public class Member extends BaseTimeEntity {
     public Member(SocialLoginType socialLoginType, String nickname, String profileUrl,
         LocalDate birthDate, String gender, String countryCode,
         String firstLang, int firstLangLevel,
-        String secondLang, int secondLangLevel,
-        List<MemberKeyword> keywords, boolean pushNotification) {
+        String secondLang, int secondLangLevel, boolean pushNotification) {
         this.socialLoginType = socialLoginType;
         this.nickname = nickname;
         this.profileUrl = profileUrl;
@@ -73,7 +67,6 @@ public class Member extends BaseTimeEntity {
         this.firstLangLevel = firstLangLevel;
         this.secondLang = secondLang;
         this.secondLangLevel = secondLangLevel;
-        this.keywords = keywords;
         this.pushNotification = pushNotification;
     }
 }
