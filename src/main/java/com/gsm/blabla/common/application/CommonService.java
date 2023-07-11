@@ -1,7 +1,7 @@
 package com.gsm.blabla.common.application;
 
 import com.gsm.blabla.common.dto.CommonCodeDto;
-import com.gsm.blabla.common.enums.CrewTag;
+import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
@@ -46,11 +46,11 @@ public class CommonService {
         Map<String, List<CommonCodeDto>> result = new HashMap<>();
 
         List<CommonCodeDto> crewTags = new ArrayList<>();
-        for (CrewTag crewTag : CrewTag.values()) {
+        for (Tag tag : Tag.values()) {
             if (Objects.equals(language, "ko")) {
-                crewTags.add(CommonCodeDto.of(crewTag.getEmoji(), crewTag.getKoreanName(), crewTag.name()));
+                crewTags.add(CommonCodeDto.of(tag.getEmoji(), tag.getKoreanName(), tag.name()));
             } else {
-                crewTags.add(CommonCodeDto.of(crewTag.getEmoji(), crewTag.getEnglishName(), crewTag.name()));
+                crewTags.add(CommonCodeDto.of(tag.getEmoji(), tag.getEnglishName(), tag.name()));
             }
         }
         result.put("tags", crewTags);
