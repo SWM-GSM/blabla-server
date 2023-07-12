@@ -22,7 +22,8 @@ public class Crew extends BaseTimeEntity {
 
     private String name;
     private String description;
-    // TODO: 희망 모임 주기 추가하기
+    @Enumerated(EnumType.STRING)
+    private MeetingCycle meetingCycle;
     private int maxNum;
     private int korLevel;
     private int engLevel;
@@ -33,10 +34,11 @@ public class Crew extends BaseTimeEntity {
     private String coverUrl;
 
     @Builder
-    public Crew(String name, String description, int maxNum, int korLevel, int engLevel,
-        PreferMember preferMember, String detail, boolean autoApproval, String coverUrl) {
+    public Crew(String name, String description, MeetingCycle meetingCycle, int maxNum, int korLevel,
+        int engLevel, PreferMember preferMember, String detail, boolean autoApproval, String coverUrl) {
         this.name = name;
         this.description = description;
+        this.meetingCycle = meetingCycle;
         this.maxNum = maxNum;
         this.korLevel = korLevel;
         this.engLevel = engLevel;
