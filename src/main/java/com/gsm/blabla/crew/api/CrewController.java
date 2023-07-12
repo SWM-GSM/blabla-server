@@ -21,10 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class CrewController {
     private final CrewService crewService;
 
-    /*
-    * [POST] /crews
-    * 크루 생성 API
-    * */
     @Operation(summary = "크루 생성 API")
     @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<Map<String, Long>> create(
