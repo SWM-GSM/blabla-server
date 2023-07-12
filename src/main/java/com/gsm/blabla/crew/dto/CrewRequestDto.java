@@ -3,6 +3,7 @@ package com.gsm.blabla.crew.dto;
 import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.crew.domain.Crew;
+import com.gsm.blabla.crew.domain.MeetingCycle;
 import java.util.List;
 import lombok.Getter;
 
@@ -10,7 +11,7 @@ import lombok.Getter;
 public class CrewRequestDto {
     private String name;
     private String description;
-    // TODO: 희망 모임 주기 추가하기
+    private MeetingCycle meetingCycle;
     private List<Tag> tags;
     private int maxNum;
     private int korLevel;
@@ -23,6 +24,7 @@ public class CrewRequestDto {
         return Crew.builder()
             .name(name)
             .description(description)
+            .meetingCycle(meetingCycle)
             .maxNum(maxNum)
             .korLevel(korLevel)
             .engLevel(engLevel)
