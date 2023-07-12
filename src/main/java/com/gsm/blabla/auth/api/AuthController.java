@@ -26,10 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class AuthController {
     private final AuthService authService;
 
-    /*
-    * [POST] /oauth/sign-up
-    * 회원가입 API
-    * */
     @Operation(summary = "회원가입 API")
     @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<Object> signup(
@@ -39,10 +35,6 @@ public class AuthController {
         return DataResponseDto.of(authService.signup(providerAccessToken, memberRequestDto, profileImage));
     }
 
-    /*
-    * [POST] /oauth/login
-    * 로그인 API
-    * */
     @Operation(summary = "로그인 API")
     @PostMapping("/login/{socialLoginType}")
     public DataResponseDto<Object> login(
@@ -51,11 +43,7 @@ public class AuthController {
     ) {
         return DataResponseDto.of(authService.login(socialLoginType, providerAccessToken));
     }
-
-    /*
-    * [POST] /oauth/reissue
-    * refresh token 재발급 API
-    * */
+    
     @Operation(summary = "refresh token 재발급 API")
     @PostMapping("/reissue")
     public DataResponseDto<Object> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
