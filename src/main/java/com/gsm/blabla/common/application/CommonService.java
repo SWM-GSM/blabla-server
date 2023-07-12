@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class CommonService {
 
         for (Level level : Level.values()) {
             if (level.getLanguage().equals(language)) {
-                result.put(level.getDegree(), level.getDescription());
+                result.put(level.getDegreeText(), level.getDescription());
             }
         }
 

@@ -25,6 +25,13 @@ public enum Code {
     * HEAD NAME - M (Member)
     * */
     DUPLICATED_NICKNAME("M001", HttpStatus.BAD_REQUEST, "Duplicate nickname"),
+    MEMBER_NOT_FOUND("M002", HttpStatus.NOT_FOUND, "Member not found"),
+
+    /*
+    * Crew 관련 오류
+    * HEAD NAME - C (Crew)
+    * */
+    CREW_NOT_FOUND("C001", HttpStatus.NOT_FOUND, "Crew not found"),
 
     /*
     * 서버 관련 오류

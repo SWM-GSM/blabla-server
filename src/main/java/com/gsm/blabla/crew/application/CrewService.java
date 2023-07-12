@@ -5,12 +5,17 @@ import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.CrewTagRepository;
 import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewMember;
+import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.crew.domain.CrewTag;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
+import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.global.application.S3UploaderService;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,11 +49,25 @@ public class CrewService {
         );
 
         crewMemberRepository.save(CrewMember.builder()
-            .member(memberRepository.findById(SecurityUtil.getMemberId()).orElse(null))
+            .member(memberRepository.findById(SecurityUtil.getMemberId()).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+            ))
             .crew(crew)
             .build()
         );
 
         return Collections.singletonMap("crewId", crew.getId());
+    }
+
+    public Map<String, CrewResponseDto> get(String language, Long crewId) {
+        Map<String, CrewResponseDto> result = new HashMap<>();
+
+        Crew crew = crewRepository.findById(crewId).orElseThrow(
+            () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
+        );
+
+        result.put("crew", CrewResponseDto.crewResponse(language, crew, crewMemberRepository));
+
+        return result;
     }
 }

@@ -8,6 +8,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +34,12 @@ public class Crew extends BaseTimeEntity {
     private String detail;
     private boolean autoApproval;
     private String coverUrl;
+
+    @OneToMany(mappedBy = "crew")
+    List<CrewMember> crewMembers;
+
+    @OneToMany(mappedBy = "crew")
+    List<CrewTag> crewTags;
 
     @Builder
     public Crew(String name, String description, MeetingCycle meetingCycle, int maxNum, int korLevel,
