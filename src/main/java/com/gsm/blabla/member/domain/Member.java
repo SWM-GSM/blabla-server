@@ -52,6 +52,8 @@ public class Member extends BaseTimeEntity {
 
     private boolean pushNotification; // 푸시 알림 허용 여부
 
+    private String description = ""; // 자기소개
+
     @Builder
     public Member(SocialLoginType socialLoginType, String nickname, String profileUrl,
         LocalDate birthDate, String gender, String countryCode,

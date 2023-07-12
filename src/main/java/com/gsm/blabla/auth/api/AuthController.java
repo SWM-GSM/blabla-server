@@ -43,7 +43,7 @@ public class AuthController {
     ) {
         return DataResponseDto.of(authService.login(socialLoginType, providerAccessToken));
     }
-    
+
     @Operation(summary = "refresh token 재발급 API")
     @PostMapping("/reissue")
     public DataResponseDto<Object> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
