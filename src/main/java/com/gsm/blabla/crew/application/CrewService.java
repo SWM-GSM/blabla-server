@@ -5,7 +5,6 @@ import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.CrewTagRepository;
 import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewMember;
-import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.crew.domain.CrewTag;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
@@ -18,6 +17,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,5 +70,10 @@ public class CrewService {
         result.put("crew", CrewResponseDto.crewResponse(language, crew, crewMemberRepository));
 
         return result;
+    }
+
+    public Page<CrewResponseDto> getAll(String language, Pageable pageable) {
+        return crewRepository.findAll(pageable).map(crew ->
+            CrewResponseDto.crewListResponse(language, crew, crewMemberRepository));
     }
 }

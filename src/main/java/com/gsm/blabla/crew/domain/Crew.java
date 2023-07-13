@@ -5,6 +5,7 @@ import com.gsm.blabla.global.domain.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,10 +36,10 @@ public class Crew extends BaseTimeEntity {
     private boolean autoApproval;
     private String coverUrl;
 
-    @OneToMany(mappedBy = "crew")
+    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
     List<CrewMember> crewMembers;
 
-    @OneToMany(mappedBy = "crew")
+    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
     List<CrewTag> crewTags;
 
     @Builder

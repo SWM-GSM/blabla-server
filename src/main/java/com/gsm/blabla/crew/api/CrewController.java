@@ -7,7 +7,11 @@ import com.gsm.blabla.global.response.DataResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,4 +42,14 @@ public class CrewController {
         return DataResponseDto.of(crewService.get(language, crewId));
     }
 
+    // TODO: 크루 찾기 화면을 기준으로 제작되었으므로 홈 화면에서 어떻게 재활용할지 고민하기
+    // TODO: page > lastCrewId로 수정
+    // TODO: createdAt 역순으로 정렬
+    @Operation(summary = "크루 목록 조회 API")
+    @GetMapping(value = "/{language}/crews")
+    public DataResponseDto<Page<CrewResponseDto>> getAll(
+        @PathVariable("language") String language,
+        @PageableDefault  Pageable pageable) {
+        return DataResponseDto.of(crewService.getAll(language, pageable));
+    }
 }
