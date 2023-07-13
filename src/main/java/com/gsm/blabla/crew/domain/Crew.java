@@ -14,6 +14,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
@@ -36,9 +37,11 @@ public class Crew extends BaseTimeEntity {
     private boolean autoApproval;
     private String coverUrl;
 
+    @BatchSize(size = 1000)
     @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
     List<CrewMember> crewMembers;
 
+    @BatchSize(size = 1000)
     @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
     List<CrewTag> crewTags;
 
