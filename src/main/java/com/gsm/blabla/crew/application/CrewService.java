@@ -60,6 +60,7 @@ public class CrewService {
         return Collections.singletonMap("crewId", crew.getId());
     }
 
+    @Transactional(readOnly = true)
     public Map<String, CrewResponseDto> get(String language, Long crewId) {
         Map<String, CrewResponseDto> result = new HashMap<>();
 
@@ -72,6 +73,7 @@ public class CrewService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     public Page<CrewResponseDto> getAll(String language, Pageable pageable) {
         return crewRepository.findAll(pageable).map(crew ->
             CrewResponseDto.crewListResponse(language, crew, crewMemberRepository));
