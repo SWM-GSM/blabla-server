@@ -98,14 +98,15 @@ public class TokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new GeneralException(Code.MALFORMED_JWT);
+//            throw new GeneralException(Code.MALFORMED_JWT);
         } catch (ExpiredJwtException e) {
-            throw new GeneralException(Code.EXPIRED_JWT);
+//            throw new GeneralException(Code.EXPIRED_JWT);
         } catch (UnsupportedJwtException e) {
-            throw new GeneralException(Code.UNSUPPORTED_JWT);
+//            throw new GeneralException(Code.UNSUPPORTED_JWT);
         } catch (IllegalArgumentException e) {
-            throw new GeneralException(Code.ILLEGAL_JWT);
+//            throw new GeneralException(Code.ILLEGAL_JWT);
         }
+        return false;
     }
 
     private Claims parseClaims(String accessToken) {
