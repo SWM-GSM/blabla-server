@@ -12,9 +12,11 @@ import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
+@BatchSize(size = 1000)
 @NoArgsConstructor
 public class CrewTag {
     @Id
