@@ -30,9 +30,8 @@ public class AuthController {
     @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<Object> signup(
         @RequestHeader("Authorization") String providerAccessToken,
-        @Valid @RequestPart MemberRequestDto memberRequestDto,
-        @RequestPart(required = false) MultipartFile profileImage) {
-        return DataResponseDto.of(authService.signup(providerAccessToken, memberRequestDto, profileImage));
+        @Valid @RequestBody MemberRequestDto memberRequestDto) {
+        return DataResponseDto.of(authService.signup(providerAccessToken, memberRequestDto));
     }
 
     @Operation(summary = "로그인 API")

@@ -40,29 +40,24 @@ public class AuthService {
     private final RestTemplate restTemplate;
     private final TokenProvider tokenProvider;
     private final JwtService jwtService;
-    private final S3UploaderService s3UploaderService;
     private final MemberRepository memberRepository;
     private final MemberInterestRepository memberInterestRepository;
     private final JwtRepository jwtRepository;
     private final GoogleAccountRepository googleAccountRepository;
 
     // 회원가입
-    public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto, MultipartFile profileImage) {
+    public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto) {
         Member member = new Member();
 
         if (memberRepository.findByNickname(memberRequestDto.getNickname()).isPresent()) {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
         }
 
-        String defaultProfileImageUrl = "https://blabla-temp.s3.ap-northeast-2.amazonaws.com/profile/default-profile.png";
-        String profileUrl = profileImage == null ? defaultProfileImageUrl
-            : s3UploaderService.uploadImage(profileImage, "profile");
-
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
 
-                member = memberRepository.save(memberRequestDto.toEntity(profileUrl));
+                member = memberRepository.save(memberRequestDto.toEntity());
 
                 googleAccountRepository.save(GoogleAccount.builder()
                     .id(googleAccountDto.getId())
@@ -82,11 +77,6 @@ public class AuthService {
                     .keyword(keyword)
                     .build());
         }
-//        memberRequestDto.getKeywords().forEach(keyword ->
-//            memberInterestRepository.save(MemberKeyword.builder()
-//                .member(member)
-//                .keyword(keyword)
-//                .build()));
 
         return jwtService.issueJwt(member);
     }
