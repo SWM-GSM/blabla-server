@@ -29,14 +29,12 @@ public class MemberRequestDto {
     private String birthDate; // yyyy-MM-dd
     private String gender;
     private String countryCode;
-    private String firstLang;
     @Min(value = 1, message = "레벨은 1에서 5 사이여야 합니다.")
     @Max(value = 5, message = "레벨은 1에서 5 사이여야 합니다.")
-    private int firstLangLevel;
-    private String secondLang;
+    private int korLevel;
     @Min(value = 1, message = "레벨은 1에서 5 사이여야 합니다.")
     @Max(value = 5, message = "레벨은 1에서 5 사이여야 합니다.")
-    private int secondLangLevel;
+    private int engLevel;
     @Size(max = 10, message = "관심사는 10개까지 선택 가능합니다.")
     private List<Keyword> keywords;
     private boolean pushNotification;
@@ -51,10 +49,8 @@ public class MemberRequestDto {
             .birthDate(LocalDate.parse(birthDate, formatter))
             .gender(gender)
             .countryCode(countryCode)
-            .firstLang(firstLang)
-            .firstLangLevel(firstLangLevel)
-            .secondLang(secondLang)
-            .secondLangLevel(secondLangLevel)
+            .korLevel(korLevel)
+            .engLevel(engLevel)
             .pushNotification(pushNotification)
             .build();
     }
