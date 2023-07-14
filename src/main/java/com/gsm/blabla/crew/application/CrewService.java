@@ -76,17 +76,18 @@ public class CrewService {
         return result;
     }
 
+    // TODO: n + 1 문제 최적화
     @Transactional(readOnly = true)
     public Page<CrewResponseDto> getAll(String language, Pageable pageable) {
         return crewRepository.findAll(pageable).map(crew ->
             CrewResponseDto.crewListResponse(language, crew, crewMemberRepository));
     }
 
+    // TODO: n + 1 문제 최적화
     public List<CrewResponseDto> getMyCrews() {
         Long memberId = SecurityUtil.getMemberId();
         List<CrewMember> crewMembers = crewMemberRepository.getByMemberIdAndStatus(memberId, CrewMemberStatus.JOINED);
-
-        // id, name, maxNum, currentNum, coverUrl
+        
         return crewMembers.stream()
             .map(crewMember -> CrewResponseDto.myCrewListResponse(crewMember.getCrew(), crewMemberRepository))
             .toList();
