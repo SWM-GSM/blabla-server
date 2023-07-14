@@ -23,10 +23,8 @@ public class MemberResponseDto {
     private LocalDate birthDate;
     private String gender;
     private String countryCode;
-    private String firstLang;
-    private int firstLangLevel;
-    private String secondLang;
-    private int secondLangLevel;
+    private int korLevel;
+    private int engLevel;
     private double trustScore;
     private boolean isLeader;
 
@@ -39,10 +37,8 @@ public class MemberResponseDto {
             .description(member.getDescription())
             .profileUrl(member.getProfileUrl())
             .countryCode(member.getCountryCode())
-            .firstLang(member.getFirstLang())
-            .firstLangLevel(member.getFirstLangLevel())
-            .secondLang(member.getSecondLang())
-            .secondLangLevel(member.getSecondLangLevel())
+            .korLevel(member.getKorLevel())
+            .engLevel(member.getEngLevel())
             .trustScore(member.getTrustScore())
             .isLeader(crewMemberRepository.getByCrewIdAndMemberId(crewId, member.getId()).getRole() == CrewMemberRole.LEADER)
             .build();
