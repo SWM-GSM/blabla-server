@@ -64,7 +64,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                    .requestMatchers("/oauth/**", "/common/**", "/ko/common/**", "/en/common/**", "/members/nicknames/**").permitAll()
+                    .requestMatchers("/**").permitAll()
+                    .requestMatchers(
+                        "/oauth/**",
+                        "/ko/common/levels/**","/ko/common/keywords/**",
+                        "/en/common/levels/**","/en/common/keywords/**",
+                        "/members/nicknames/**"
+                    ).permitAll()
                     .requestMatchers(PathRequest.toH2Console()).permitAll() // H2-console 화면을 사용하기 위해
                     .anyRequest().authenticated()
             )
