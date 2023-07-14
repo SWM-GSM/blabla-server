@@ -31,18 +31,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class CrewService {
 
-    private final S3UploaderService s3UploaderService;
     private final CrewRepository crewRepository;
     private final CrewTagRepository crewTagRepository;
     private final CrewMemberRepository crewMemberRepository;
     private final MemberRepository memberRepository;
 
-    public Map<String, Long> create(CrewRequestDto crewRequestDto, MultipartFile coverImage) {
-        String defaultCoverUrl = "https://blabla-temp.s3.ap-northeast-2.amazonaws.com/cover/defalut-crew-cover.png";
-        String coverUrl = coverImage == null ? defaultCoverUrl
-            : s3UploaderService.uploadImage(coverImage, "cover");
-
-        Crew crew = crewRepository.save(crewRequestDto.toEntity(coverUrl));
+    public Map<String, Long> create(CrewRequestDto crewRequestDto) {
+        Crew crew = crewRepository.save(crewRequestDto.toEntity());
 
         crewRequestDto.getTags().forEach(tag ->
                 crewTagRepository.save(CrewTag.builder()
@@ -87,7 +82,7 @@ public class CrewService {
     public List<CrewResponseDto> getMyCrews() {
         Long memberId = SecurityUtil.getMemberId();
         List<CrewMember> crewMembers = crewMemberRepository.getByMemberIdAndStatus(memberId, CrewMemberStatus.JOINED);
-        
+
         return crewMembers.stream()
             .map(crewMember -> CrewResponseDto.myCrewListResponse(crewMember.getCrew(), crewMemberRepository))
             .toList();
