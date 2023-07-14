@@ -6,8 +6,8 @@ import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import java.util.Map;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,12 +45,18 @@ public class CrewController {
 
     // TODO: 크루 찾기 화면을 기준으로 제작되었으므로 홈 화면에서 어떻게 재활용할지 고민하기
     // TODO: page > lastCrewId로 수정
-    // TODO: createdAt 역순으로 정렬
+    // TODO: n + 1 문제 최적화
     @Operation(summary = "크루 목록 조회 API")
     @GetMapping(value = "/{language}/crews")
     public DataResponseDto<Page<CrewResponseDto>> getAll(
         @PathVariable("language") String language,
         @PageableDefault(sort = "id", direction = Direction.DESC)  Pageable pageable) {
         return DataResponseDto.of(crewService.getAll(language, pageable));
+    }
+
+    @Operation(summary = "나의 크루 조회 API")
+    @GetMapping(value = "/crews/me")
+    public DataResponseDto<List<CrewResponseDto>> getMyCrews() {
+        return DataResponseDto.of(crewService.getMyCrews());
     }
 }
