@@ -5,6 +5,7 @@ import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.CrewTagRepository;
 import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewMember;
+import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.CrewTag;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
@@ -13,8 +14,10 @@ import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -77,5 +80,15 @@ public class CrewService {
     public Page<CrewResponseDto> getAll(String language, Pageable pageable) {
         return crewRepository.findAll(pageable).map(crew ->
             CrewResponseDto.crewListResponse(language, crew, crewMemberRepository));
+    }
+
+    public List<CrewResponseDto> getMyCrews() {
+        Long memberId = SecurityUtil.getMemberId();
+        List<CrewMember> crewMembers = crewMemberRepository.getByMemberIdAndStatus(memberId, CrewMemberStatus.JOINED);
+
+        // id, name, maxNum, currentNum, coverUrl
+        return crewMembers.stream()
+            .map(crewMember -> CrewResponseDto.myCrewListResponse(crewMember.getCrew(), crewMemberRepository))
+            .toList();
     }
 }

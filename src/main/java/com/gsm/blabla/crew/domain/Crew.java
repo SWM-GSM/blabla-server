@@ -29,25 +29,25 @@ public class Crew extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private MeetingCycle meetingCycle;
     private int maxNum;
-    private int korLevel;
-    private int engLevel;
+    private Integer korLevel;
+    private Integer engLevel;
     @Enumerated(EnumType.STRING)
     private PreferMember preferMember;
     private String detail;
-    private boolean autoApproval;
+    private Boolean autoApproval;
     private String coverUrl;
 
-    @BatchSize(size = 1000)
+//    @BatchSize(size = 1000)
     @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
     List<CrewMember> crewMembers;
 
-    @BatchSize(size = 1000)
+//    @BatchSize(size = 1000)
     @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
     List<CrewTag> crewTags;
 
     @Builder
     public Crew(String name, String description, MeetingCycle meetingCycle, int maxNum, int korLevel,
-        int engLevel, PreferMember preferMember, String detail, boolean autoApproval, String coverUrl) {
+        int engLevel, PreferMember preferMember, String detail, Boolean autoApproval, String coverUrl) {
         this.name = name;
         this.description = description;
         this.meetingCycle = meetingCycle;

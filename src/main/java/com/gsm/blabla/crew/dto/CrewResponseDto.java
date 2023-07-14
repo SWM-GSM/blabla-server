@@ -26,13 +26,13 @@ public class CrewResponseDto {
     private String meetingCycle;
     private int maxNum;
     private int currentNum;
-    private int korLevel;
+    private Integer korLevel;
     private String korLevelText;
-    private int engLevel;
+    private Integer engLevel;
     private String engLevelText;
     private String preferMember;
     private String detail;
-    private boolean autoApproval;
+    private Boolean autoApproval;
     private String coverUrl;
     private LocalDateTime createdAt;
     private List<MemberResponseDto> members;
@@ -54,7 +54,7 @@ public class CrewResponseDto {
             .preferMember(Objects.equals(language, "ko") ? crew.getPreferMember().getKoreanName()
                 : crew.getPreferMember().getEnglishName())
             .detail(crew.getDetail())
-            .autoApproval(crew.isAutoApproval())
+            .autoApproval(crew.getAutoApproval())
             .coverUrl(crew.getCoverUrl())
             .members(crew.getCrewMembers().stream()
                     .map(crewMember -> MemberResponseDto.crewProfileResponse(crew.getId(), crewMember.getMember(),
@@ -87,6 +87,18 @@ public class CrewResponseDto {
             .build();
 
     }
+
+    public static CrewResponseDto myCrewListResponse(Crew crew, CrewMemberRepository crewMemberRepository) {
+        return CrewResponseDto.builder()
+            .id(crew.getId())
+            .name(crew.getName())
+            .coverUrl(crew.getCoverUrl())
+            .maxNum(crew.getMaxNum())
+            .currentNum(crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(),
+                CrewMemberStatus.JOINED))
+            .build();
+    }
+
     public static String getLevelDescription(String language, int degree) {
         for (Level level : Level.values()) {
             if (level.getLanguage().equals(language) && level.getDegree() == degree) {
