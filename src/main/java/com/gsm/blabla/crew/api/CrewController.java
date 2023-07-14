@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,9 +31,8 @@ public class CrewController {
     @Operation(summary = "크루 생성 API")
     @PostMapping(value = "/crews", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public DataResponseDto<Map<String, Long>> create(
-        @RequestPart CrewRequestDto crewRequestDto,
-        @RequestPart(required = false) MultipartFile coverImage) {
-        return DataResponseDto.of(crewService.create(crewRequestDto, coverImage));
+        @RequestBody CrewRequestDto crewRequestDto) {
+        return DataResponseDto.of(crewService.create(crewRequestDto));
     }
 
     @Operation(summary = "크루 단일 조회 API")
