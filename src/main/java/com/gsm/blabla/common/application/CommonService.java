@@ -2,11 +2,11 @@ package com.gsm.blabla.common.application;
 
 import com.gsm.blabla.common.dto.CommonCodeDto;
 import com.gsm.blabla.common.dto.KeywordDto;
+import com.gsm.blabla.common.dto.LevelDto;
 import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,16 +19,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CommonService {
-    public Map<String, String> getLevels(String language) {
-        Map<String, String> result = new HashMap<>();
+    public Map<String, List<LevelDto>> getLevels(String language) {
+        List<LevelDto> levels = Arrays.stream(Level.values())
+            .filter(level -> level.getLanguage().equals(language))
+            .map(level -> LevelDto.of(level.getDegree(), level.getDescription()))
+            .toList();
 
-        for (Level level : Level.values()) {
-            if (level.getLanguage().equals(language)) {
-                result.put(level.getDegreeText(), level.getDescription());
-            }
-        }
-
-        return result;
+        return Map.of("levels", levels);
     }
 
     public Map<String, List<KeywordDto>> getKeywords(String language) {

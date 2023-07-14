@@ -3,6 +3,7 @@ package com.gsm.blabla.common.api;
 import com.gsm.blabla.common.application.CommonService;
 import com.gsm.blabla.common.dto.CommonCodeDto;
 import com.gsm.blabla.common.dto.KeywordDto;
+import com.gsm.blabla.common.dto.LevelDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,7 +26,7 @@ public class CommonController {
     @Operation(summary = "레벨 별 문구 조회 API")
     @Parameter(name = "language", description = "언어", example = "ko / en")
     @GetMapping("/levels")
-    public DataResponseDto<Map<String, String>> getLevels(@PathVariable String language) {
+    public DataResponseDto<Map<String, List<LevelDto>>> getLevels(@PathVariable String language) {
         return DataResponseDto.of(commonService.getLevels(language));
     }
 
