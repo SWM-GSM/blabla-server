@@ -1,4 +1,4 @@
-package com.gsm.blabla.global.enums;
+package com.gsm.blabla.global.response;
 
 import com.gsm.blabla.global.exception.GeneralException;
 import java.util.Arrays;
@@ -25,6 +25,13 @@ public enum Code {
     * HEAD NAME - M (Member)
     * */
     DUPLICATED_NICKNAME("M001", HttpStatus.BAD_REQUEST, "Duplicate nickname"),
+    MEMBER_NOT_FOUND("M002", HttpStatus.NOT_FOUND, "Member not found"),
+
+    /*
+    * Crew 관련 오류
+    * HEAD NAME - C (Crew)
+    * */
+    CREW_NOT_FOUND("C001", HttpStatus.NOT_FOUND, "Crew not found"),
 
     /*
     * 서버 관련 오류
@@ -47,6 +54,7 @@ public enum Code {
     UNSUPPORTED_JWT("AUTH007", HttpStatus.UNAUTHORIZED, "Unsupported jwt format"),
     ILLEGAL_JWT("AUTH008", HttpStatus.UNAUTHORIZED, "Illegal jwt format"),
     FORBIDDEN("AUTH009", HttpStatus.FORBIDDEN, "Forbidden"),
+    NO_CREDENTIALS_IN_CONETEXT("AUTH010", HttpStatus.UNAUTHORIZED, "No credentials in Security Context")
     ;
 
     private final String code;

@@ -1,6 +1,6 @@
-package com.gsm.blabla.member.domain;
+package com.gsm.blabla.crew.domain;
 
-import com.gsm.blabla.common.enums.Keyword;
+import com.gsm.blabla.common.enums.Tag;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,25 +10,29 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
+@Getter
+@BatchSize(size = 1000)
 @NoArgsConstructor
-public class MemberKeyword {
+public class CrewTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "crew_id")
+    private Crew crew;
 
     @Enumerated(EnumType.STRING)
-    private Keyword keyword;
+    private Tag tag;
 
     @Builder
-    public MemberKeyword(Member member, Keyword keyword) {
-        this.member = member;
-        this.keyword = keyword;
+    public CrewTag(Crew crew, Tag tag) {
+        this.crew = crew;
+        this.tag = tag;
     }
 }

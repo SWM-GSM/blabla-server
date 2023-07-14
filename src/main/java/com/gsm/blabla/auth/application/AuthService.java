@@ -1,9 +1,9 @@
 package com.gsm.blabla.auth.application;
 
 import com.gsm.blabla.global.application.S3UploaderService;
-import com.gsm.blabla.global.enums.Code;
+import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.exception.GeneralException;
-import com.gsm.blabla.global.enums.Keyword;
+import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.jwt.TokenProvider;
 import com.gsm.blabla.jwt.application.JwtService;
 import com.gsm.blabla.jwt.dao.GoogleAccountRepository;
@@ -40,29 +40,24 @@ public class AuthService {
     private final RestTemplate restTemplate;
     private final TokenProvider tokenProvider;
     private final JwtService jwtService;
-    private final S3UploaderService s3UploaderService;
     private final MemberRepository memberRepository;
     private final MemberInterestRepository memberInterestRepository;
     private final JwtRepository jwtRepository;
     private final GoogleAccountRepository googleAccountRepository;
 
     // 회원가입
-    public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto, MultipartFile profileImage) {
+    public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto) {
         Member member = new Member();
 
         if (memberRepository.findByNickname(memberRequestDto.getNickname()).isPresent()) {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
         }
 
-        String defaultProfileImageUrl = "https://blabla-temp.s3.ap-northeast-2.amazonaws.com/profile/default-profile.png";
-        String profileUrl = profileImage == null ? defaultProfileImageUrl
-            : s3UploaderService.uploadImage(profileImage, "profile");
-
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
 
-                member = memberRepository.save(memberRequestDto.toEntity(profileUrl));
+                member = memberRepository.save(memberRequestDto.toEntity());
 
                 googleAccountRepository.save(GoogleAccount.builder()
                     .id(googleAccountDto.getId())
@@ -112,7 +107,7 @@ public class AuthService {
     public JwtDto reissue(TokenRequestDto tokenRequestDto) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
+            throw new GeneralException(Code.INVALID_REFRESH_TOKEN, "Refresh Token이 유효하지 않습니다.");
         }
 
         // 2. Access Token 에서 Member ID 가져오기
@@ -120,9 +115,9 @@ public class AuthService {
         Long memberId = Long.parseLong(authentication.getName());
 
         Jwt jwt = jwtRepository.findOneByMemberId(memberId)
-            .orElseThrow(() -> new RuntimeException("Refresh Token이 없습니다. 다시 로그인해주세요."));
+            .orElseThrow(() -> new GeneralException(Code.REFRESH_TOKEN_NOT_FOUND, "Refresh Token이 없습니다. 다시 로그인해주세요."));
         if (!jwt.getRefreshToken().equals(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
+            throw new GeneralException(Code.INVALID_REFRESH_TOKEN, "Refresh Token이 유효하지 않습니다.");
         }
 
         jwtRepository.delete(jwt);
