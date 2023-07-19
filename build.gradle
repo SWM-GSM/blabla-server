@@ -72,3 +72,7 @@ task copySecret(type: Copy) {
     include '*.yml'
     into 'src/main/resources'
 }
+
+jar {
+    enabled = false
+}
