@@ -61,8 +61,7 @@ public class ScheduleService {
 
         return Collections.singletonMap("scheduleId", schedule.getId());
     }
-
-    // TODO: 프로필 이미지 리스트 로직 수정해야 함
+    
     public Map<String, List<ScheduleResponseDto>> getSchedulesOfDay(int month, int day, Long crewId) {
         List<ScheduleResponseDto> schedules = new ArrayList<>();
 
@@ -73,9 +72,6 @@ public class ScheduleService {
         List<String> profiles = new ArrayList<>();
 
         for (Schedule schedule : schedulesOfDay) {
-            for (MemberSchedule memberSchedule : schedule.getMemberSchedules()) {
-                profiles.add(memberSchedule.getMember().getProfileUrl());
-            }
             schedules.add(ScheduleResponseDto.of(
                 schedule.getId(),
                 schedule.getTitle(),
@@ -83,7 +79,9 @@ public class ScheduleService {
                     DateTimeFormatter.ofPattern("M월 dd일 E요일 a h:mm")
                 ),
                 schedule.getMeetingTime().getDayOfYear() - LocalDateTime.now().getDayOfYear(),
-                profiles
+                schedule.getMemberSchedules().stream().map(
+                    memberSchedule -> memberSchedule.getMember().getProfileUrl()
+                ).toList()
             ));
         }
         return Collections.singletonMap("schedules", schedules);
