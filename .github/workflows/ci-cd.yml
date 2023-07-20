@@ -1,4 +1,4 @@
-name: API Server - CI
+name: API Server - CI/ㅌㄴ
 
 on:
   push:
@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  CI:
+  CI-CD:
     runs-on: ubuntu-latest
     steps:
       - name: Set up JDK 17
@@ -18,16 +18,6 @@ jobs:
           distribution: 'temurin'
           token: ${{secrets.ACTION_TOKEN}}
           submodules: true
-
-      - name: Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
 
       - name: init with Gradle
         uses: gradle/gradle-build-action@v2
@@ -39,10 +29,7 @@ jobs:
         with:
           gradle-version: 7.6.1
           arguments: build
-  CD:
-    needs: CI
-    runs-on: ubuntu-latest
-    steps:
+
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip .
         shell: bash
