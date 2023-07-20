@@ -1,4 +1,4 @@
-name: API Server - CI/ㅌㄴ
+name: API Server - CI/CD
 
 on:
   push:
