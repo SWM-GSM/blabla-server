@@ -61,7 +61,7 @@ public class ScheduleService {
 
         return Collections.singletonMap("scheduleId", schedule.getId());
     }
-    
+
     public Map<String, List<ScheduleResponseDto>> getSchedulesOfDay(int month, int day, Long crewId) {
         List<ScheduleResponseDto> schedules = new ArrayList<>();
 
@@ -69,7 +69,6 @@ public class ScheduleService {
                 () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
 
         List<Schedule> schedulesOfDay = scheduleRepository.findSchedulesByMeetingTimeAndCrew(month, day, crew);
-        List<String> profiles = new ArrayList<>();
 
         for (Schedule schedule : schedulesOfDay) {
             schedules.add(ScheduleResponseDto.of(
