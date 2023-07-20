@@ -16,7 +16,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          token: ${{secrets.ACTION_TOKEN}}
+          token: ${{ secrets.ACTION_TOKEN }}
           submodules: true
 
       - name: init with Gradle
