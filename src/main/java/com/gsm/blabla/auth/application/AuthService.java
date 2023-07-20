@@ -1,6 +1,5 @@
 package com.gsm.blabla.auth.application;
 
-import com.gsm.blabla.global.application.S3UploaderService;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.common.enums.Keyword;
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
