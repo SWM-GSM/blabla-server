@@ -43,4 +43,12 @@ public class ScheduleController {
         return DataResponseDto.of(scheduleService.getSchedulesOfDay(month, day, crewId));
     }
 
+    @Operation(summary = "다가오는 크루 일정 API")
+    @GetMapping(value = "/upcoming")
+    public DataResponseDto<ScheduleResponseDto> getUpcomingSchedule(
+        @PathVariable Long crewId
+    ) {
+        return DataResponseDto.of(scheduleService.getUpcomingSchedule(crewId));
+    }
+
 }

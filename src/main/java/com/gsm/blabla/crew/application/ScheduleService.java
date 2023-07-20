@@ -71,18 +71,14 @@ public class ScheduleService {
         List<Schedule> schedulesOfDay = scheduleRepository.findSchedulesByMeetingTimeAndCrew(month, day, crew);
 
         for (Schedule schedule : schedulesOfDay) {
-            schedules.add(ScheduleResponseDto.of(
-                schedule.getId(),
-                schedule.getTitle(),
-                schedule.getMeetingTime().format(
-                    DateTimeFormatter.ofPattern("M월 dd일 E요일 a h:mm")
-                ),
-                schedule.getMeetingTime().getDayOfYear() - LocalDateTime.now().getDayOfYear(),
-                schedule.getMemberSchedules().stream().map(
-                    memberSchedule -> memberSchedule.getMember().getProfileUrl()
-                ).toList()
-            ));
+            schedules.add(ScheduleResponseDto.of(schedule));
         }
         return Collections.singletonMap("schedules", schedules);
+    }
+
+    public ScheduleResponseDto getUpcomingSchedule(Long crewId) {
+        Schedule schedule = scheduleRepository.findNearestSchedule(crewId);
+
+        return ScheduleResponseDto.of(schedule);
     }
 }
