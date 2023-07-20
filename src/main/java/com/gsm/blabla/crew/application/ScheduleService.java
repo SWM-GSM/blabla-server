@@ -6,7 +6,7 @@ import com.gsm.blabla.crew.dao.MemberScheduleRepository;
 import com.gsm.blabla.crew.dao.ScheduleRepository;
 import com.gsm.blabla.crew.domain.MemberSchedule;
 import com.gsm.blabla.crew.domain.Schedule;
-import com.gsm.blabla.crew.dto.CrewScheduleRequestDto;
+import com.gsm.blabla.crew.dto.ScheduleRequestDto;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
@@ -30,12 +30,12 @@ public class ScheduleService {
     private final MemberRepository memberRepository;
     private final CrewMemberRepository crewMemberRepository;
 
-    public Map<String, Long> create(Long crewId, CrewScheduleRequestDto crewScheduleRequestDto) {
-        String meetingTimeInString = crewScheduleRequestDto.getMeetingTime();
+    public Map<String, Long> create(Long crewId, ScheduleRequestDto scheduleRequestDto) {
+        String meetingTimeInString = scheduleRequestDto.getMeetingTime();
         LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString);
 
         Schedule schedule = scheduleRepository.save(Schedule.builder()
-            .title(crewScheduleRequestDto.getTitle())
+            .title(scheduleRequestDto.getTitle())
             .meetingTime(meetingTime)
             .crew(crewRepository.findById(crewId).orElseThrow(
                     () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")))

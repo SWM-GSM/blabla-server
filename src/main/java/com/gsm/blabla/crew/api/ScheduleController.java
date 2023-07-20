@@ -24,8 +24,8 @@ public class ScheduleController {
     @PostMapping(value = "")
     public DataResponseDto<Map<String, Long>> create(
         @PathVariable Long crewId,
-        @RequestBody CrewScheduleRequestDto crewScheduleRequestDto
+        @RequestBody ScheduleRequestDto scheduleRequestDto
         ) {
-        return DataResponseDto.of(scheduleService.create(crewId, crewScheduleRequestDto));
+        return DataResponseDto.of(scheduleService.create(crewId, scheduleRequestDto));
     }
 }
