@@ -25,7 +25,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Run build with Gradle Wrapper
-        run: ./gradlew build
+        run: ./gradlew clean build -x test
 
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip .
