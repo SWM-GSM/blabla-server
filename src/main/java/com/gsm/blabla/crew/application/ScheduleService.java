@@ -14,15 +14,14 @@ import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
-import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +61,7 @@ public class ScheduleService {
         return Collections.singletonMap("scheduleId", schedule.getId());
     }
 
+    @Transactional(readOnly = true)
     public Map<String, List<ScheduleResponseDto>> getSchedulesOfDay(int month, int day, Long crewId) {
         List<ScheduleResponseDto> schedules = new ArrayList<>();
 
@@ -76,6 +76,7 @@ public class ScheduleService {
         return Collections.singletonMap("schedules", schedules);
     }
 
+    @Transactional(readOnly = true)
     public ScheduleResponseDto getUpcomingSchedule(Long crewId) {
         Schedule schedule = scheduleRepository.findNearestSchedule(crewId);
 
