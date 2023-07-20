@@ -11,24 +11,24 @@ jobs:
   CI-CD:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          token: ${{secrets.ACTION_TOKEN}}
+          token: ${{ secrets.ACTION_TOKEN }}
           submodules: true
 
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
-        with:
-          arguments: build
+      - name: Run build with Gradle Wrapper
+        run: ./gradlew build
 
       - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
+        run: zip -qq -r ./$GITHUB_SHA.zip .
         shell: bash
 
       - name: Configure AWS Credentials
