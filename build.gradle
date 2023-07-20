@@ -30,6 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
 
     // query logging
@@ -71,4 +72,8 @@ task copySecret(type: Copy) {
     from './security'
     include '*.yml'
     into 'src/main/resources'
+}
+
+jar {
+    enabled = false
 }
