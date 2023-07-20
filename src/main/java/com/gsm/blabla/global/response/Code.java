@@ -34,6 +34,12 @@ public enum Code {
     CREW_NOT_FOUND("C001", HttpStatus.NOT_FOUND, "Crew not found"),
 
     /*
+     * Content 관련 오류
+     * HEAD NAME - CT (ConTent)
+     * */
+    CONTENT_NOT_FOUND("CT001", HttpStatus.NOT_FOUND, "Content not found"),
+
+    /*
     * 서버 관련 오류
     * HEAD NAME - S (Server)
     * */
