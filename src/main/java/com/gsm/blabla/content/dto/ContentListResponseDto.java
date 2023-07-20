@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ContentListResponseDto {
     private double progress; // 연습실
-    private List<ContentResponseDto> contents; // 컨텐츠 리스트
+    private List<ContentViewResponseDto> contents; // 컨텐츠 리스트
 
-    public static ContentListResponseDto contentListResponse(List<ContentResponseDto> contents) {
+    public static ContentListResponseDto contentListResponse(List<ContentViewResponseDto> contents) {
         int totalContents = contents.size();
         Map<Integer, Long> completedContentsByLevel = contents.stream()
-                .filter(ContentResponseDto::isCompleted)
-                .collect(Collectors.groupingBy(ContentResponseDto::getLevel, Collectors.counting()));
+                .filter(ContentViewResponseDto::isCompleted)
+                .collect(Collectors.groupingBy(ContentViewResponseDto::getLevel, Collectors.counting()));
 
         long completedOverall = completedContentsByLevel.getOrDefault(10, 0L);
         double overallProgress = (completedOverall / (double) totalContents) * 100.0;
