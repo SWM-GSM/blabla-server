@@ -4,9 +4,11 @@ import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.MemberScheduleRepository;
 import com.gsm.blabla.crew.dao.ScheduleRepository;
+import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.MemberSchedule;
 import com.gsm.blabla.crew.domain.Schedule;
 import com.gsm.blabla.crew.dto.ScheduleRequestDto;
+import com.gsm.blabla.crew.dto.ScheduleResponseDto;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
@@ -14,7 +16,10 @@ import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -55,5 +60,32 @@ public class ScheduleService {
             .build());
 
         return Collections.singletonMap("scheduleId", schedule.getId());
+    }
+
+    // TODO: 프로필 이미지 리스트 로직 수정해야 함
+    public Map<String, List<ScheduleResponseDto>> getSchedulesOfDay(int month, int day, Long crewId) {
+        List<ScheduleResponseDto> schedules = new ArrayList<>();
+
+        Crew crew = crewRepository.findById(crewId).orElseThrow(
+                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
+
+        List<Schedule> schedulesOfDay = scheduleRepository.findSchedulesByMeetingTimeAndCrew(month, day, crew);
+        List<String> profiles = new ArrayList<>();
+
+        for (Schedule schedule : schedulesOfDay) {
+            for (MemberSchedule memberSchedule : schedule.getMemberSchedules()) {
+                profiles.add(memberSchedule.getMember().getProfileUrl());
+            }
+            schedules.add(ScheduleResponseDto.of(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getMeetingTime().format(
+                    DateTimeFormatter.ofPattern("M월 dd일 E요일 a h:mm")
+                ),
+                schedule.getMeetingTime().getDayOfYear() - LocalDateTime.now().getDayOfYear(),
+                profiles
+            ));
+        }
+        return Collections.singletonMap("schedules", schedules);
     }
 }
