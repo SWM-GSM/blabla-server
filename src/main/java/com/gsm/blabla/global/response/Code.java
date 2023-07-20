@@ -26,6 +26,7 @@ public enum Code {
     * */
     DUPLICATED_NICKNAME("M001", HttpStatus.BAD_REQUEST, "Duplicate nickname"),
     MEMBER_NOT_FOUND("M002", HttpStatus.NOT_FOUND, "Member not found"),
+    MEMBER_WITHOUT_PRIVILEGE("M003", HttpStatus.FORBIDDEN, "Member without privilege"),
 
     /*
     * Crew 관련 오류

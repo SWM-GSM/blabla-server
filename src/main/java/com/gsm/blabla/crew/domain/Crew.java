@@ -37,12 +37,10 @@ public class Crew extends BaseTimeEntity {
     private Boolean autoApproval;
     private String coverUrl;
 
-//    @BatchSize(size = 1000)
-    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "crew")
     List<CrewMember> crewMembers;
 
-//    @BatchSize(size = 1000)
-    @OneToMany(mappedBy = "crew", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "crew")
     List<CrewTag> crewTags;
 
     @Builder
