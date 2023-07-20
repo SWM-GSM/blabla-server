@@ -3,6 +3,7 @@ package com.gsm.blabla.content.api;
 import com.gsm.blabla.content.application.ContentService;
 import com.gsm.blabla.content.dto.ContentListResponseDto;
 import com.gsm.blabla.content.dto.ContentResponseDto;
+import com.gsm.blabla.content.dto.ContentViewResponseDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +30,12 @@ public class ContentController {
     @GetMapping("/{language}/contents")
     public DataResponseDto<Map<String, ContentListResponseDto>> getAll(@PathVariable String language) {
         return DataResponseDto.of(contentService.getAll(language));
+    }
+
+    @Operation(summary = "오늘의 컨텐츠 조회 API")
+    @GetMapping("/{language}/contents/today")
+    public DataResponseDto<Map<String, ContentViewResponseDto>> getTodayContent(@PathVariable String language) {
+        return DataResponseDto.of(contentService.getTodayContent(language));
     }
 }
 

@@ -41,19 +41,4 @@ public class ContentResponseDto {
                 .title(content.getTitle())
                 .build();
     }
-
-    public static List<ContentResponseDto> contentListResponse(List<Content> contents, MemberContentRepository memberContentRepository) {
-        return contents.stream()
-                .map(content -> {
-                    return ContentResponseDto.builder()
-                            .id(content.getId())
-                            .thumbnailUrl("https://img.youtube.com/vi/" + content.getContentUrl().split("/watch\\?v=")[1] + "/hqdefault.jpg")
-                            .level(content.getLevel())
-                            .topic(content.getTopic())
-                            .title(content.getTitle())
-                            .isCompleted(memberContentRepository.findByContentId(content.getId()).isPresent())
-                            .build();
-                })
-                .collect(Collectors.toList());
-    }
 }
