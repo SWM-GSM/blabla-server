@@ -1,14 +1,23 @@
 package com.gsm.blabla.dummy.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.agora.application.AgoraService;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.crew.domain.MeetingCycle;
-import com.gsm.blabla.dummy.api.DummyController.ReportDto.Info;
-import com.gsm.blabla.dummy.api.DummyController.ReportDto.LanguageRatio;
+import com.gsm.blabla.dummy.dto.AccuseDto;
+import com.gsm.blabla.dummy.dto.CrewDto;
+import com.gsm.blabla.dummy.dto.JoinDto;
+import com.gsm.blabla.dummy.dto.KeywordDto;
+import com.gsm.blabla.dummy.dto.MemberDto;
+import com.gsm.blabla.dummy.dto.ProfileDto;
+import com.gsm.blabla.dummy.dto.ReportDto;
+import com.gsm.blabla.dummy.dto.ReportDto.Info;
+import com.gsm.blabla.dummy.dto.ReportDto.LanguageRatio;
+import com.gsm.blabla.dummy.dto.ScheduleDto;
+import com.gsm.blabla.dummy.dto.StatusDto;
+import com.gsm.blabla.dummy.dto.VoiceRoomDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,8 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,130 +45,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class DummyController {
 
     private final AgoraService agoraService;
-
-    @Getter
-    @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static class KeywordDto {
-        private String emoji;
-        private String name;
-    }
-
-    @Getter
-    @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static class MemberDto {
-        private Long id;
-        private String profileImage;
-        private String nickname;
-        private Integer korLevel;
-        private Integer engLevel;
-        private Integer signedUpAfter;
-        private String countryCode;
-        private List<KeywordDto> keywords;
-        private String description;
-        private String application;
-        private Boolean isLeader;
-        private String comment;
-    }
-
-    @Getter
-    @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static class CrewDto {
-        private Long id;
-        private String name;
-        private String description;
-        private String meetingCycle;
-        private Integer maxNum;
-        private Integer currentNum;
-        private Integer korLevel;
-        private String korLevelText;
-        private Integer engLevel;
-        private String engLevelText;
-        private String preferMember;
-        private String detail;
-        private Boolean autoApproval;
-        private String coverImage;
-        private List<MemberDto> members;
-        private List<String> tags;
-        private String createdAt;
-    }
-
-    @Getter
-    @Builder
-    private static class VoiceRoomDto {
-        private String channelName;
-        private String token;
-        private long expiresIn;
-    }
-
-    @Getter
-    @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static class ScheduleDto {
-        private Long id;
-        private String title;
-        private Integer dday;
-        private String meetingTime;
-        private List<String> profiles;
-        private List<MemberDto> members;
-    }
-
-    @Getter
-    @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class ReportDto {
-        private Long id;
-        private Info info;
-        private List<MemberDto> members;
-        private String bubbleChart;
-        private List<Keyword> keyword;
-        private LanguageRatio languageRatio;
-        private List<MemberDto> feedbacks;
-
-        @Getter
-        @Builder
-        public static class Info {
-            private String createdAt;
-            private String durationTime;
-        }
-
-        @Getter
-        @Builder
-        public static class Keyword {
-            private String name;
-            private int count;
-        }
-
-        @Getter
-        @Builder
-        public static class LanguageRatio {
-            private double korean;
-            private double english;
-        }
-    }
-
-    @Getter
-    @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static class JoinDto {
-        private String message;
-    }
-
-    @Getter
-    @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static class AccuseDto {
-        private String reason;
-    }
-
-    @Getter
-    @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static class StatusDto {
-        private String status;
-    }
 
     @GetMapping(value = "{language}/profile/{memberId}")
     public DataResponseDto<MemberDto> getProfile(@PathVariable String language) {
@@ -316,55 +199,55 @@ public class DummyController {
         return DataResponseDto.of(Map.of("reports", Collections.nCopies(5, report1)));
     }
 
-//    @DeleteMapping(value = "/members/withdrawal")
-//    public DataResponseDto<Map<String, String>> withdrawal() {
-//        return DataResponseDto.of(Map.of("message", "회원탈퇴가 완료되었습니다."));
-//    }
-//
-//    @PostMapping(value = "/crews")
-//    public DataResponseDto<Map<String, Long>> create(@RequestBody CrewDto crewDto) {
-//        return DataResponseDto.of(Map.of("crewId", 1L));
-//    }
-//
-//    @PostMapping(value = "/crews/{crewId}/join")
-//    public DataResponseDto<Map<String, String>> join(@RequestBody JoinDto joinDto) {
-//        return DataResponseDto.of(Map.of("message", "크루 가입이 완료되었습니다."));
-//    }
-//
-//    @PostMapping(value = "/crews/{crewId}/accuse")
-//    public DataResponseDto<Map<String, String>> accuse(@RequestBody AccuseDto accuseDto) {
-//        return DataResponseDto.of(Map.of("message", "신고가 완료되었습니다."));
-//    }
-//
-//    @PostMapping(value = "/crews/{crewId}/waiting-list/{memberId}")
-//    public DataResponseDto<Map<String, String>> accept(@RequestBody StatusDto statusDto) {
-//        return DataResponseDto.of(Map.of("message", "승인이 완료되었습니다."));
-//    }
-//
-//    @DeleteMapping(value = "/crews/{crewId}/force-withdrawal/{memberId}")
-//    public DataResponseDto<Map<String, String>> forceWithdrawal(@RequestBody StatusDto statusDto) {
-//        return DataResponseDto.of(Map.of("message", "강제 탈퇴가 완료되었습니다."));
-//    }
-//
-//    @PostMapping(value = "/crews/{crewId}/schedules")
-//    public DataResponseDto<Map<String, Long>> createSchedule(@RequestBody ScheduleDto scheduleDto) {
-//        return DataResponseDto.of(Map.of("scheduleId", 1L));
-//    }
-//
-//    @PostMapping(value = "/crews/{crewId}/schedules/join")
-//    public DataResponseDto<Map<String, String>> joinSchedule(@RequestBody ScheduleDto scheduleDto) {
-//        return DataResponseDto.of(Map.of("message", "일정 참여가 완료되었습니다."));
-//    }
-//
-//    @DeleteMapping(value = "/crews/{crewId}/withdrawal")
-//    public DataResponseDto<Map<String, String>> crewWithdrawal() {
-//        return DataResponseDto.of(Map.of("message", "크루 탈퇴가 완료되었습니다."));
-//    }
-//
-//    @PatchMapping(value ="/profile")
-//    public DataResponseDto<Map<String, String>> updateProfile(@RequestBody MemberDto memberDto) {
-//        return DataResponseDto.of(Map.of("message", "프로필 수정이 완료되었습니다."));
-//    }
+    @DeleteMapping(value = "/members/withdrawal")
+    public DataResponseDto<Map<String, String>> withdrawal() {
+        return DataResponseDto.of(Map.of("message", "회원탈퇴가 완료되었습니다."));
+    }
+
+    @PostMapping(value = "/crews")
+    public DataResponseDto<Map<String, Long>> create(@RequestBody CrewDto crewDto) {
+        return DataResponseDto.of(Map.of("crewId", 1L));
+    }
+
+    @PostMapping(value = "/crews/{crewId}/join")
+    public DataResponseDto<Map<String, String>> join(@RequestBody JoinDto joinDto) {
+        return DataResponseDto.of(Map.of("message", "크루 가입이 완료되었습니다."));
+    }
+
+    @PostMapping(value = "/crews/{crewId}/accuse")
+    public DataResponseDto<Map<String, String>> accuse(@RequestBody AccuseDto accuseDto) {
+        return DataResponseDto.of(Map.of("message", "신고가 완료되었습니다."));
+    }
+
+    @PostMapping(value = "/crews/{crewId}/waiting-list/{memberId}")
+    public DataResponseDto<Map<String, String>> accept(@RequestBody StatusDto statusDto) {
+        return DataResponseDto.of(Map.of("message", "승인이 완료되었습니다."));
+    }
+
+    @DeleteMapping(value = "/crews/{crewId}/force-withdrawal/{memberId}")
+    public DataResponseDto<Map<String, String>> forceWithdrawal() {
+        return DataResponseDto.of(Map.of("message", "강제 탈퇴가 완료되었습니다."));
+    }
+
+    @PostMapping(value = "/crews/{crewId}/schedules")
+    public DataResponseDto<Map<String, Long>> createSchedule(@RequestBody ScheduleDto scheduleDto) {
+        return DataResponseDto.of(Map.of("scheduleId", 1L));
+    }
+
+    @PostMapping(value = "/crews/{crewId}/schedules/join")
+    public DataResponseDto<Map<String, String>> joinSchedule(@RequestBody ScheduleDto scheduleDto) {
+        return DataResponseDto.of(Map.of("message", "일정 참여가 완료되었습니다."));
+    }
+
+    @DeleteMapping(value = "/crews/{crewId}/withdrawal")
+    public DataResponseDto<Map<String, String>> crewWithdrawal() {
+        return DataResponseDto.of(Map.of("message", "크루 탈퇴가 완료되었습니다."));
+    }
+
+    @PatchMapping(value ="/profile")
+    public DataResponseDto<Map<String, String>> updateProfile(@RequestBody ProfileDto profileDto) {
+        return DataResponseDto.of(Map.of("message", "프로필 수정이 완료되었습니다."));
+    }
     
     private ScheduleDto makeSchedule(Long id, String meetingTime) {
         MemberDto member1 = MemberDto.builder().id(1L).nickname("도도").profileImage("cat").build();
