@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 public class CrewRequestDto {
-    private String coverUrl;
+    private String coverImage;
     private String name;
     private String description;
     private MeetingCycle meetingCycle;
@@ -23,7 +23,7 @@ public class CrewRequestDto {
 
     public Crew toEntity() {
         return Crew.builder()
-            .coverUrl(coverUrl)
+            .coverImage(coverImage)
             .name(name)
             .description(description)
             .meetingCycle(meetingCycle)
@@ -33,7 +33,6 @@ public class CrewRequestDto {
             .preferMember(preferMember)
             .detail(detail)
             .autoApproval(autoApproval)
-            .coverUrl(coverUrl)
             .build();
     }
 }
