@@ -79,4 +79,21 @@ public class ScheduleService {
 
         return ScheduleResponseDto.of(schedule);
     }
+
+    public Map<String, String> joinSchedule(Long crewId, ScheduleRequestDto scheduleRequestDto) {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));
+        Crew crew = crewRepository.findById(crewId).orElseThrow(
+                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
+        Schedule schedule = scheduleRepository.findByIdAndCrew(scheduleRequestDto.getId(), crew);
+
+        memberScheduleRepository.save(MemberSchedule.builder()
+            .member(member)
+            .schedule(schedule)
+            .build()
+        );
+
+        return Collections.singletonMap("message", "일정 참여가 완료되었습니다.");
+    }
 }
