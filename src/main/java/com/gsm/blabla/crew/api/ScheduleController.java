@@ -33,16 +33,6 @@ public class ScheduleController {
         return DataResponseDto.of(scheduleService.create(crewId, scheduleRequestDto));
     }
 
-    @Operation(summary = "해당 날짜의 일정 조회 API")
-    @GetMapping(value = "")
-    public DataResponseDto<Map<String, List<ScheduleResponseDto>>> getSchedulesOfDay(
-        @PathVariable Long crewId,
-        @RequestParam int month,
-        @RequestParam int day
-    ) {
-        return DataResponseDto.of(scheduleService.getSchedulesOfDay(month, day, crewId));
-    }
-
     @Operation(summary = "다가오는 크루 일정 API")
     @GetMapping(value = "/upcoming")
     public DataResponseDto<ScheduleResponseDto> getUpcomingSchedule(

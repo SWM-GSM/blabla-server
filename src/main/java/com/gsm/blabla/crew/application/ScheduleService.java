@@ -62,21 +62,6 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, List<ScheduleResponseDto>> getSchedulesOfDay(int month, int day, Long crewId) {
-        List<ScheduleResponseDto> schedules = new ArrayList<>();
-
-        Crew crew = crewRepository.findById(crewId).orElseThrow(
-                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
-
-        List<Schedule> schedulesOfDay = scheduleRepository.findSchedulesByMeetingTimeAndCrew(month, day, crew);
-
-        for (Schedule schedule : schedulesOfDay) {
-            schedules.add(ScheduleResponseDto.of(schedule));
-        }
-        return Collections.singletonMap("schedules", schedules);
-    }
-
-    @Transactional(readOnly = true)
     public ScheduleResponseDto getUpcomingSchedule(Long crewId) {
         Schedule schedule = scheduleRepository.findNearestSchedule(crewId);
 
