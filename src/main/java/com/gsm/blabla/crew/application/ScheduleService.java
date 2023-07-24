@@ -15,6 +15,7 @@ import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,8 @@ public class ScheduleService {
 
     public Map<String, Long> create(Long crewId, ScheduleRequestDto scheduleRequestDto) {
         String meetingTimeInString = scheduleRequestDto.getMeetingTime();
-        LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString, formatter);
 
         Schedule schedule = scheduleRepository.save(Schedule.builder()
             .title(scheduleRequestDto.getTitle())
