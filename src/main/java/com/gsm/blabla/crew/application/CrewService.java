@@ -53,6 +53,7 @@ public class CrewService {
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
             ))
             .crew(crew)
+            .status(CrewMemberStatus.JOINED)
             .role(CrewMemberRole.LEADER)
             .build()
         );
@@ -119,6 +120,16 @@ public class CrewService {
             if (messageRequestDto == null) {
                 throw new GeneralException(Code.APPLY_WITHOUT_MESSAGE, "크루에 가입하기 위해서는 참여 신청 문구가 필요합니다.");
             }
+
+            crewMemberRepository.save(
+                CrewMember.builder()
+                    .member(memberRepository.findById(memberId).orElseThrow(
+                        () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+                    ))
+                    .crew(crew)
+                    .role(CrewMemberRole.MEMBER)
+                    .status(CrewMemberStatus.WAITING)
+                    .build());
 
             applyMessageRepository.save(
                 ApplyMessage.builder()
