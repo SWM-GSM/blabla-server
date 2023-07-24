@@ -35,6 +35,12 @@ public enum Code {
     CREW_NOT_FOUND("C001", HttpStatus.NOT_FOUND, "Crew not found"),
 
     /*
+     * Schedule 관련 오류
+     * HEAD NAME - SCH (Schedule)
+     * */
+    SCHEDULE_NOT_FOUND("SCH001", HttpStatus.NOT_FOUND, "Schedule not found"),
+
+    /*
      * Content 관련 오류
      * HEAD NAME - CT (ConTent)
      * */

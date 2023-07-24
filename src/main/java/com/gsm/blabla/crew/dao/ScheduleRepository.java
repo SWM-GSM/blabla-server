@@ -19,4 +19,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Schedule findNearestSchedule(@Param("crewId") Long crewId);
 
     List<Schedule> findAllByCrewOrderByMeetingTime(Crew crew);
+    Schedule findByIdAndCrew(Long id, Crew crew);
 }
