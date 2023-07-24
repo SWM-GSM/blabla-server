@@ -17,4 +17,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
         + "order by (s.meetingTime - NOW()) "
         + "limit 1")
     Schedule findNearestSchedule(@Param("crewId") Long crewId);
+
+    List<Schedule> findAllByCrewOrderByMeetingTime(Crew crew);
 }
