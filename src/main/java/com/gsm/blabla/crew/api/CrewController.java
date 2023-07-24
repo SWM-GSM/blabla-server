@@ -3,6 +3,7 @@ package com.gsm.blabla.crew.api;
 import com.gsm.blabla.crew.application.CrewService;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
+import com.gsm.blabla.crew.dto.MessageRequestDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -54,5 +55,13 @@ public class CrewController {
     @GetMapping(value = "/crews/me")
     public DataResponseDto<List<CrewResponseDto>> getMyCrews() {
         return DataResponseDto.of(crewService.getMyCrews());
+    }
+
+    @Operation(summary = "크루 가입 신청 API")
+    @PostMapping(value = "/crews/{crewId}/join")
+    public DataResponseDto<Map<String, String>> joinCrew(
+        @PathVariable("crewId") Long crewId,
+        @RequestBody(required = false) MessageRequestDto messageRequestDto) {
+        return DataResponseDto.of(crewService.joinCrew(crewId, messageRequestDto));
     }
 }
