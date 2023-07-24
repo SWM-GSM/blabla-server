@@ -116,6 +116,10 @@ public class CrewService {
             );
             message = "가입이 완료되었습니다.";
         } else {
+            if (messageRequestDto == null) {
+                throw new GeneralException(Code.APPLY_WITHOUT_MESSAGE, "크루에 가입하기 위해서는 참여 신청 문구가 필요합니다.");
+            }
+
             applyMessageRepository.save(
                 ApplyMessage.builder()
                     .message(messageRequestDto.getMessage())

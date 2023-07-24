@@ -36,6 +36,7 @@ public enum Code {
     MEMBER_NOT_JOINED("C002", HttpStatus.NOT_FOUND, "Member not joined"),
     CREW_ALREADY_JOINED("C003", HttpStatus.CONFLICT, "Crew already joined"),
     CREW_ALREADY_APPLIED("C004", HttpStatus.CONFLICT, "Crew already applied"),
+    APPLY_WITHOUT_MESSAGE("C005", HttpStatus.BAD_REQUEST, "Apply without message"),
 
     /*
      * Schedule 관련 오류
