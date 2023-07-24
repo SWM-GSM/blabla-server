@@ -16,7 +16,6 @@ import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +60,17 @@ public class ScheduleService {
             .build());
 
         return Collections.singletonMap("scheduleId", schedule.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, List<ScheduleResponseDto>> getAll(Long crewId) {
+        Crew crew = crewRepository.findById(crewId).orElseThrow(
+                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
+        List<Schedule> schedules = scheduleRepository.findAllByCrewOrderByMeetingTime(crew);
+
+        return Collections.singletonMap("schedules", schedules.stream()
+            .map(ScheduleResponseDto::of)
+            .toList());
     }
 
     @Transactional(readOnly = true)
