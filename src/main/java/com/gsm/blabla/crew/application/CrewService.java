@@ -17,6 +17,7 @@ import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
+import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -144,5 +145,13 @@ public class CrewService {
         }
 
         return Collections.singletonMap("message", message);
+    }
+
+    public Map<String, List<MemberResponseDto>> getWaitingList(Long crewId) {
+        List<MemberResponseDto> members = crewMemberRepository.getByCrewIdAndStatus(crewId, CrewMemberStatus.WAITING).stream()
+            .map(crewMember -> MemberResponseDto.waitingListResponse(crewId, crewMember.getMember(), applyMessageRepository))
+            .toList();
+
+        return Collections.singletonMap("members", members);
     }
 }

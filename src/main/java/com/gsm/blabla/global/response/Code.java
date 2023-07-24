@@ -37,6 +37,7 @@ public enum Code {
     CREW_ALREADY_JOINED("C003", HttpStatus.CONFLICT, "Crew already joined"),
     CREW_ALREADY_APPLIED("C004", HttpStatus.CONFLICT, "Crew already applied"),
     APPLY_WITHOUT_MESSAGE("C005", HttpStatus.BAD_REQUEST, "Apply without message"),
+    APPLY_NOT_FOUND("C006", HttpStatus.NOT_FOUND, "Apply not found"),
 
     /*
      * Schedule 관련 오류
