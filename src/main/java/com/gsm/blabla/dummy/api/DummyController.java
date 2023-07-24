@@ -132,7 +132,7 @@ public class DummyController {
     @GetMapping(value = "/crews/{crewId}/voice-room")
     public DataResponseDto<VoiceRoomDto> getVoiceRoomToken() {
         long now = (new Date()).getTime();
-        return DataResponseDto.of(VoiceRoomDto.builder().channelName("hello").token(agoraService.create("hello", 1L)).expiresIn(new Date(now + 3600).getTime()).build());
+        return DataResponseDto.of(VoiceRoomDto.builder().channelName("crew-1").token(agoraService.create(1L, 1L).getToken()).expiresIn(new Date(now + 3600).getTime()).build());
     }
 
     @GetMapping(value = "/crews/{crewId}/waiting-list")
