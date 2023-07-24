@@ -33,6 +33,9 @@ public enum Code {
     * HEAD NAME - C (Crew)
     * */
     CREW_NOT_FOUND("C001", HttpStatus.NOT_FOUND, "Crew not found"),
+    MEMBER_NOT_JOINED("C002", HttpStatus.NOT_FOUND, "Member not joined"),
+    CREW_ALREADY_JOINED("C003", HttpStatus.CONFLICT, "Crew already joined"),
+    CREW_ALREADY_APPLIED("C004", HttpStatus.CONFLICT, "Crew already applied"),
 
     /*
      * Schedule 관련 오류

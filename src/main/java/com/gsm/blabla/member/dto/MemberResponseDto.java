@@ -3,6 +3,8 @@ package com.gsm.blabla.member.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.domain.Member;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -38,7 +40,9 @@ public class MemberResponseDto {
             .countryCode(member.getCountryCode())
             .korLevel(member.getKorLevel())
             .engLevel(member.getEngLevel())
-            .isLeader(crewMemberRepository.getByCrewIdAndMemberId(crewId, member.getId()).getRole() == CrewMemberRole.LEADER)
+            .isLeader(crewMemberRepository.getByCrewIdAndMemberId(crewId, member.getId())
+                .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_JOINED, "해당 멤버는 해당 크루의 멤버가 아닙니다."))
+                .getRole() == CrewMemberRole.LEADER)
             .build();
     }
 }
