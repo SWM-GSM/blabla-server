@@ -1,6 +1,7 @@
 package com.gsm.blabla.agora.api;
 
 import com.gsm.blabla.agora.application.AgoraService;
+import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.global.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,10 +16,10 @@ public class AgoraController {
     private final AgoraService agoraService;
 
     @Operation(summary = "채널 생성 API")
-    @GetMapping("/channels/{channelName}")
-    public DataResponseDto<String> create(@PathVariable String channelName) {
+    @GetMapping("/crews/{crewId}/voice-room")
+    public DataResponseDto<RtcTokenDto> create(@PathVariable Long crewId) {
         Long memberId = SecurityUtil.getMemberId();
-        return DataResponseDto.of(agoraService.create(channelName, memberId));
+        return DataResponseDto.of(agoraService.create(crewId, memberId));
     }
 
 }

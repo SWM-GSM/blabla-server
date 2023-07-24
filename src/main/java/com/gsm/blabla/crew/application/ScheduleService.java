@@ -15,6 +15,7 @@ import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,8 @@ public class ScheduleService {
 
     public Map<String, Long> create(Long crewId, ScheduleRequestDto scheduleRequestDto) {
         String meetingTimeInString = scheduleRequestDto.getMeetingTime();
-        LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString, formatter);
 
         Schedule schedule = scheduleRepository.save(Schedule.builder()
             .title(scheduleRequestDto.getTitle())
@@ -59,21 +61,6 @@ public class ScheduleService {
             .build());
 
         return Collections.singletonMap("scheduleId", schedule.getId());
-    }
-
-    @Transactional(readOnly = true)
-    public Map<String, List<ScheduleResponseDto>> getSchedulesOfDay(int month, int day, Long crewId) {
-        List<ScheduleResponseDto> schedules = new ArrayList<>();
-
-        Crew crew = crewRepository.findById(crewId).orElseThrow(
-                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
-
-        List<Schedule> schedulesOfDay = scheduleRepository.findSchedulesByMeetingTimeAndCrew(month, day, crew);
-
-        for (Schedule schedule : schedulesOfDay) {
-            schedules.add(ScheduleResponseDto.of(schedule));
-        }
-        return Collections.singletonMap("schedules", schedules);
     }
 
     @Transactional(readOnly = true)

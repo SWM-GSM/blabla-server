@@ -7,6 +7,7 @@ import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -33,8 +34,8 @@ public class CrewResponseDto {
     private String preferMember;
     private String detail;
     private Boolean autoApproval;
-    private String coverUrl;
-    private LocalDateTime createdAt;
+    private String coverImage;
+    private String  createdAt;
     private List<MemberResponseDto> members;
     private List<String> tags;
 
@@ -55,7 +56,7 @@ public class CrewResponseDto {
                 : crew.getPreferMember().getEnglishName())
             .detail(crew.getDetail())
             .autoApproval(crew.getAutoApproval())
-            .coverUrl(crew.getCoverUrl())
+            .coverImage(crew.getCoverImage())
             .members(crew.getCrewMembers().stream()
                     .map(crewMember -> MemberResponseDto.crewProfileResponse(crew.getId(), crewMember.getMember(),
                 crewMemberRepository))
@@ -78,8 +79,9 @@ public class CrewResponseDto {
             .maxNum(crew.getMaxNum())
             .currentNum(crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(),
                 CrewMemberStatus.JOINED))
-            .createdAt(crew.getCreatedAt())
-            .coverUrl(crew.getCoverUrl())
+            .createdAt(crew.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+            .coverImage(crew.getCoverImage())
+            .autoApproval(crew.getAutoApproval())
             .tags(crew.getCrewTags().stream()
                 .map(crewTag -> language.equals("ko") ? crewTag.getTag().getKoreanName() : crewTag.getTag().getEnglishName()
                 ).toList()
@@ -92,7 +94,7 @@ public class CrewResponseDto {
         return CrewResponseDto.builder()
             .id(crew.getId())
             .name(crew.getName())
-            .coverUrl(crew.getCoverUrl())
+            .coverImage(crew.getCoverImage())
             .maxNum(crew.getMaxNum())
             .currentNum(crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(),
                 CrewMemberStatus.JOINED))

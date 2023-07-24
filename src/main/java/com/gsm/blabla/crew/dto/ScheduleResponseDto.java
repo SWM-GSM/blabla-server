@@ -31,11 +31,11 @@ public class ScheduleResponseDto {
             .id(schedule.getId())
             .title(schedule.getTitle())
             .meetingTime(schedule.getMeetingTime().format(
-                DateTimeFormatter.ofPattern("M월 dd일 E요일 a h:mm")
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             ))
             .dDay(schedule.getMeetingTime().getDayOfYear() - LocalDateTime.now().getDayOfYear())
             .profiles(schedule.getMemberSchedules().stream().map(
-                        memberSchedule -> memberSchedule.getMember().getProfileUrl()
+                        memberSchedule -> memberSchedule.getMember().getProfileImage()
                     ).toList())
             .build();
     }
