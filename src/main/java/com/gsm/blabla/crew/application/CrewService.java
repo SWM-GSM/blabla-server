@@ -56,16 +56,12 @@ public class CrewService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, CrewResponseDto> get(String language, Long crewId) {
-        Map<String, CrewResponseDto> result = new HashMap<>();
-
+    public CrewResponseDto get(String language, Long crewId) {
         Crew crew = crewRepository.findById(crewId).orElseThrow(
             () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
         );
 
-        result.put("crew", CrewResponseDto.crewResponse(language, crew, crewMemberRepository));
-
-        return result;
+        return CrewResponseDto.crewResponse(language, crew, crewMemberRepository);
     }
 
     // TODO: n + 1 문제 최적화

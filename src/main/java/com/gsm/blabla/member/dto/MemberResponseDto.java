@@ -19,13 +19,12 @@ public class MemberResponseDto {
     private Long id;
     private String nickname;
     private String description;
-    private String profileUrl;
+    private String profileImage;
     private LocalDate birthDate;
     private String gender;
     private String countryCode;
     private int korLevel;
     private int engLevel;
-    private double trustScore;
     private boolean isLeader;
 
     public static MemberResponseDto crewProfileResponse(Long crewId, Member member,
@@ -35,11 +34,10 @@ public class MemberResponseDto {
             .id(member.getId())
             .nickname(member.getNickname())
             .description(member.getDescription())
-            .profileUrl(member.getProfileUrl())
+            .profileImage(member.getProfileImage())
             .countryCode(member.getCountryCode())
             .korLevel(member.getKorLevel())
             .engLevel(member.getEngLevel())
-            .trustScore(member.getTrustScore())
             .isLeader(crewMemberRepository.getByCrewIdAndMemberId(crewId, member.getId()).getRole() == CrewMemberRole.LEADER)
             .build();
     }

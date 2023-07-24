@@ -35,7 +35,7 @@ public class Crew extends BaseTimeEntity {
     private PreferMember preferMember;
     private String detail;
     private Boolean autoApproval;
-    private String coverUrl;
+    private String coverImage;
 
     @OneToMany(mappedBy = "crew")
     List<CrewMember> crewMembers;
@@ -45,7 +45,7 @@ public class Crew extends BaseTimeEntity {
 
     @Builder
     public Crew(String name, String description, MeetingCycle meetingCycle, int maxNum, int korLevel,
-        int engLevel, PreferMember preferMember, String detail, Boolean autoApproval, String coverUrl) {
+        int engLevel, PreferMember preferMember, String detail, Boolean autoApproval, String coverImage) {
         this.name = name;
         this.description = description;
         this.meetingCycle = meetingCycle;
@@ -55,6 +55,6 @@ public class Crew extends BaseTimeEntity {
         this.preferMember = preferMember;
         this.detail = detail;
         this.autoApproval = autoApproval;
-        this.coverUrl = coverUrl;
+        this.coverImage = coverImage;
     }
 }
