@@ -35,7 +35,7 @@ public class ScheduleResponseDto {
             ))
             .dDay(schedule.getMeetingTime().getDayOfYear() - LocalDateTime.now().getDayOfYear())
             .profiles(schedule.getMemberSchedules().stream().map(
-                        memberSchedule -> memberSchedule.getMember().getProfileUrl()
+                        memberSchedule -> memberSchedule.getMember().getProfileImage()
                     ).toList())
             .build();
     }

@@ -45,7 +45,7 @@ public class MemberRequestDto {
         return Member.builder()
             .socialLoginType(SocialLoginType.valueOf(socialLoginType))
             .nickname(nickname)
-            .profileUrl(profileImage)
+            .profileImage(profileImage)
             .birthDate(LocalDate.parse(birthDate, formatter))
             .gender(gender)
             .countryCode(countryCode)

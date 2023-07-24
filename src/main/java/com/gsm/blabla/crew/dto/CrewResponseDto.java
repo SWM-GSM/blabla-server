@@ -7,6 +7,7 @@ import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -34,7 +35,7 @@ public class CrewResponseDto {
     private String detail;
     private Boolean autoApproval;
     private String coverImage;
-    private LocalDateTime createdAt;
+    private String  createdAt;
     private List<MemberResponseDto> members;
     private List<String> tags;
 
@@ -78,8 +79,9 @@ public class CrewResponseDto {
             .maxNum(crew.getMaxNum())
             .currentNum(crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(),
                 CrewMemberStatus.JOINED))
-            .createdAt(crew.getCreatedAt())
+            .createdAt(crew.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
             .coverImage(crew.getCoverImage())
+            .autoApproval(crew.getAutoApproval())
             .tags(crew.getCrewTags().stream()
                 .map(crewTag -> language.equals("ko") ? crewTag.getTag().getKoreanName() : crewTag.getTag().getEnglishName()
                 ).toList()

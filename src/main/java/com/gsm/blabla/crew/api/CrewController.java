@@ -34,7 +34,7 @@ public class CrewController {
 
     @Operation(summary = "크루 단일 조회 API")
     @GetMapping(value = "/{language}/crews/{crewId}")
-    public DataResponseDto<Map<String, CrewResponseDto>> get(
+    public DataResponseDto<CrewResponseDto> get(
         @PathVariable("language") String language,
         @PathVariable("crewId") Long crewId) {
         return DataResponseDto.of(crewService.get(language, crewId));
