@@ -1,6 +1,7 @@
 package com.gsm.blabla.dummy.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +24,8 @@ public class CrewDto {
     private String detail;
     private Boolean autoApproval;
     private String coverImage;
+    private String createdAt;
+    private CrewMemberStatus status;
     private List<MemberDto> members;
     private List<String> tags;
-    private String createdAt;
 }
