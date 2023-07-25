@@ -5,6 +5,7 @@ import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
+import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.dummy.dto.AccuseDto;
 import com.gsm.blabla.dummy.dto.CrewDto;
@@ -95,6 +96,7 @@ public class DummyController {
                 .detail("같이 게임도 하고 프리토킹도 나눌 수 있으면 좋을 것 같아요 ㅎㅎ")
                 .autoApproval(true)
                 .coverImage("hello")
+                .status(CrewMemberStatus.JOINED)
                 .members(List.of(member1, member2))
                 .tags(tags)
                 .build()
