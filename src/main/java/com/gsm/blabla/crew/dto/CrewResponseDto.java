@@ -25,8 +25,8 @@ public class CrewResponseDto {
     private String name;
     private String description;
     private String meetingCycle;
-    private int maxNum;
-    private int currentNum;
+    private Integer maxNum;
+    private Integer currentNum;
     private Integer korLevel;
     private String korLevelText;
     private Integer engLevel;
