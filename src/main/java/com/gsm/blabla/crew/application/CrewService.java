@@ -5,6 +5,7 @@ import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.CrewTagRepository;
 import com.gsm.blabla.crew.domain.ApplyMessage;
+import com.gsm.blabla.crew.domain.ApplyMessageStatus;
 import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
@@ -122,16 +123,6 @@ public class CrewService {
                 throw new GeneralException(Code.APPLY_WITHOUT_MESSAGE, "크루에 가입하기 위해서는 참여 신청 문구가 필요합니다.");
             }
 
-            crewMemberRepository.save(
-                CrewMember.builder()
-                    .member(memberRepository.findById(memberId).orElseThrow(
-                        () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-                    ))
-                    .crew(crew)
-                    .role(CrewMemberRole.MEMBER)
-                    .status(CrewMemberStatus.WAITING)
-                    .build());
-
             applyMessageRepository.save(
                 ApplyMessage.builder()
                     .message(messageRequestDto.getMessage())
@@ -148,8 +139,10 @@ public class CrewService {
     }
 
     public Map<String, List<MemberResponseDto>> getWaitingList(Long crewId) {
-        List<MemberResponseDto> members = crewMemberRepository.getByCrewIdAndStatus(crewId, CrewMemberStatus.WAITING).stream()
-            .map(crewMember -> MemberResponseDto.waitingListResponse(crewId, crewMember.getMember(), applyMessageRepository))
+
+        List<MemberResponseDto> members = applyMessageRepository.getByCrewIdAndStatus(crewId, ApplyMessageStatus.WAITING).stream()
+            .map(ApplyMessage::getMember)
+            .map(member -> MemberResponseDto.waitingListResponse(crewId, member, applyMessageRepository))
             .toList();
 
         return Collections.singletonMap("members", members);
