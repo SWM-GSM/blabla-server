@@ -13,7 +13,7 @@ public class ScheduleResponseDto {
     private Long id;
     private String title;
     private String meetingTime;
-    private int dDay;
+    private Integer dDay;
     private List<String> profiles;
 
     public static ScheduleResponseDto of(Long id, String title, String meetingTime, int dDay, List<String> profiles) {

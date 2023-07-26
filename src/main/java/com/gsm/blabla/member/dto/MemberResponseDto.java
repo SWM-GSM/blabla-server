@@ -27,9 +27,9 @@ public class MemberResponseDto {
     private LocalDate birthDate;
     private String gender;
     private String countryCode;
-    private int korLevel;
-    private int engLevel;
-    private boolean isLeader;
+    private Integer korLevel;
+    private Integer engLevel;
+    private Boolean isLeader;
 
     public static MemberResponseDto crewProfileResponse(Long crewId, Member member,
         CrewMemberRepository crewMemberRepository) {
