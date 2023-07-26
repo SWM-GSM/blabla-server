@@ -45,11 +45,12 @@ public class CrewMember {
     private LocalDateTime withdrawnAt;
 
     @Builder
-    public CrewMember(Member member, Crew crew, CrewMemberRole role, CrewMemberStatus status) {
+    public CrewMember(Member member, Crew crew, CrewMemberRole role) {
         this.member = member;
         this.crew = crew;
         this.status = CrewMemberStatus.JOINED;
         this.role = role;
         this.joinedAt = LocalDateTime.now();
     }
+
 }

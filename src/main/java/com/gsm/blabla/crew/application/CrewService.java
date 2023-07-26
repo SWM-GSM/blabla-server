@@ -14,6 +14,7 @@ import com.gsm.blabla.crew.domain.CrewTag;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.crew.dto.MessageRequestDto;
+import com.gsm.blabla.crew.dto.StatusRequestDto;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
@@ -56,7 +57,6 @@ public class CrewService {
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
             ))
             .crew(crew)
-            .status(CrewMemberStatus.JOINED)
             .role(CrewMemberRole.LEADER)
             .build()
         );
@@ -159,5 +159,40 @@ public class CrewService {
             .toList();
 
         return Collections.singletonMap("members", members);
+    }
+
+    public Map<String, String> acceptOrReject(Long crewId, Long memberId, StatusRequestDto statusRequestDto) {
+        Long meberId = SecurityUtil.getMemberId();
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, meberId).orElseThrow(
+            () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
+
+        if (!crewMember.getRole().equals(CrewMemberRole.LEADER)) {
+            throw new GeneralException(Code.CREW_MEMBER_NOT_LEADER, "크루장만 신청을 승인할 수 있습니다.");
+        }
+
+        String status = statusRequestDto.getStatus();
+
+        String message = "";
+
+        ApplyMessage applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId).orElseThrow(
+            () -> new GeneralException(Code.APPLY_NOT_FOUND, "존재하지 않는 신청입니다.")
+        );
+
+        if (status.equals("accept")) {
+            applyMessage.acceptOrReject(status);
+            crewMemberRepository.save(CrewMember.builder()
+                .member(applyMessage.getMember())
+                .crew(applyMessage.getCrew())
+                .role(CrewMemberRole.MEMBER)
+                .build()
+            );
+
+            message = "승인이 완료되었습니다.";
+        } else if (status.equals("reject")) {
+            applyMessage.acceptOrReject(status);
+            message = "거절이 완료되었습니다.";
+        }
+
+        return Collections.singletonMap("message", message);
     }
 }

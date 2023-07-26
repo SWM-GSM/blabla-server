@@ -43,4 +43,12 @@ public class ApplyMessage {
         this.crew = crew;
         this.member = member;
     }
+
+    public void acceptOrReject(String status) {
+        if (status.equals("accept")) {
+            this.status = ApplyMessageStatus.ACCEPT;
+        } else if (status.equals("reject")) {
+            this.status = ApplyMessageStatus.REJECT;
+        }
+    }
 }
