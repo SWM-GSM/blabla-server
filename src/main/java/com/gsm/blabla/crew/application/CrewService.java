@@ -1,16 +1,20 @@
 package com.gsm.blabla.crew.application;
 
 import com.gsm.blabla.crew.dao.ApplyMessageRepository;
+import com.gsm.blabla.crew.dao.CrewAccuseRepository;
 import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.CrewTagRepository;
 import com.gsm.blabla.crew.domain.ApplyMessage;
 import com.gsm.blabla.crew.domain.ApplyMessageStatus;
 import com.gsm.blabla.crew.domain.Crew;
+import com.gsm.blabla.crew.domain.CrewAccuse;
+import com.gsm.blabla.crew.domain.CrewAccuseType;
 import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.CrewTag;
+import com.gsm.blabla.crew.dto.AccuseRequestDto;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.crew.dto.MessageRequestDto;
@@ -40,6 +44,7 @@ public class CrewService {
     private final CrewMemberRepository crewMemberRepository;
     private final MemberRepository memberRepository;
     private final ApplyMessageRepository applyMessageRepository;
+    private final CrewAccuseRepository crewAccuseRepository;
 
     public Map<String, Long> create(CrewRequestDto crewRequestDto) {
         Crew crew = crewRepository.save(crewRequestDto.toEntity());
@@ -194,5 +199,23 @@ public class CrewService {
         }
 
         return Collections.singletonMap("message", message);
+    }
+
+    public Map<String, String> accuse(Long crewId, AccuseRequestDto accuseRequestDto) {
+        Long memberId = SecurityUtil.getMemberId();
+
+        crewAccuseRepository.save(CrewAccuse.builder()
+            .type(CrewAccuseType.valueOf(accuseRequestDto.getType()))
+            .description(accuseRequestDto.getDescription())
+            .crew(crewRepository.findById(crewId).orElseThrow(
+                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
+            ))
+            .member(memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+            ))
+            .build()
+        );
+
+        return Collections.singletonMap("message", "신고가 완료되었습니다.");
     }
 }
