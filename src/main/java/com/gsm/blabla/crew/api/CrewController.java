@@ -4,6 +4,7 @@ import com.gsm.blabla.crew.application.CrewService;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.crew.dto.MessageRequestDto;
+import com.gsm.blabla.crew.dto.StatusRequestDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -70,5 +71,14 @@ public class CrewController {
     @GetMapping(value = "/crews/{crewId}/waiting-list")
     public DataResponseDto<Map<String, List<MemberResponseDto>>> getWaitingList(@PathVariable("crewId") Long crewId) {
         return DataResponseDto.of(crewService.getWaitingList(crewId));
+    }
+
+    @Operation(summary = "크루 가입 승인 및 거절 API")
+    @PostMapping(value = "/crews/{crewId}/waiting-list/{memberId}")
+    public DataResponseDto<Map<String, String>> acceptOrReject(
+        @PathVariable("crewId") Long crewId,
+        @PathVariable("memberId") Long memberId,
+        @RequestBody StatusRequestDto statusRequestDto) {
+        return DataResponseDto.of(crewService.acceptOrReject(crewId, memberId, statusRequestDto));
     }
 }
