@@ -48,7 +48,7 @@ public class CrewMember {
     public CrewMember(Member member, Crew crew, CrewMemberRole role, CrewMemberStatus status) {
         this.member = member;
         this.crew = crew;
-        this.status = status;
+        this.status = CrewMemberStatus.JOINED;
         this.role = role;
         this.joinedAt = LocalDateTime.now();
     }
