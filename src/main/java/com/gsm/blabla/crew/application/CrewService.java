@@ -22,6 +22,7 @@ import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,11 +66,23 @@ public class CrewService {
 
     @Transactional(readOnly = true)
     public CrewResponseDto get(String language, Long crewId) {
+        Long memberId = SecurityUtil.getMemberId();
         Crew crew = crewRepository.findById(crewId).orElseThrow(
             () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
         );
 
-        return CrewResponseDto.crewResponse(language, crew, crewMemberRepository);
+        String status = "";
+        Optional<CrewMember> crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        Optional<ApplyMessage> applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId);
+        if (crewMember.isPresent()) {
+            status = crewMember.get().getStatus().toString();
+        } else if (applyMessage.isPresent()) {
+            status = applyMessage.get().getStatus().toString();
+        } else {
+            status = "NOTHING";
+        }
+
+        return CrewResponseDto.crewResponse(language, crew, status, crewMemberRepository);
     }
 
     // TODO: n + 1 문제 최적화
