@@ -5,6 +5,7 @@ import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.CrewTagRepository;
 import com.gsm.blabla.crew.domain.ApplyMessage;
+import com.gsm.blabla.crew.domain.ApplyMessageStatus;
 import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
@@ -17,6 +18,7 @@ import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
+import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,7 @@ public class CrewService {
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
             ))
             .crew(crew)
+            .status(CrewMemberStatus.JOINED)
             .role(CrewMemberRole.LEADER)
             .build()
         );
@@ -133,5 +136,15 @@ public class CrewService {
         }
 
         return Collections.singletonMap("message", message);
+    }
+
+    public Map<String, List<MemberResponseDto>> getWaitingList(Long crewId) {
+
+        List<MemberResponseDto> members = applyMessageRepository.getByCrewIdAndStatus(crewId, ApplyMessageStatus.WAITING).stream()
+            .map(ApplyMessage::getMember)
+            .map(member -> MemberResponseDto.waitingListResponse(crewId, member, applyMessageRepository))
+            .toList();
+
+        return Collections.singletonMap("members", members);
     }
 }

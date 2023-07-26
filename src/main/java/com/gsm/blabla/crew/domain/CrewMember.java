@@ -45,7 +45,7 @@ public class CrewMember {
     private LocalDateTime withdrawnAt;
 
     @Builder
-    public CrewMember(Member member, Crew crew, CrewMemberRole role) {
+    public CrewMember(Member member, Crew crew, CrewMemberRole role, CrewMemberStatus status) {
         this.member = member;
         this.crew = crew;
         this.status = CrewMemberStatus.JOINED;

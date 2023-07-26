@@ -2,6 +2,8 @@ package com.gsm.blabla.crew.domain;
 
 import com.gsm.blabla.member.domain.Member;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +25,9 @@ public class ApplyMessage {
 
     private String message;
 
+    @Enumerated(EnumType.STRING)
+    private ApplyMessageStatus status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "crew_id")
     private Crew crew;
@@ -32,8 +37,9 @@ public class ApplyMessage {
     private Member member;
 
     @Builder
-    public ApplyMessage(String message, Crew crew, Member member) {
+    public ApplyMessage(String message, ApplyMessageStatus status, Crew crew, Member member) {
         this.message = message;
+        this.status = ApplyMessageStatus.WAITING;
         this.crew = crew;
         this.member = member;
     }
