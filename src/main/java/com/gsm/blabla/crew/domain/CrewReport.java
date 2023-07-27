@@ -19,23 +19,11 @@ public class CrewReport {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "crew_id")
     private Crew crew;
-
     private LocalDateTime startedAt;
-    private LocalDateTime endAt;
-
-    private Duration koreanTime;
-    private Duration englishTime;
-    private String cloudUrl;
-    private LocalDateTime createdAt;
 
     @Builder
-    public CrewReport(Crew crew, LocalDateTime startedAt, LocalDateTime endAt, Duration koreanTime, Duration englishTime, String cloudUrl) {
+public CrewReport(Crew crew, LocalDateTime startedAt) {
         this.crew = crew;
         this.startedAt = startedAt;
-        this.endAt = endAt;
-        this.koreanTime = koreanTime;
-        this.englishTime = englishTime;
-        this.cloudUrl = cloudUrl;
-        this.createdAt = LocalDateTime.now();
     }
 }
