@@ -5,6 +5,10 @@ import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
+import com.gsm.blabla.content.domain.Content;
+import com.gsm.blabla.content.dto.ContentListResponseDto;
+import com.gsm.blabla.content.dto.ContentResponseDto;
+import com.gsm.blabla.content.dto.ContentViewResponseDto;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.dummy.dto.AccuseDto;
@@ -22,10 +26,9 @@ import com.gsm.blabla.dummy.dto.VoiceRoomDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -259,5 +262,62 @@ public class DummyController {
         MemberDto member1 = MemberDto.builder().id(1L).nickname("도도").profileImage("cat").build();
 
         return ScheduleDto.builder().id(id).title("모여라").dday(5).meetingTime(meetingTime).members(Collections.nCopies(4, member1)).build();
+    }
+
+    @GetMapping("/contents/{contentId}")
+    public DataResponseDto<ContentResponseDto> get(@PathVariable Long contentId) {
+        ContentResponseDto contentResponseDto = ContentResponseDto.builder()
+                .contentUrl("https://www.youtube.com/watch?v=9mQk7Evt6Vs")
+                .sentence("지금 만나자!")
+                .answer("그때 만나자!")
+                .topic("시간 약속 정하기")
+                .title("애니메이션 - 아이스베어")
+                .level(1L)
+                .build();
+        return DataResponseDto.of(contentResponseDto);
+    }
+
+    @GetMapping("/{language}/contents")
+    public DataResponseDto<Map<String, ContentListResponseDto>> getAll(@PathVariable String language) {
+            Map<String, ContentListResponseDto> result = new HashMap<>();
+            List<ContentViewResponseDto> contents = new ArrayList<>();
+            ContentViewResponseDto contentViewResponseDto = ContentViewResponseDto.builder()
+                    .id(1L)
+                    .level(1L)
+                    .topic("Topic 2")
+                    .title("Title 2")
+                    .thumbnailUrl("https://img.youtube.com/vi/BUic6FWvRDg/hqdefault.jpg")
+                    .isCompleted(true)
+                    .build();
+            contents.add(contentViewResponseDto);
+            contents.add(contentViewResponseDto);
+            contents.add(contentViewResponseDto);
+            contents.add(contentViewResponseDto);
+            contents.add(contentViewResponseDto);
+            contents.add(contentViewResponseDto);
+            ContentListResponseDto contentListResponseDto = ContentListResponseDto.builder()
+                    .progress(100.0)
+                    .contents(contents)
+                    .build();
+        result.put("level1", contentListResponseDto);
+        result.put("level2", contentListResponseDto);
+        result.put("level3", contentListResponseDto);
+        result.put("level4", contentListResponseDto);
+        result.put("level5", contentListResponseDto);
+
+        return DataResponseDto.of(result);
+    }
+
+    @GetMapping("/{language}/contents/today")
+    public DataResponseDto<ContentViewResponseDto> getTodayContent(@PathVariable String language) {
+        ContentViewResponseDto contentViewResponseDto = ContentViewResponseDto.builder()
+                .id(1L)
+                .level(1L)
+                .topic("Topic 2")
+                .title("Title 2")
+                .thumbnailUrl("https://img.youtube.com/vi/BUic6FWvRDg/hqdefault.jpg")
+                .isCompleted(true)
+                .build();
+        return DataResponseDto.of(contentViewResponseDto);
     }
 }
