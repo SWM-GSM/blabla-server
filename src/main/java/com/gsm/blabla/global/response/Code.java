@@ -40,12 +40,24 @@ public enum Code {
     APPLY_NOT_FOUND("C006", HttpStatus.NOT_FOUND, "Apply not found"),
     CREW_MEMBER_NOT_FOUND("C007", HttpStatus.NOT_FOUND, "Crew member not found"),
     CREW_MEMBER_NOT_LEADER("C008", HttpStatus.FORBIDDEN, "Crew member not leader"),
-
+    FILE_IS_EMPTY("C009", HttpStatus.BAD_REQUEST, "File is empty"),
     /*
      * Schedule 관련 오류
      * HEAD NAME - SCH (Schedule)
      * */
     SCHEDULE_NOT_FOUND("SCH001", HttpStatus.NOT_FOUND, "Schedule not found"),
+
+    /*
+     * Report 관련 오류
+     * HEAD NAME - RE (Report)
+     * */
+    REPORT_NOT_FOUND("RE001", HttpStatus.NOT_FOUND, "Report not found"),
+
+    /*
+     * VoiceFile 관련 오류
+     * HEAD NAME - V (VoiceFile)
+     * */
+    VOICE_ANALYSIS_IS_NULL("V001", HttpStatus.NOT_FOUND, "Voice Analysis not found"),
 
     /*
      * Content 관련 오류
