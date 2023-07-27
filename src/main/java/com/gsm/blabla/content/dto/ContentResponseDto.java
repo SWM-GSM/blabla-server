@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ContentResponseDto {
     private String contentUrl; // 컨텐츠 URL
-    private int level; // 컨텐츠 레벨
+    private Long level; // 컨텐츠 레벨
     private String sentence; // 타켓 문장
     private String answer; // 모범 답안
     private String topic; // 컨텐츠 주제
