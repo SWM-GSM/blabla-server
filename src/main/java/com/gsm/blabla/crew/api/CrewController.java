@@ -112,4 +112,12 @@ public class CrewController {
     public DataResponseDto<Map<String, String>> withdrawal(@PathVariable Long crewId) {
         return DataResponseDto.of(crewService.withdrawal(crewId));
     }
+
+    @Operation(summary = "크루 강제 탈퇴 API")
+    @PostMapping(value = "/crews/{crewId}/force-withdrawal/{memberId}")
+    public DataResponseDto<Map<String, String>> forceWithdrawal(
+        @PathVariable("crewId") Long crewId,
+        @PathVariable("memberId") Long crewMemberId) {
+        return DataResponseDto.of(crewService.forceWithdrawal(crewId, crewMemberId));
+    }
 }
