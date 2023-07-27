@@ -43,10 +43,10 @@ public class ContentService {
 
         final Long memberId = SecurityUtil.getMemberId();
 
-        Map<Integer, List<Content>> contentsByLevel = allContents.stream()
+        Map<Long, List<Content>> contentsByLevel = allContents.stream()
                 .collect(Collectors.groupingBy(Content::getLevel));
-        for (Map.Entry<Integer, List<Content>> entry : contentsByLevel.entrySet()) {
-            int level = entry.getKey();
+        for (Map.Entry<Long, List<Content>> entry : contentsByLevel.entrySet()) {
+            Long level = entry.getKey();
             List<Content> contentsForLevel = entry.getValue();
             List<ContentViewResponseDto> contentResponseForLevel = ContentViewResponseDto.contentViewListResponse(contentsForLevel, memberId, memberContentRepository);
 
