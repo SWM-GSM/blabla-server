@@ -19,14 +19,13 @@ public class ContentListResponseDto {
 
     public static ContentListResponseDto contentListResponse(List<ContentViewResponseDto> contents) {
         int totalContents = contents.size();
-        Map<Integer, Long> completedContentsByLevel = contents.stream()
+        long completedCount = contents.stream()
                 .filter(ContentViewResponseDto::isCompleted)
-                .collect(Collectors.groupingBy(ContentViewResponseDto::getLevel, Collectors.counting()));
+                .count();
 
-        long completedOverall = completedContentsByLevel.getOrDefault(10, 0L);
-        double overallProgress = (completedOverall / (double) totalContents) * 100.0;
-
-        int overallProgressPercentage = (int) Math.min(100, overallProgress);
+        double overallProgress = (completedCount / (double) totalContents) * 100.0;
+        double roundedOverallProgress = Math.min(100.0, overallProgress);
+        double overallProgressPercentage = Math.round(roundedOverallProgress * 10) / 10.0;
 
         return ContentListResponseDto.builder()
                 .progress(overallProgressPercentage)

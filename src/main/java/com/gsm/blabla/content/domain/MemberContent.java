@@ -16,11 +16,11 @@ public class MemberContent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_id")
     private Content content;
 
@@ -37,7 +37,7 @@ public class MemberContent {
     private LocalDateTime joinedAt;
 
     @Builder
-    public MemberContent(Long id, Member member, Content content, String userAnswer, String shortFeedback, String longFeedback, int starRating, int contextRating, LocalDateTime joinedAt) {
+    public MemberContent(Long id, Member member, Content content, String userAnswer, String shortFeedback, String longFeedback, int starRating, int contextRating) {
         this.id = id;
         this.member = member;
         this.content = content;
@@ -46,6 +46,5 @@ public class MemberContent {
         this.longFeedback = longFeedback;
         this.starRating = starRating;
         this.contextRating = contextRating;
-        this.joinedAt = LocalDateTime.now();
     }
 }
