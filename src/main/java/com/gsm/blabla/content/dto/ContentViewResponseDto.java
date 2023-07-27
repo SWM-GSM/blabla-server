@@ -23,7 +23,7 @@ public class ContentViewResponseDto {
     private String thumbnailUrl; // 컨텐츠 썸네일 URL
     private boolean isCompleted; // 컨텐츠 완료 여부
 
-    public static ContentViewResponseDto contentViewResponse(Content content, MemberContentRepository memberContentRepository) {
+    public static ContentViewResponseDto contentViewResponse(Content content, Long memberId, MemberContentRepository memberContentRepository) {
 
         return ContentViewResponseDto.builder()
                 .id(content.getId())
@@ -31,11 +31,11 @@ public class ContentViewResponseDto {
                 .level(content.getLevel())
                 .topic(content.getTopic())
                 .title(content.getTitle())
-                .isCompleted(memberContentRepository.findByContentId(content.getId()).isPresent())
+                .isCompleted(memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isPresent())
                 .build();
     }
 
-    public static List<ContentViewResponseDto> contentViewListResponse(List<Content> contents, MemberContentRepository memberContentRepository) {
+    public static List<ContentViewResponseDto> contentViewListResponse(List<Content> contents, Long memberId, MemberContentRepository memberContentRepository) {
         return contents.stream()
                 .map(content -> {
                     return ContentViewResponseDto.builder()
@@ -44,7 +44,7 @@ public class ContentViewResponseDto {
                             .level(content.getLevel())
                             .topic(content.getTopic())
                             .title(content.getTitle())
-                            .isCompleted(memberContentRepository.findByContentId(content.getId()).isPresent())
+                            .isCompleted(memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isPresent())
                             .build();
                 })
                 .collect(Collectors.toList());

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface MemberContentRepository extends JpaRepository<MemberContent, Long> {
-    Optional<MemberContent> findByContentId(Long id);
+    Optional<MemberContent> findByContentIdAndMemberId(Long contentId, Long memberId);
 }
