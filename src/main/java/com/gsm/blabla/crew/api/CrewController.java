@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -89,5 +90,11 @@ public class CrewController {
         @PathVariable("crewId") Long crewId,
         @RequestBody AccuseRequestDto accuseRequestDto) {
         return DataResponseDto.of(crewService.accuse(crewId, accuseRequestDto));
+    }
+
+    @Operation(summary = "크루 탈퇴 API")
+    @DeleteMapping(value = "/crews/{crewId}/withdrawal")
+    public DataResponseDto<Map<String, String>> withdrawal(@PathVariable Long crewId) {
+        return DataResponseDto.of(crewService.withdrawal(crewId));
     }
 }

@@ -53,4 +53,8 @@ public class CrewMember {
         this.joinedAt = LocalDateTime.now();
     }
 
+    public void withdrawal() {
+        this.status = CrewMemberStatus.WITHDRAWAL;
+        this.withdrawnAt = LocalDateTime.now();
+    }
 }
