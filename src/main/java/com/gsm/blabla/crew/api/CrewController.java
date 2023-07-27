@@ -1,6 +1,7 @@
 package com.gsm.blabla.crew.api;
 
 import com.gsm.blabla.crew.application.CrewService;
+import com.gsm.blabla.crew.dto.AccuseRequestDto;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.crew.dto.MessageRequestDto;
@@ -80,5 +81,13 @@ public class CrewController {
         @PathVariable("memberId") Long memberId,
         @RequestBody StatusRequestDto statusRequestDto) {
         return DataResponseDto.of(crewService.acceptOrReject(crewId, memberId, statusRequestDto));
+    }
+
+    @Operation(summary = "크루 신고하기 API")
+    @PostMapping(value = "/crews/{crewId}/accuse")
+    public DataResponseDto<Map<String, String>> accuse(
+        @PathVariable("crewId") Long crewId,
+        @RequestBody AccuseRequestDto accuseRequestDto) {
+        return DataResponseDto.of(crewService.accuse(crewId, accuseRequestDto));
     }
 }
