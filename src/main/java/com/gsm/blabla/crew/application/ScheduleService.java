@@ -69,7 +69,7 @@ public class ScheduleService {
         List<Schedule> schedules = scheduleRepository.findAllByCrewOrderByMeetingTime(crew);
 
         return Collections.singletonMap("schedules", schedules.stream()
-            .map(ScheduleResponseDto::of)
+            .map(schedule -> ScheduleResponseDto.of(schedule, crewMemberRepository))
             .toList());
     }
 
@@ -77,7 +77,7 @@ public class ScheduleService {
     public ScheduleResponseDto getUpcomingSchedule(Long crewId) {
         Schedule schedule = scheduleRepository.findNearestSchedule(crewId);
 
-        return ScheduleResponseDto.of(schedule);
+        return ScheduleResponseDto.of(schedule, crewMemberRepository);
     }
 
     public Map<String, String> joinSchedule(Long crewId, ScheduleRequestDto scheduleRequestDto) {
