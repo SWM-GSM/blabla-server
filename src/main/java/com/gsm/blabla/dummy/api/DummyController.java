@@ -120,9 +120,9 @@ public class DummyController {
     @GetMapping(value = "/crews/me")
     public DataResponseDto<Map<String, List<CrewDto>>> getMyCrews() {
         CrewDto crew1 = CrewDto.builder().id(1L).name("일요일마다 언어 교환할 분들 구함 :)").maxNum(5).currentNum(2).coverImage("hello").build();
-        CrewDto crew2 = CrewDto.builder().id(2L).name("감자네 언어교환").maxNum(5).currentNum(2).coverImage("hahaha").build();
-        CrewDto crew3 = CrewDto.builder().id(3L).name("고구마네 언어교환").maxNum(5).currentNum(2).coverImage("sweet-potato").build();
-        CrewDto crew4 = CrewDto.builder().id(4L).name("옥수수네 언어교환").maxNum(5).currentNum(2).coverImage("oksusu").build();
+        CrewDto crew2 = CrewDto.builder().id(2L).name("감자네 언어교환").maxNum(5).currentNum(2).coverImage("book").build();
+        CrewDto crew3 = CrewDto.builder().id(3L).name("고구마네 언어교환").maxNum(5).currentNum(2).coverImage("cooking").build();
+        CrewDto crew4 = CrewDto.builder().id(4L).name("옥수수네 언어교환").maxNum(5).currentNum(2).coverImage("exercise").build();
 
 
         return DataResponseDto.of(Map.of("crews", List.of(crew1, crew2, crew3, crew4)));
