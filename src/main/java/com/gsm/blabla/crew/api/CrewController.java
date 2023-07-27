@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Crew 관련 API")
 @RestController
@@ -69,6 +71,18 @@ public class CrewController {
         return DataResponseDto.of(crewService.joinCrew(crewId, messageRequestDto));
     }
 
+
+    @Operation(summary = "음성 파일 업로드 & 분석 API")
+    @PostMapping(value = "/crews/{crewId}/reports/{reportId}")
+    public DataResponseDto<Map<String, String>> createCrewReport(
+            @PathVariable("crewId") Long crewId,
+            @PathVariable("reportId") Long reportId,
+            @RequestParam("files") List<MultipartFile> wavFiles,
+            @RequestParam("users") String memberIds) {
+        return DataResponseDto.of(crewService.createCrewReport(crewId, reportId, memberIds, wavFiles));
+    }
+      
+      
     @Operation(summary = "크루 가입 승인 대기 인원 조회 API")
     @GetMapping(value = "/crews/{crewId}/waiting-list")
     public DataResponseDto<Map<String, List<MemberResponseDto>>> getWaitingList(@PathVariable("crewId") Long crewId) {
@@ -90,6 +104,7 @@ public class CrewController {
         @PathVariable("crewId") Long crewId,
         @RequestBody AccuseRequestDto accuseRequestDto) {
         return DataResponseDto.of(crewService.accuse(crewId, accuseRequestDto));
+
     }
 
     @Operation(summary = "크루 탈퇴 API")
