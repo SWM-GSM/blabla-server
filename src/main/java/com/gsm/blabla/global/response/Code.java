@@ -37,8 +37,10 @@ public enum Code {
     CREW_ALREADY_JOINED("C003", HttpStatus.CONFLICT, "Crew already joined"),
     CREW_ALREADY_APPLIED("C004", HttpStatus.CONFLICT, "Crew already applied"),
     APPLY_WITHOUT_MESSAGE("C005", HttpStatus.BAD_REQUEST, "Apply without message"),
-    FILE_IS_EMPTY("C006", HttpStatus.BAD_REQUEST, "File is empty"),
-
+    APPLY_NOT_FOUND("C006", HttpStatus.NOT_FOUND, "Apply not found"),
+    CREW_MEMBER_NOT_FOUND("C007", HttpStatus.NOT_FOUND, "Crew member not found"),
+    CREW_MEMBER_NOT_LEADER("C008", HttpStatus.FORBIDDEN, "Crew member not leader"),
+    FILE_IS_EMPTY("C009", HttpStatus.BAD_REQUEST, "File is empty"),
     /*
      * Schedule 관련 오류
      * HEAD NAME - SCH (Schedule)

@@ -25,8 +25,8 @@ public class CrewResponseDto {
     private String name;
     private String description;
     private String meetingCycle;
-    private int maxNum;
-    private int currentNum;
+    private Integer maxNum;
+    private Integer currentNum;
     private Integer korLevel;
     private String korLevelText;
     private Integer engLevel;
@@ -36,11 +36,12 @@ public class CrewResponseDto {
     private Boolean autoApproval;
     private String coverImage;
     private String  createdAt;
+    private String status;
     private List<MemberResponseDto> members;
     private List<String> tags;
 
     public static CrewResponseDto crewResponse(String language, Crew crew,
-        CrewMemberRepository crewMemberRepository) {
+        String status, CrewMemberRepository crewMemberRepository) {
         return CrewResponseDto.builder()
             .name(crew.getName())
             .description(crew.getDescription())
@@ -57,6 +58,7 @@ public class CrewResponseDto {
             .detail(crew.getDetail())
             .autoApproval(crew.getAutoApproval())
             .coverImage(crew.getCoverImage())
+            .status(status)
             .members(crew.getCrewMembers().stream()
                     .map(crewMember -> MemberResponseDto.crewProfileResponse(crew.getId(), crewMember.getMember(),
                 crewMemberRepository))

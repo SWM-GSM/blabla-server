@@ -13,6 +13,25 @@ import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.crew.dto.MessageRequestDto;
 import com.gsm.blabla.crew.dto.VoiceAnalysisResponseDto;
 import com.gsm.blabla.global.application.S3UploaderService;
+import com.gsm.blabla.crew.dao.ApplyMessageRepository;
+import com.gsm.blabla.crew.dao.CrewAccuseRepository;
+import com.gsm.blabla.crew.dao.CrewMemberRepository;
+import com.gsm.blabla.crew.dao.CrewRepository;
+import com.gsm.blabla.crew.dao.CrewTagRepository;
+import com.gsm.blabla.crew.domain.ApplyMessage;
+import com.gsm.blabla.crew.domain.ApplyMessageStatus;
+import com.gsm.blabla.crew.domain.Crew;
+import com.gsm.blabla.crew.domain.CrewAccuse;
+import com.gsm.blabla.crew.domain.CrewAccuseType;
+import com.gsm.blabla.crew.domain.CrewMember;
+import com.gsm.blabla.crew.domain.CrewMemberRole;
+import com.gsm.blabla.crew.domain.CrewMemberStatus;
+import com.gsm.blabla.crew.domain.CrewTag;
+import com.gsm.blabla.crew.dto.AccuseRequestDto;
+import com.gsm.blabla.crew.dto.CrewRequestDto;
+import com.gsm.blabla.crew.dto.CrewResponseDto;
+import com.gsm.blabla.crew.dto.MessageRequestDto;
+import com.gsm.blabla.crew.dto.StatusRequestDto;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
@@ -30,6 +49,11 @@ import com.nimbusds.jose.shaded.gson.Gson;
 import com.nimbusds.jose.shaded.gson.JsonArray;
 import com.nimbusds.jose.shaded.gson.JsonSyntaxException;
 import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
+import com.gsm.blabla.member.dto.MemberResponseDto;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -59,6 +83,7 @@ public class CrewService {
     private final CrewReportRepository crewReportRepository;
     private final S3UploaderService s3UploaderService;
     private final RestTemplate restTemplate;
+    private final CrewAccuseRepository crewAccuseRepository;
 
     public Map<String, Long> create(CrewRequestDto crewRequestDto) {
         Crew crew = crewRepository.save(crewRequestDto.toEntity());
@@ -85,11 +110,23 @@ public class CrewService {
 
     @Transactional(readOnly = true)
     public CrewResponseDto get(String language, Long crewId) {
+        Long memberId = SecurityUtil.getMemberId();
         Crew crew = crewRepository.findById(crewId).orElseThrow(
             () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
         );
 
-        return CrewResponseDto.crewResponse(language, crew, crewMemberRepository);
+        String status = "";
+        Optional<CrewMember> crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        Optional<ApplyMessage> applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId);
+        if (crewMember.isPresent()) {
+            status = crewMember.get().getStatus().toString();
+        } else if (applyMessage.isPresent()) {
+            status = applyMessage.get().getStatus().toString();
+        } else {
+            status = "NOTHING";
+        }
+
+        return CrewResponseDto.crewResponse(language, crew, status, crewMemberRepository);
     }
 
     // TODO: n + 1 문제 최적화
@@ -242,4 +279,67 @@ public class CrewService {
         return Collections.singletonMap("message", "음성 파일이 저장되었습니다.");
     }
 
+
+    public Map<String, List<MemberResponseDto>> getWaitingList(Long crewId) {
+
+        List<MemberResponseDto> members = applyMessageRepository.getByCrewIdAndStatus(crewId, ApplyMessageStatus.WAITING).stream()
+            .map(ApplyMessage::getMember)
+            .map(member -> MemberResponseDto.waitingListResponse(crewId, member, applyMessageRepository))
+            .toList();
+
+        return Collections.singletonMap("members", members);
+    }
+
+    public Map<String, String> acceptOrReject(Long crewId, Long memberId, StatusRequestDto statusRequestDto) {
+        Long meberId = SecurityUtil.getMemberId();
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, meberId).orElseThrow(
+            () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
+
+        if (!crewMember.getRole().equals(CrewMemberRole.LEADER)) {
+            throw new GeneralException(Code.CREW_MEMBER_NOT_LEADER, "크루장만 신청을 승인할 수 있습니다.");
+        }
+
+        String status = statusRequestDto.getStatus();
+
+        String message = "";
+
+        ApplyMessage applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId).orElseThrow(
+            () -> new GeneralException(Code.APPLY_NOT_FOUND, "존재하지 않는 신청입니다.")
+        );
+
+        if (status.equals("accept")) {
+            applyMessage.acceptOrReject(status);
+            crewMemberRepository.save(CrewMember.builder()
+                .member(applyMessage.getMember())
+                .crew(applyMessage.getCrew())
+                .role(CrewMemberRole.MEMBER)
+                .build()
+            );
+
+            message = "승인이 완료되었습니다.";
+        } else if (status.equals("reject")) {
+            applyMessage.acceptOrReject(status);
+            message = "거절이 완료되었습니다.";
+        }
+
+        return Collections.singletonMap("message", message);
+    }
+
+    public Map<String, String> accuse(Long crewId, AccuseRequestDto accuseRequestDto) {
+        Long memberId = SecurityUtil.getMemberId();
+
+        crewAccuseRepository.save(CrewAccuse.builder()
+            .type(CrewAccuseType.valueOf(accuseRequestDto.getType()))
+            .description(accuseRequestDto.getDescription())
+            .crew(crewRepository.findById(crewId).orElseThrow(
+                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
+            ))
+            .member(memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+            ))
+            .build()
+        );
+
+        return Collections.singletonMap("message", "신고가 완료되었습니다.");
+    }
 }
