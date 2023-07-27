@@ -34,7 +34,7 @@ public class VoiceFile {
     private LocalDateTime createdAt;
 
     @Builder
-    public VoiceFile(Member member, CrewReport crewReport, String fileUrl, Duration totalCallTime, Duration koreanTime, Duration englishTime, Duration redundancyTime, LocalDateTime createdAt) {
+    public VoiceFile(Member member, CrewReport crewReport, String fileUrl, Duration totalCallTime, Duration koreanTime, Duration englishTime, Duration redundancyTime) {
         this.member = member;
         this.crewReport = crewReport;
         this.fileUrl = fileUrl;
