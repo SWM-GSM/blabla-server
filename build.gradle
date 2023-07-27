@@ -52,6 +52,10 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
+    // apple login
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+    implementation 'org.bouncycastle:bcpkix-jdk14:1.71'
+
     // s3
     implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 
@@ -70,7 +74,7 @@ tasks.named('test') {
 processResources.dependsOn('copySecret')
 task copySecret(type: Copy) {
     from './security'
-    include '*.yml'
+    include '*'
     into 'src/main/resources'
 }
 
