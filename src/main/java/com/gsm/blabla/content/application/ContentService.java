@@ -6,7 +6,6 @@ import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.content.dto.ContentListResponseDto;
 import com.gsm.blabla.content.dto.ContentResponseDto;
 import com.gsm.blabla.content.dto.ContentViewResponseDto;
-import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
@@ -25,15 +24,11 @@ public class ContentService {
     private final MemberContentRepository memberContentRepository;
 
     @Transactional(readOnly = true)
-    public Map<String, ContentResponseDto> get(Long contentId) {
-        Map<String, ContentResponseDto> result = new HashMap<>();
-
+    public ContentResponseDto get(Long contentId) {
         Content content = contentRepository.findById(contentId).orElseThrow(
                 () -> new GeneralException(Code.CONTENT_NOT_FOUND, "존재하지 않는 컨텐츠입니다.")
         );
-
-        result.put("content", ContentResponseDto.contentResponse(content));
-        return result;
+        return ContentResponseDto.contentResponse(content);
     }
 
     @Transactional(readOnly = true)
@@ -62,7 +57,8 @@ public class ContentService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, ContentViewResponseDto> getTodayContent(String language) {
+    public ContentViewResponseDto getTodayContent(String language) {
+
         List<Content> contents = switch (language) {
             case "ko" -> contentRepository.findAllByLanguage("ko");
             case "en" -> contentRepository.findAllByLanguage("en");
@@ -75,10 +71,7 @@ public class ContentService {
                 .filter(content -> memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isEmpty())
                 .findFirst();
 
-        Map<String, ContentViewResponseDto> result = new HashMap<>();
-        todayContents.ifPresent(content -> {
-            result.put("todayContent", ContentViewResponseDto.contentViewResponse(content, memberId, memberContentRepository));
-        });
-        return result;
+        return todayContents.map(content -> ContentViewResponseDto.contentViewResponse(content, memberId, memberContentRepository))
+                .orElse(null);
     }
 }
