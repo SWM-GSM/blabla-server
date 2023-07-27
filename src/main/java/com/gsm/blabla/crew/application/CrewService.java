@@ -263,8 +263,9 @@ public class CrewService {
 
     public Map<String, String> acceptOrReject(Long crewId, Long memberId, StatusRequestDto statusRequestDto) {
         Long meberId = SecurityUtil.getMemberId();
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, meberId).orElseThrow(
-            () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, meberId)
+            .orElseThrow(
+                () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
 
         if (!crewMember.getRole().equals(CrewMemberRole.LEADER)) {
             throw new GeneralException(Code.CREW_MEMBER_NOT_LEADER, "크루장만 신청을 승인할 수 있습니다.");
@@ -274,9 +275,10 @@ public class CrewService {
 
         String message = "";
 
-        ApplyMessage applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId).orElseThrow(
-            () -> new GeneralException(Code.APPLY_NOT_FOUND, "존재하지 않는 신청입니다.")
-        );
+        ApplyMessage applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId)
+            .orElseThrow(
+                () -> new GeneralException(Code.APPLY_NOT_FOUND, "존재하지 않는 신청입니다.")
+            );
 
         if (status.equals("accept")) {
             applyMessage.acceptOrReject(status);
@@ -312,5 +314,16 @@ public class CrewService {
         );
 
         return Collections.singletonMap("message", "신고가 완료되었습니다.");
+    }
+
+    public Map<String, String> withdrawal(Long crewId) {
+        Long memberId = SecurityUtil.getMemberId();
+
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId)
+                .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
+
+        crewMember.withdrawal();
+
+        return Collections.singletonMap("message", "크루 탈퇴가 완료되었습니다.");
     }
 }
