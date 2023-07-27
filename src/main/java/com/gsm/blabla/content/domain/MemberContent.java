@@ -46,5 +46,6 @@ public class MemberContent {
         this.longFeedback = longFeedback;
         this.starRating = starRating;
         this.contextRating = contextRating;
+        this.joinedAt = LocalDateTime.now();
     }
 }
