@@ -2,10 +2,13 @@ package com.gsm.blabla.crew.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gsm.blabla.crew.application.CrewService;
+import com.gsm.blabla.crew.dto.AccuseRequestDto;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.crew.dto.MessageRequestDto;
+import com.gsm.blabla.crew.dto.StatusRequestDto;
 import com.gsm.blabla.global.response.DataResponseDto;
+import com.gsm.blabla.member.dto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -63,6 +66,7 @@ public class CrewController {
         return DataResponseDto.of(crewService.joinCrew(crewId, messageRequestDto));
     }
 
+
     @Operation(summary = "음성 파일 업로드 & 분석 API")
     @PostMapping(value = "/crews/{crewId}/reports/{reportId}")
     public DataResponseDto<Map<String, String>> createCrewReport(
@@ -71,5 +75,30 @@ public class CrewController {
             @RequestParam("files") List<MultipartFile> wavFiles,
             @RequestParam("users") String users) {
         return DataResponseDto.of(crewService.createCrewReport(crewId, reportId, users, wavFiles));
+    }
+      
+      
+    @Operation(summary = "크루 가입 승인 대기 인원 조회 API")
+    @GetMapping(value = "/crews/{crewId}/waiting-list")
+    public DataResponseDto<Map<String, List<MemberResponseDto>>> getWaitingList(@PathVariable("crewId") Long crewId) {
+        return DataResponseDto.of(crewService.getWaitingList(crewId));
+    }
+
+    @Operation(summary = "크루 가입 승인 및 거절 API")
+    @PostMapping(value = "/crews/{crewId}/waiting-list/{memberId}")
+    public DataResponseDto<Map<String, String>> acceptOrReject(
+        @PathVariable("crewId") Long crewId,
+        @PathVariable("memberId") Long memberId,
+        @RequestBody StatusRequestDto statusRequestDto) {
+        return DataResponseDto.of(crewService.acceptOrReject(crewId, memberId, statusRequestDto));
+    }
+
+    @Operation(summary = "크루 신고하기 API")
+    @PostMapping(value = "/crews/{crewId}/accuse")
+    public DataResponseDto<Map<String, String>> accuse(
+        @PathVariable("crewId") Long crewId,
+        @RequestBody AccuseRequestDto accuseRequestDto) {
+        return DataResponseDto.of(crewService.accuse(crewId, accuseRequestDto));
+
     }
 }

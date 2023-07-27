@@ -5,6 +5,7 @@ import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
+import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.dummy.dto.AccuseDto;
 import com.gsm.blabla.dummy.dto.CrewDto;
@@ -95,6 +96,7 @@ public class DummyController {
                 .detail("같이 게임도 하고 프리토킹도 나눌 수 있으면 좋을 것 같아요 ㅎㅎ")
                 .autoApproval(true)
                 .coverImage("hello")
+                .status(CrewMemberStatus.JOINED)
                 .members(List.of(member1, member2))
                 .tags(tags)
                 .build()
@@ -118,8 +120,12 @@ public class DummyController {
     @GetMapping(value = "/crews/me")
     public DataResponseDto<Map<String, List<CrewDto>>> getMyCrews() {
         CrewDto crew1 = CrewDto.builder().id(1L).name("일요일마다 언어 교환할 분들 구함 :)").maxNum(5).currentNum(2).coverImage("hello").build();
+        CrewDto crew2 = CrewDto.builder().id(2L).name("감자네 언어교환").maxNum(5).currentNum(2).coverImage("book").build();
+        CrewDto crew3 = CrewDto.builder().id(3L).name("고구마네 언어교환").maxNum(5).currentNum(2).coverImage("cooking").build();
+        CrewDto crew4 = CrewDto.builder().id(4L).name("옥수수네 언어교환").maxNum(5).currentNum(2).coverImage("exercise").build();
 
-        return DataResponseDto.of(Map.of("crews", Collections.nCopies(5, crew1)));
+
+        return DataResponseDto.of(Map.of("crews", List.of(crew1, crew2, crew3, crew4)));
     }
 
     @GetMapping(value = "/crews/me/can-join")

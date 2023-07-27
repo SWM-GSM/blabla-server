@@ -52,4 +52,5 @@ public class CrewMember {
         this.role = role;
         this.joinedAt = LocalDateTime.now();
     }
+
 }
