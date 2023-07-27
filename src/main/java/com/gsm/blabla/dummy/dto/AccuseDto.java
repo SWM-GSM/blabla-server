@@ -4,5 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class AccuseDto {
-    private String reason;
+    private String type;
+    private String description;
 }
