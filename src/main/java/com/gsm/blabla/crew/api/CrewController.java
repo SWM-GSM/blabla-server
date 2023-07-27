@@ -73,8 +73,8 @@ public class CrewController {
             @PathVariable("crewId") Long crewId,
             @PathVariable("reportId") Long reportId,
             @RequestParam("files") List<MultipartFile> wavFiles,
-            @RequestParam("users") String users) {
-        return DataResponseDto.of(crewService.createCrewReport(crewId, reportId, users, wavFiles));
+            @RequestParam("users") String memberIds) {
+        return DataResponseDto.of(crewService.createCrewReport(crewId, reportId, memberIds, wavFiles));
     }
       
       

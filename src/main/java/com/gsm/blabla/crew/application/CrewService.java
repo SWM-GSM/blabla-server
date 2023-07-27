@@ -1,9 +1,7 @@
 package com.gsm.blabla.crew.application;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.gsm.blabla.crew.dao.*;
@@ -28,9 +26,6 @@ import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.CrewTag;
 import com.gsm.blabla.crew.dto.AccuseRequestDto;
-import com.gsm.blabla.crew.dto.CrewRequestDto;
-import com.gsm.blabla.crew.dto.CrewResponseDto;
-import com.gsm.blabla.crew.dto.MessageRequestDto;
 import com.gsm.blabla.crew.dto.StatusRequestDto;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
@@ -39,33 +34,20 @@ import com.gsm.blabla.member.dao.MemberRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.IntStream;
 
 import com.gsm.blabla.member.domain.Member;
-import com.nimbusds.jose.shaded.gson.Gson;
-import com.nimbusds.jose.shaded.gson.JsonArray;
-import com.nimbusds.jose.shaded.gson.JsonSyntaxException;
-import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
-import org.joda.time.DateTime;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -195,17 +177,14 @@ public class CrewService {
         return Collections.singletonMap("message", message);
     }
 
-    public Map<String, String> createCrewReport(Long crewId, Long reportId, String users, List<MultipartFile> wavFiles) {
+    public Map<String, String> createCrewReport(Long crewId, Long reportId, String memberIds, List<MultipartFile> wavFiles) {
         if (wavFiles.stream().anyMatch(wavFile -> wavFile.getSize() == 0)) {
             throw new GeneralException(Code.FILE_IS_EMPTY, "음성 파일이 비어있습니다.");
         }
 
-        List<String> userList = Arrays.stream(users.replaceAll("[\"\\[\\]\\s]", "").split(","))
+        List<String> memberIdList = Arrays.stream(memberIds.replaceAll("[\"\\[\\]\\s]", "").split(","))
                 .toList();
-        List<String> fileUrls = s3UploaderService.uploadWavFiles(crewId, reportId, userList, wavFiles, "users");
-        for (String fileUrl : fileUrls) {
-            System.out.println("fileUrl = " + fileUrl);
-        }
+        List<String> fileUrls = s3UploaderService.uploadWavFiles(crewId, reportId, memberIdList, wavFiles, "users");
 
         // TODO: 더미 데이터 & API URL 수정
         String fastApiUrl = "http://localhost:8000/api/voice-analysis";
@@ -220,8 +199,6 @@ public class CrewService {
         }
         String response = voiceAnalysisResponse.replaceAll("\\\\|^\"|\"$", "");
 
-        System.out.println("response = " + response);
-        
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectReader reader = objectMapper.readerFor(new TypeReference<List<VoiceAnalysisResponseDto>>() {});
         List<VoiceAnalysisResponseDto> voiceAnalysisResponseList = null;
@@ -234,28 +211,19 @@ public class CrewService {
             throw new GeneralException(Code.VOICE_ANALYSIS_IS_NULL, "음성 분석 결과가 예상한 값과 다릅니다.");
         }
 
-        for (VoiceAnalysisResponseDto voiceAnalysisResponseDto : voiceAnalysisResponseList) {
-            System.out.println("voiceAnalysisResponseDto = " + voiceAnalysisResponseDto.getRedundancyTime());
-        }
-
-        Long memberId = SecurityUtil.getMemberId();
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-        );
-
-        crewReportRepository.save(
-                CrewReport.builder()
-                        .crew(crewRepository.findById(crewId).orElseThrow(
-                                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
-                        ))
-                        .startedAt(LocalDateTime.now())
-                        .endAt(LocalDateTime.now())
-                        .koreanTime(Duration.ofSeconds(100))
-                        .englishTime(Duration.ofSeconds(100))
-                        .cloudUrl("wewesdawd")
-                        .createdAt(LocalDateTime.now())
-                        .build()
-        );
+        // Todo: crewReport 논의
+//        crewReportRepository.save(
+//                CrewReport.builder()
+//                        .crew(crewRepository.findById(crewId).orElseThrow(
+//                                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
+//                        ))
+//                        .startedAt(LocalDateTime.now())
+//                        .endAt(LocalDateTime.now())
+//                        .koreanTime(Duration.ofSeconds(100))
+//                        .englishTime(Duration.ofSeconds(100))
+//                        .cloudUrl("wewesdawd")
+//                        .build()
+//        );
 
         CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
                 () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
@@ -263,6 +231,10 @@ public class CrewService {
 
         for (VoiceAnalysisResponseDto voiceAnalysisResponseDto : voiceAnalysisResponseList) {
             int index = voiceAnalysisResponseList.indexOf(voiceAnalysisResponseDto);
+            Long memberId = Long.parseLong(memberIdList.get(index));
+            Member member = memberRepository.findById(memberId).orElseThrow(
+                    () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+            );
             voiceFileRepository.save(
                     VoiceFile.builder()
                             .member(member)
