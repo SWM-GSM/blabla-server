@@ -1,5 +1,6 @@
 package com.gsm.blabla.crew.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gsm.blabla.crew.application.CrewService;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
@@ -14,11 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Crew 관련 API")
 @RestController
@@ -63,5 +61,15 @@ public class CrewController {
         @PathVariable("crewId") Long crewId,
         @RequestBody(required = false) MessageRequestDto messageRequestDto) {
         return DataResponseDto.of(crewService.joinCrew(crewId, messageRequestDto));
+    }
+
+    @Operation(summary = "음성 파일 업로드 & 분석 API")
+    @PostMapping(value = "/crews/{crewId}/reports/{reportId}")
+    public DataResponseDto<Map<String, String>> createCrewReport(
+            @PathVariable("crewId") Long crewId,
+            @PathVariable("reportId") Long reportId,
+            @RequestParam("files") List<MultipartFile> wavFiles,
+            @RequestParam("users") String users) {
+        return DataResponseDto.of(crewService.createCrewReport(crewId, reportId, users, wavFiles));
     }
 }
