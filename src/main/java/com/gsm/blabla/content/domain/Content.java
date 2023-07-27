@@ -15,7 +15,7 @@ public class Content {
 
     private String contentUrl; // 컨텐츠 URL
 
-    private int level; // 컨텐츠 레벨
+    private Long level; // 컨텐츠 레벨
 
     private String sentence; // 타켓 문장
 
@@ -28,7 +28,7 @@ public class Content {
     private String title; // 컨텐츠 제목
 
     @Builder
-    public Content(Long id, String contentUrl, int level, String sentence, String answer, String language, String topic, String title) {
+    public Content(Long id, String contentUrl, Long level, String sentence, String answer, String language, String topic, String title) {
         this.id = id;
         this.contentUrl = contentUrl;
         this.level = level;
