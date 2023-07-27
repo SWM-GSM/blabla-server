@@ -211,20 +211,6 @@ public class CrewService {
             throw new GeneralException(Code.VOICE_ANALYSIS_IS_NULL, "음성 분석 결과가 예상한 값과 다릅니다.");
         }
 
-        // Todo: crewReport 논의
-//        crewReportRepository.save(
-//                CrewReport.builder()
-//                        .crew(crewRepository.findById(crewId).orElseThrow(
-//                                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
-//                        ))
-//                        .startedAt(LocalDateTime.now())
-//                        .endAt(LocalDateTime.now())
-//                        .koreanTime(Duration.ofSeconds(100))
-//                        .englishTime(Duration.ofSeconds(100))
-//                        .cloudUrl("wewesdawd")
-//                        .build()
-//        );
-
         CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
                 () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
         );
@@ -247,7 +233,7 @@ public class CrewService {
                             .build()
             );
         }
-        return Collections.singletonMap("message", "음성 파일이 저장되었습니다.");
+        return Collections.singletonMap("message", "음성 파일 분석이 완료되었습니다.");
     }
 
 
