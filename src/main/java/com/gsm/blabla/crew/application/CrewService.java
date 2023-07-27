@@ -326,4 +326,23 @@ public class CrewService {
 
         return Collections.singletonMap("message", "크루 탈퇴가 완료되었습니다.");
     }
+
+    public Map<String, String> forceWithdrawal(Long crewId, Long crewMemberId) {
+        Long memberId = SecurityUtil.getMemberId();
+
+        boolean isLeader = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId).orElseThrow(
+            () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."))
+            .getRole().equals(CrewMemberRole.LEADER);
+
+        if (!isLeader) {
+            throw new GeneralException(Code.CREW_MEMBER_NOT_LEADER, "크루장만 강제 탈퇴를 할 수 있습니다.");
+        }
+
+        CrewMember crewMember = crewMemberRepository.findById(crewMemberId).orElseThrow(
+            () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
+
+        crewMember.withdrawal();
+        
+        return Collections.singletonMap("message", "강제 탈퇴가 완료되었습니다.");
+    }
 }
