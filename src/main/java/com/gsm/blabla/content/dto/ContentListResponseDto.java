@@ -20,7 +20,7 @@ public class ContentListResponseDto {
     public static ContentListResponseDto contentListResponse(List<ContentViewResponseDto> contents) {
         int totalContents = contents.size();
         long completedCount = contents.stream()
-                .filter(ContentViewResponseDto::isCompleted)
+                .filter(ContentViewResponseDto::getIsCompleted)
                 .count();
 
         double overallProgress = (completedCount / (double) totalContents) * 100.0;
