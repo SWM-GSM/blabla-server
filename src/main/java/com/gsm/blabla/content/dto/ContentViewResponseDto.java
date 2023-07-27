@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ContentViewResponseDto {
     private Long id;
-    private int level; // 컨텐츠 레벨
+    private Long level; // 컨텐츠 레벨
     private String topic; // 컨텐츠 주제
     private String title; // 컨텐츠 제목
 
