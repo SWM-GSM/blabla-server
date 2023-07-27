@@ -244,7 +244,6 @@ public class CrewService {
                             .koreanTime(voiceAnalysisResponseDto.getKoreanTime())
                             .englishTime(voiceAnalysisResponseDto.getEnglishTime())
                             .redundancyTime(voiceAnalysisResponseDto.getRedundancyTime())
-                            .createdAt(LocalDateTime.now())
                             .build()
             );
         }

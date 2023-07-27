@@ -29,7 +29,7 @@ public class CrewReport {
     private LocalDateTime createdAt;
 
     @Builder
-    public CrewReport(Crew crew, LocalDateTime startedAt, LocalDateTime endAt, Duration koreanTime, Duration englishTime, String cloudUrl, LocalDateTime createdAt) {
+    public CrewReport(Crew crew, LocalDateTime startedAt, LocalDateTime endAt, Duration koreanTime, Duration englishTime, String cloudUrl) {
         this.crew = crew;
         this.startedAt = startedAt;
         this.endAt = endAt;
