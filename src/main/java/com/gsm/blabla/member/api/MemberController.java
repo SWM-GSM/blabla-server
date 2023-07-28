@@ -33,4 +33,10 @@ public class MemberController {
     public DataResponseDto<Map<String, String>> withdrawal() {
         return DataResponseDto.of(memberService.withdrawal());
     }
+
+    @Operation(summary = "멤버 프로필 조회 API")
+    @GetMapping("/{language}/profile")
+    public DataResponseDto<MemberResponseDto> getProfile(@PathVariable String language) {
+        return DataResponseDto.of(memberService.getProfile(language));
+    }
 }
