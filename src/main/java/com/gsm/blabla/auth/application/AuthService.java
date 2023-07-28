@@ -12,7 +12,7 @@ import com.gsm.blabla.jwt.domain.Jwt;
 import com.gsm.blabla.jwt.dto.GoogleAccountDto;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
-import com.gsm.blabla.member.dao.MemberInterestRepository;
+import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.MemberKeyword;
@@ -39,7 +39,7 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
-    private final MemberInterestRepository memberInterestRepository;
+    private final MemberKeywordRepository memberKeywordRepository;
     private final JwtRepository jwtRepository;
     private final GoogleAccountRepository googleAccountRepository;
 
@@ -70,7 +70,7 @@ public class AuthService {
 
         // 키워드
         for (Keyword keyword : memberRequestDto.getKeywords()) {
-            memberInterestRepository.save(MemberKeyword.builder()
+            memberKeywordRepository.save(MemberKeyword.builder()
                     .member(member)
                     .keyword(keyword)
                     .build());
