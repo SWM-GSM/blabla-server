@@ -30,10 +30,10 @@ echo "> $JAR_PATH 배포 - dev"
 nohup java -jar \
       -Dspring.profiles.active=dev \
       build/libs/$JAR_NAME \
-      > $REPOSITORY/nohup.out 2>&1 &
+      > $REPOSITORY/nohup-dev.out 2>&1 &
       
 echo "> $JAR_PATH 배포 - prod"
 nohup java -jar \
       -Dspring.profiles.active=prod \
       build/libs/$JAR_NAME \
-      > $REPOSITORY/nohup.out 2>&1 &
+      > $REPOSITORY/nohup-prod.out 2>&1 &
