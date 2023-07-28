@@ -1,5 +1,6 @@
 package com.gsm.blabla.member.application;
 
+import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
@@ -9,6 +10,7 @@ import com.gsm.blabla.member.dao.MemberRepository;
 import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
+import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -37,21 +39,19 @@ public class MemberService {
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         );
 
-        BeanUtils.copyProperties(memberRequestDto, member, getNullPropertyNames(memberRequestDto) );
+        if (memberRequestDto.getKeywords() != null) {
+            memberKeywordRepository.deleteAllByMemberId(memberId);
+
+            for (Keyword keyword : memberRequestDto.getKeywords()) {
+                memberKeywordRepository.save(MemberKeyword.builder()
+                        .member(member)
+                        .keyword(keyword)
+                        .build());
+            }
+        }
+
+        member.updateMember(memberRequestDto);
 
         return Collections.singletonMap("message", "프로필 수정이 완료되었습니다.");
-    }
-
-    private static String[] getNullPropertyNames (Object source) {
-        final BeanWrapper src = new BeanWrapperImpl(source);
-        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
-
-        Set<String> emptyNames = new HashSet<String>();
-        for(java.beans.PropertyDescriptor pd : pds) {
-            Object srcValue = src.getPropertyValue(pd.getName());
-            if (srcValue == null) emptyNames.add(pd.getName());
-        }
-        String[] result = new String[emptyNames.size()];
-        return emptyNames.toArray(result);
     }
 }
