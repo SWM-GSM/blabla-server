@@ -2,15 +2,13 @@ package com.gsm.blabla.member.api;
 
 import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.member.application.MemberService;
+import com.gsm.blabla.member.dto.MemberRequestDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "멤버 관련 API")
 @RestController
@@ -22,5 +20,11 @@ public class MemberController {
     @GetMapping("/members/nicknames/{nickname}")
     public DataResponseDto<Map<String, Boolean>> duplicatedNickname(@PathVariable String nickname) {
         return DataResponseDto.of(memberService.isNicknameDuplicated(nickname));
+    }
+
+    @Operation(summary = "프로필 수정 API")
+    @PatchMapping("/profile")
+    public DataResponseDto<Map<String, String>> updateProfile(@RequestBody MemberRequestDto memberRequestDto) {
+        return DataResponseDto.of(memberService.updateProfile(memberRequestDto));
     }
 }
