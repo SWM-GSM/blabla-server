@@ -40,14 +40,14 @@ public class Member extends BaseTimeEntity {
 
     private String countryCode; // 국가 코드
 
-    private int korLevel; // 한국어 레벨
+    private Integer korLevel; // 한국어 레벨
 
-    private int engLevel; // 영어 레벨
+    private Integer engLevel; // 영어 레벨
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER; // 역할
 
-    private boolean pushNotification; // 푸시 알림 허용 여부
+    private Boolean pushNotification; // 푸시 알림 허용 여부
 
     private String description = ""; // 자기소개
 
