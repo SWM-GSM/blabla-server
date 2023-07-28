@@ -73,7 +73,7 @@ public class MemberResponseDto {
             .build();
     }
 
-    public static MemberResponseDto getMemberProfile(Member member, CrewMember crewMember, List<Map<String, String>> memberInterestList) {
+    public static MemberResponseDto getCrewMemberProfile(Member member, CrewMember crewMember, List<Map<String, String>> memberInterestList) {
         return MemberResponseDto.builder()
             .nickname(member.getNickname())
             .description(member.getDescription())
@@ -85,5 +85,19 @@ public class MemberResponseDto {
             .isLeader(crewMember.getRole() == CrewMemberRole.LEADER)
             .keywords(memberInterestList)
             .build();
+    }
+
+    public static MemberResponseDto getMemberProfile(Member member, List<Map<String, String>> memberInterestList) {
+        return MemberResponseDto.builder()
+                .nickname(member.getNickname())
+                .description(member.getDescription())
+                .profileImage(member.getProfileImage())
+                .countryCode(member.getCountryCode())
+                .korLevel(member.getKorLevel())
+                .engLevel(member.getEngLevel())
+                .signedUpAfter((long) member.getCreatedAt().toLocalDate().until(LocalDateTime.now().toLocalDate()).getDays() + 1)
+                .isLeader(null)
+                .keywords(memberInterestList)
+                .build();
     }
 }
