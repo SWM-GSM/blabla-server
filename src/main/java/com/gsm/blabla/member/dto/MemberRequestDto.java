@@ -3,6 +3,7 @@ package com.gsm.blabla.member.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.member.domain.Member;
+import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -37,6 +38,7 @@ public class MemberRequestDto {
     private int engLevel;
     @Size(max = 10, message = "관심사는 10개까지 선택 가능합니다.")
     private List<Keyword> keywords;
+    private String description;
     private boolean pushNotification;
 
     public Member toEntity() {
