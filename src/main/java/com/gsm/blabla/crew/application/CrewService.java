@@ -365,6 +365,6 @@ public class CrewService {
                 .toList();
 
 
-        return MemberResponseDto.getMemberProfile(member, crewMember, interests);
+        return MemberResponseDto.getCrewMemberProfile(member, crewMember, interests);
     }
 }
