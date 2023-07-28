@@ -23,10 +23,4 @@ public class MemberController {
     public DataResponseDto<Map<String, Boolean>> duplicatedNickname(@PathVariable String nickname) {
         return DataResponseDto.of(memberService.isNicknameDuplicated(nickname));
     }
-
-    @Operation(summary = "멤버 프로필 조회 API")
-    @GetMapping("/{language}/profile/{memberId}")
-    public DataResponseDto<MemberResponseDto> getMemberProfile(@PathVariable String language ,@PathVariable Long memberId) {
-        return DataResponseDto.of(memberService.getMemberProfile(language, memberId));
-    }
 }

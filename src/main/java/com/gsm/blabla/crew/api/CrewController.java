@@ -120,4 +120,13 @@ public class CrewController {
         @PathVariable("memberId") Long crewMemberId) {
         return DataResponseDto.of(crewService.forceWithdrawal(crewId, crewMemberId));
     }
+
+    @Operation(summary = "멤버 프로필 조회 API")
+    @GetMapping("/{language}/crews/{crewId}/profile/{memberId}")
+    public DataResponseDto<MemberResponseDto> getMemberProfile(
+            @PathVariable String language,
+            @PathVariable Long crewId,
+            @PathVariable Long memberId) {
+        return DataResponseDto.of(crewService.getMemberProfile(language, crewId, memberId));
+    }
 }
