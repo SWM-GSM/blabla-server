@@ -1,6 +1,8 @@
 package com.gsm.blabla.member.application;
 
+import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
+
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final MemberKeywordRepository memberKeywordRepository;
 
     public Map<String, Boolean> isNicknameDuplicated(String nickname) {
         Map<String, Boolean> result = new HashMap<>();
