@@ -1,6 +1,7 @@
 package com.gsm.blabla.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.crew.dao.ApplyMessageRepository;
 import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
@@ -8,6 +9,12 @@ import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.domain.Member;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import com.gsm.blabla.member.domain.MemberKeyword;
+import com.gsm.blabla.member.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +37,8 @@ public class MemberResponseDto {
     private Integer korLevel;
     private Integer engLevel;
     private Boolean isLeader;
+    private Long signedUpAfter;
+    List<Map<String, String>> keywords;
 
     public static MemberResponseDto crewProfileResponse(Long crewId, Member member,
         CrewMemberRepository crewMemberRepository) {
@@ -60,6 +69,20 @@ public class MemberResponseDto {
             .countryCode(member.getCountryCode())
             .korLevel(member.getKorLevel())
             .engLevel(member.getEngLevel())
+            .build();
+    }
+
+    public static MemberResponseDto getMemberProfile(Member member, List<Map<String, String>> memberInterestList) {
+        return MemberResponseDto.builder()
+            .nickname(member.getNickname())
+            .description(member.getDescription())
+            .profileImage(member.getProfileImage())
+            .countryCode(member.getCountryCode())
+            .korLevel(member.getKorLevel())
+            .engLevel(member.getEngLevel())
+            .signedUpAfter((long) member.getCreatedAt().toLocalDate().until(LocalDateTime.now().toLocalDate()).getDays() + 1)
+            .isLeader(member.getRole().equals(Role.ROLE_ADMIN))
+            .keywords(memberInterestList)
             .build();
     }
 }
