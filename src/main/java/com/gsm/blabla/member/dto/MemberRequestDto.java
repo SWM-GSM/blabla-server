@@ -32,14 +32,14 @@ public class MemberRequestDto {
     private String countryCode;
     @Min(value = 1, message = "레벨은 1에서 5 사이여야 합니다.")
     @Max(value = 5, message = "레벨은 1에서 5 사이여야 합니다.")
-    private int korLevel;
+    private Integer korLevel;
     @Min(value = 1, message = "레벨은 1에서 5 사이여야 합니다.")
     @Max(value = 5, message = "레벨은 1에서 5 사이여야 합니다.")
-    private int engLevel;
+    private Integer engLevel;
     @Size(max = 10, message = "관심사는 10개까지 선택 가능합니다.")
     private List<Keyword> keywords;
     private String description;
-    private boolean pushNotification;
+    private Boolean pushNotification;
 
     public Member toEntity() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
