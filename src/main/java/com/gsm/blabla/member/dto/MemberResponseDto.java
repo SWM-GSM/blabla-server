@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.crew.dao.ApplyMessageRepository;
 import com.gsm.blabla.crew.dao.CrewMemberRepository;
+import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
@@ -72,7 +73,7 @@ public class MemberResponseDto {
             .build();
     }
 
-    public static MemberResponseDto getMemberProfile(Member member, List<Map<String, String>> memberInterestList) {
+    public static MemberResponseDto getMemberProfile(Member member, CrewMember crewMember, List<Map<String, String>> memberInterestList) {
         return MemberResponseDto.builder()
             .nickname(member.getNickname())
             .description(member.getDescription())
@@ -81,7 +82,7 @@ public class MemberResponseDto {
             .korLevel(member.getKorLevel())
             .engLevel(member.getEngLevel())
             .signedUpAfter((long) member.getCreatedAt().toLocalDate().until(LocalDateTime.now().toLocalDate()).getDays() + 1)
-            .isLeader(member.getRole().equals(Role.ROLE_ADMIN))
+            .isLeader(crewMember.getRole() == CrewMemberRole.LEADER)
             .keywords(memberInterestList)
             .build();
     }
