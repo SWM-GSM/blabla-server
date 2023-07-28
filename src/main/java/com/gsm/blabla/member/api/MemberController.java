@@ -27,4 +27,10 @@ public class MemberController {
     public DataResponseDto<Map<String, String>> updateProfile(@RequestBody MemberRequestDto memberRequestDto) {
         return DataResponseDto.of(memberService.updateProfile(memberRequestDto));
     }
+
+    @Operation(summary = "멤버 삭제 API")
+    @DeleteMapping("/members/withdrawal")
+    public DataResponseDto<Map<String, String>> withdrawal() {
+        return DataResponseDto.of(memberService.withdrawal());
+    }
 }
