@@ -11,11 +11,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE member SET is_withdrawal = true WHERE member_id = ?")
+@Where(clause = "is_withdrawal = false")
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -46,6 +50,8 @@ public class Member extends BaseTimeEntity {
     private boolean pushNotification; // 푸시 알림 허용 여부
 
     private String description = ""; // 자기소개
+
+    private Boolean isWithdrawal = false; // 탈퇴 여부
 
     @Builder
     public Member(SocialLoginType socialLoginType, String nickname, String profileImage,

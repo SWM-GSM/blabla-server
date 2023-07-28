@@ -54,4 +54,15 @@ public class MemberService {
 
         return Collections.singletonMap("message", "프로필 수정이 완료되었습니다.");
     }
+
+    public Map<String, String> withdrawal() {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        memberRepository.delete(member);
+
+        return Collections.singletonMap("message", "회원탈퇴가 완료되었습니다.");
+    }
 }
