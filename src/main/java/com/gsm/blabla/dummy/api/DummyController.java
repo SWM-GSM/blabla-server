@@ -28,6 +28,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import com.gsm.blabla.member.dto.MemberRequestDto;
+import com.gsm.blabla.member.dto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -50,7 +52,7 @@ public class DummyController {
 
     private final AgoraService agoraService;
 
-    @GetMapping(value = "{language}/profile/{memberId}")
+    @GetMapping(value = {"/{language}/profile", "{language}/crews/{crewId}/profile/{memberId}"})
     public DataResponseDto<MemberDto> getProfile(@PathVariable String language) {
         List<KeywordDto> keywords = "ko".equals(language) ?
             List.of(
@@ -71,6 +73,7 @@ public class DummyController {
                 .signedUpAfter(99)
                 .countryCode("KR")
                 .keywords(keywords)
+                .isLeader(false)
                 .description("안녕하세요, 반갑습니다. Nice to meet ya!")
                 .build()
         );
