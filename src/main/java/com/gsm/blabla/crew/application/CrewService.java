@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.crew.dao.*;
 import com.gsm.blabla.crew.domain.*;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
@@ -30,6 +31,7 @@ import com.gsm.blabla.crew.dto.StatusRequestDto;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
+import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 
 import java.time.Duration;
@@ -37,6 +39,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
+import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.util.Collections;
 import java.util.List;
@@ -66,6 +69,7 @@ public class CrewService {
     private final S3UploaderService s3UploaderService;
     private final RestTemplate restTemplate;
     private final CrewAccuseRepository crewAccuseRepository;
+    private final MemberKeywordRepository memberKeywordRepository;
 
     public Map<String, Long> create(CrewRequestDto crewRequestDto) {
         Crew crew = crewRepository.save(crewRequestDto.toEntity());
@@ -330,5 +334,37 @@ public class CrewService {
         crewMember.withdrawal();
         
         return Collections.singletonMap("message", "강제 탈퇴가 완료되었습니다.");
+    }
+
+    public MemberResponseDto getMemberProfile(String language, Long crewId, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        List<MemberKeyword> memberInterest = memberKeywordRepository.findAllByMemberId(memberId);
+
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId)
+                .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_JOINED, "해당 멤버는 해당 크루의 멤버가 아닙니다."));
+
+        List<Keyword> keywords = memberInterest.stream()
+                .map(MemberKeyword::getKeyword)
+                .toList();
+
+        List<Map<String, String>> interests = keywords.stream()
+                .map(keyword -> {
+                    Map<String, String> interest = new HashMap<>();
+                    if ("ko".equals(language)) {
+                        interest.put("emoji", keyword.getEmoji());
+                        interest.put("name", keyword.getKoreanName());
+                    } else if ("en".equals(language)) {
+                        interest.put("emoji", keyword.getEmoji());
+                        interest.put("name", keyword.getEnglishName());
+                    }
+                    return interest;
+                })
+                .toList();
+
+
+        return MemberResponseDto.getMemberProfile(member, crewMember, interests);
     }
 }

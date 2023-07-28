@@ -22,7 +22,7 @@ public class ContentController {
 
     @Operation(summary = "단일 컨텐츠 조회 API")
     @GetMapping("/contents/{contentId}")
-    public DataResponseDto<Map<String, ContentResponseDto>> get(@PathVariable Long contentId) {
+    public DataResponseDto<ContentResponseDto> get(@PathVariable Long contentId) {
         return DataResponseDto.of(contentService.get(contentId));
     }
 
@@ -34,7 +34,7 @@ public class ContentController {
 
     @Operation(summary = "오늘의 컨텐츠 조회 API")
     @GetMapping("/{language}/contents/today")
-    public DataResponseDto<Map<String, ContentViewResponseDto>> getTodayContent(@PathVariable String language) {
+    public DataResponseDto<ContentViewResponseDto> getTodayContent(@PathVariable String language) {
         return DataResponseDto.of(contentService.getTodayContent(language));
     }
 }
