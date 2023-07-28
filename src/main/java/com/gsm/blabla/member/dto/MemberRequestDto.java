@@ -37,6 +37,7 @@ public class MemberRequestDto {
     private int engLevel;
     @Size(max = 10, message = "관심사는 10개까지 선택 가능합니다.")
     private List<Keyword> keywords;
+    private String description;
     private boolean pushNotification;
 
     public Member toEntity() {
