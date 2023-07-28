@@ -1,9 +1,12 @@
 package com.gsm.blabla.member.domain;
 
 import com.gsm.blabla.global.domain.BaseTimeEntity;
+import com.gsm.blabla.member.dto.MemberRequestDto;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,5 +60,15 @@ public class Member extends BaseTimeEntity {
         this.korLevel = korLevel;
         this.engLevel = engLevel;
         this.pushNotification = pushNotification;
+    }
+
+    public void updateMember(MemberRequestDto memberRequestDto) {
+        Optional.ofNullable(memberRequestDto.getNickname()).ifPresent(this::setNickname);
+        Optional.ofNullable(memberRequestDto.getProfileImage()).ifPresent(this::setProfileImage);
+        Optional.ofNullable(memberRequestDto.getKorLevel()).ifPresent(this::setKorLevel);
+        Optional.ofNullable(memberRequestDto.getEngLevel()).ifPresent(this::setEngLevel);
+        Optional.ofNullable(memberRequestDto.getCountryCode()).ifPresent(this::setCountryCode);
+        Optional.ofNullable(memberRequestDto.getDescription()).ifPresent(this::setDescription);
+        Optional.ofNullable(memberRequestDto.getGender()).ifPresent(this::setGender);
     }
 }
