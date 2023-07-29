@@ -356,9 +356,11 @@ public class CrewService {
                     if ("ko".equals(language)) {
                         interest.put("emoji", keyword.getEmoji());
                         interest.put("name", keyword.getKoreanName());
+                        interest.put("tag", keyword.name());
                     } else if ("en".equals(language)) {
                         interest.put("emoji", keyword.getEmoji());
                         interest.put("name", keyword.getEnglishName());
+                        interest.put("tag", keyword.name());
                     }
                     return interest;
                 })
