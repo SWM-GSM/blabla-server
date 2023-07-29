@@ -93,6 +93,7 @@ public class DummyController {
                 .description(member.getDescription())
                 .profileImage(member.getProfileImage())
                 .countryCode(member.getCountryCode())
+                .birthDate(member.getBirthDate())
                 .korLevel(member.getKorLevel())
                 .engLevel(member.getEngLevel())
                 .isLeader(true)
