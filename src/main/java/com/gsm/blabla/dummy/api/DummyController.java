@@ -24,10 +24,14 @@ import com.gsm.blabla.dummy.dto.ScheduleDto;
 import com.gsm.blabla.dummy.dto.StatusDto;
 import com.gsm.blabla.dummy.dto.VoiceRoomDto;
 import com.gsm.blabla.global.response.DataResponseDto;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import com.gsm.blabla.member.domain.Member;
+import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,30 +57,51 @@ public class DummyController {
     private final AgoraService agoraService;
 
     @GetMapping(value = {"/{language}/profile", "{language}/crews/{crewId}/profile/{memberId}"})
-    public DataResponseDto<MemberDto> getProfile(@PathVariable String language) {
-        List<KeywordDto> keywords = "ko".equals(language) ?
-            List.of(
-                KeywordDto.builder().emoji(Keyword.DRIVE.getEmoji()).name(Keyword.GAME.getKoreanName()).build(),
-                KeywordDto.builder().emoji(Keyword.GAME.getEmoji()).name(Keyword.GAME.getKoreanName()).build()
-            ) :
-            List.of(
-                KeywordDto.builder().emoji(Keyword.DRIVE.getEmoji()).name(Keyword.GAME.getEnglishName()).build(),
-                KeywordDto.builder().emoji(Keyword.GAME.getEmoji()).name(Keyword.GAME.getEnglishName()).build()
-            );
+    public DataResponseDto<MemberResponseDto> getProfile(@PathVariable String language) {
+        List<Keyword> keywords = new ArrayList<>();
+        keywords.add(Keyword.GAME);
+        keywords.add(Keyword.NETFLIX);
 
-        return DataResponseDto.of(
-            MemberDto.builder()
-                .profileImage("cat")
+        List<Map<String, String>> interests = keywords.stream()
+                .map(keyword -> {
+                    Map<String, String> interest = new HashMap<>();
+                    if ("ko".equals(language)) {
+                        interest.put("emoji", keyword.getEmoji());
+                        interest.put("name", keyword.getKoreanName());
+                        interest.put("tag", keyword.name());
+                    } else if ("en".equals(language)) {
+                        interest.put("emoji", keyword.getEmoji());
+                        interest.put("name", keyword.getEnglishName());
+                        interest.put("tag", keyword.name());
+                    }
+                    return interest;
+                })
+                .toList();
+        Member member = Member.builder()
                 .nickname("가나다라마바사")
+                .profileImage("cat")
+                .countryCode("KR")
                 .korLevel(5)
                 .engLevel(3)
-                .signedUpAfter(99)
-                .countryCode("KR")
-                .keywords(keywords)
-                .isLeader(false)
-                .description("안녕하세요, 반갑습니다. Nice to meet ya!")
-                .build()
-        );
+                .gender("female")
+                .birthDate(LocalDate.of(1995, 1, 1))
+                .build();
+
+        MemberResponseDto memberResponseDto = MemberResponseDto.builder()
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .description(member.getDescription())
+                .profileImage(member.getProfileImage())
+                .countryCode(member.getCountryCode())
+                .korLevel(member.getKorLevel())
+                .engLevel(member.getEngLevel())
+                .isLeader(true)
+                .gender(member.getGender())
+                .signedUpAfter(1L)
+                .keywords(interests)
+                .build();
+
+        return DataResponseDto.of(memberResponseDto);
     }
 
     @GetMapping(value = "/{language}/crews/{crewId}")
