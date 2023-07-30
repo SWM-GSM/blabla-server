@@ -341,6 +341,36 @@ public class DummyController {
         return DataResponseDto.of(contentViewResponseDto);
     }
 
+    @GetMapping("/contents/{contentId}/feedback")
+    public DataResponseDto<PracticeFeedbackResponseDto> getFeedback(
+            @PathVariable Long contentId) {
+
+        Member member = Member.builder()
+                .nickname("감자")
+                .profileImage("cat")
+                .build();
+
+        Content content = Content.builder()
+                .id(contentId)
+                .level(1L)
+                .topic("Topic 2")
+                .title("Title 2")
+                .build();
+
+        MemberContent memberContent = MemberContent.builder()
+                .member(member)
+                .content(content)
+                .userAnswer("거의 다 왔어")
+                .shortFeedback(null)
+                .longFeedback("In Korean, both \\\"거의 다 왔어\\\" and \\\"거의 다 했어\\\" convey a similar meaning, which is \\\"I'm almost there\\\" or \\\"I'm almost done.\\\" However, there is a subtle difference in their usage.\\n\\n\\\"거의 다 왔어\\\" is used when referring to a physical location or a destination. It implies that you are almost at the place you are going to. For example, if you are meeting someone at a cafe and you are close to arriving, you would say \\\"거의 다 왔어\\\" to indicate that you are almost there.\\n\\nOn the other hand, \\\"거의 다 했어\\\" is used when talking about completing an action or task. It implies that you are almost finished doing something. For example, if you are almost done with your homework, you would say \\\"거의 다 했어\\\" to express that you are almost finished.\\n\\nIn this case, the correct answer is \\\"거의 다 왔어\\\" because the learner is referring to a physical location or a destination. They are saying that they are almost at the place, not that they are almost done with something.")
+                .starScore(0.78)
+                .contextScore(0.5)
+                .build();
+
+        return DataResponseDto.of(PracticeFeedbackResponseDto.of(memberContent));
+    }
+
+
     @PostMapping("/contents/{contentId}/feedback")
     public DataResponseDto<PracticeFeedbackResponseDto> feedback(
             @PathVariable Long contentId,
