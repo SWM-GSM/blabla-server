@@ -35,7 +35,7 @@ public class MemberController {
 
     @Operation(summary = "멤버 프로필 조회 API")
     @GetMapping("/{language}/profile")
-    public DataResponseDto<MemberResponseDto> getProfile(@PathVariable String language) {
+    public DataResponseDto<MemberProfileResponseDto> getProfile(@PathVariable String language) {
         return DataResponseDto.of(memberService.getProfile(language));
     }
 
