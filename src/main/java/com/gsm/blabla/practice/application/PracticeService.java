@@ -84,7 +84,7 @@ public class PracticeService {
                 .orElse(null);
     }
 
-    public PracticeFeedbackResponseDto createFeedback(Long contentId, String userAnswer) {
+    public PracticeFeedbackResponseDto createFeedback(Long contentId, UserAnswerRequestDto userAnswerRequestDto) {
         Content content = contentRepository.findById(contentId)
                 .orElseThrow(() -> new GeneralException(Code.CONTENT_NOT_FOUND, "존재하지 않는 컨텐츠입니다.")
         );
@@ -92,7 +92,7 @@ public class PracticeService {
         String language = content.getLanguage();
 
         PracticeFeedbackRequestDto practiceFeedbackRequestDto = PracticeFeedbackRequestDto.builder()
-                .userAnswer(userAnswer)
+                .userAnswer(userAnswerRequestDto.getUserAnswer())
                 .answer(content.getAnswer())
                 .build();
 
@@ -121,7 +121,7 @@ public class PracticeService {
         MemberContent memberContent = MemberContent.builder()
                 .member(member)
                 .content(content)
-                .userAnswer(userAnswer)
+                .userAnswer(userAnswerRequestDto.getUserAnswer())
                 .shortFeedback(null)
                 .longFeedback(practiceFeedbackResponseDto.getLongFeedback())
                 .starScore(practiceFeedbackResponseDto.getStarScore())
