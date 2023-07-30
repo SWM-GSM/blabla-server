@@ -37,12 +37,19 @@ public class PracticeController {
         return DataResponseDto.of(practiceService.getTodayContent(language));
     }
 
-    @Operation(summary = "연습실 피드백 API")
+    @Operation(summary = "연습실 피드백 생성 & 조회 API")
     @PostMapping("/contents/{contentId}/feedback")
-    public DataResponseDto<PracticeFeedbackResponseDto> feedback(
+    public DataResponseDto<PracticeFeedbackResponseDto> createFeedback(
             @PathVariable Long contentId,
             @RequestParam("userAnswer") String userAnswer) {
-        return DataResponseDto.of(practiceService.feedback(contentId, userAnswer));
+        return DataResponseDto.of(practiceService.createFeedback(contentId, userAnswer));
+    }
+
+    @Operation(summary = "연습실 피드백 조회 API")
+    @GetMapping("/contents/{contentId}/feedback")
+    public DataResponseDto<PracticeFeedbackResponseDto> getFeedback(
+            @PathVariable Long contentId) {
+        return DataResponseDto.of(practiceService.getFeedback(contentId));
     }
 }
 

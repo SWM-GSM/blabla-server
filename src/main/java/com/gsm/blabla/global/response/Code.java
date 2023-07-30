@@ -66,6 +66,12 @@ public enum Code {
     CONTENT_NOT_FOUND("CT001", HttpStatus.NOT_FOUND, "Content not found"),
 
     /*
+     * Content 관련 오류
+     * HEAD NAME - MC (MemberContent)
+     * */
+    MEMBER_CONTENT_NOT_FOUND("MC001", HttpStatus.NOT_FOUND, "MemberContent not found"),
+
+    /*
     * 서버 관련 오류
     * HEAD NAME - S (Server)
     * */

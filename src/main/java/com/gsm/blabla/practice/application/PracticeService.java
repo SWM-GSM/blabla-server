@@ -84,7 +84,7 @@ public class PracticeService {
                 .orElse(null);
     }
 
-    public PracticeFeedbackResponseDto feedback(Long contentId, String userAnswer) {
+    public PracticeFeedbackResponseDto createFeedback(Long contentId, String userAnswer) {
         Content content = contentRepository.findById(contentId)
                 .orElseThrow(() -> new GeneralException(Code.CONTENT_NOT_FOUND, "존재하지 않는 컨텐츠입니다.")
         );
@@ -129,6 +129,16 @@ public class PracticeService {
                 .build();
 
         memberContentRepository.save(memberContent);
+
+        return PracticeFeedbackResponseDto.of(memberContent);
+    }
+
+    public PracticeFeedbackResponseDto getFeedback(Long contentId) {
+        Long memberId = SecurityUtil.getMemberId();
+
+        MemberContent memberContent = memberContentRepository.findByContentIdAndMemberId(contentId, memberId)
+                .orElseThrow(() -> new GeneralException(Code.MEMBER_CONTENT_NOT_FOUND, "존재하지 않는 유저 컨텐츠입니다.")
+        );
 
         return PracticeFeedbackResponseDto.of(memberContent);
     }
