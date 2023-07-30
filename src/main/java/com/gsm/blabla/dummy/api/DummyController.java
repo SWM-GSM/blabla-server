@@ -5,6 +5,9 @@ import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
+import com.gsm.blabla.member.dto.BirthDateDisclosureRequestDto;
+import com.gsm.blabla.member.dto.PushNotificationRequestDto;
+import com.gsm.blabla.member.dto.genderDisclosureRequestDto;
 import com.gsm.blabla.practice.domain.Content;
 import com.gsm.blabla.practice.domain.MemberContent;
 import com.gsm.blabla.practice.dto.ContentListResponseDto;
@@ -33,6 +36,7 @@ import java.util.*;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import com.gsm.blabla.practice.dto.PracticeFeedbackResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -399,5 +403,20 @@ public class DummyController {
                 .build();
 
         return DataResponseDto.of(PracticeFeedbackResponseDto.of(memberContent));
+    }
+
+    @PatchMapping("/members/push-notification")
+    public DataResponseDto<Map<String, String>> updatePushNotification(@RequestBody PushNotificationRequestDto pushNotificationRequestDto) {
+        return DataResponseDto.of(Map.of("message", "푸쉬 알림 설정이 완료되었습니다."));
+    }
+
+    @PatchMapping("/members/birth-date-disclosure")
+    public DataResponseDto<Map<String, String>> updateBirthDateDisclosure(@RequestBody BirthDateDisclosureRequestDto birthDateDisclosureRequestDto) {
+        return DataResponseDto.of(Map.of("message", "생년월일 공개 여부 설정이 완료되었습니다."));
+    }
+
+    @PatchMapping("/members/gender-disclosure")
+    public DataResponseDto<Map<String, String>> updateGenderDisclosure(@RequestBody genderDisclosureRequestDto genderDisclosureRequestDto) {
+        return DataResponseDto.of(Map.of("message", "성별 공개 여부 설정이 완료되었습니다."));
     }
 }
