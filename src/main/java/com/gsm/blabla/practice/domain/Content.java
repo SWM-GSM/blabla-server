@@ -1,4 +1,4 @@
-package com.gsm.blabla.content.domain;
+package com.gsm.blabla.practice.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;

@@ -1,6 +1,6 @@
-package com.gsm.blabla.content.dao;
+package com.gsm.blabla.practice.dao;
 
-import com.gsm.blabla.content.domain.MemberContent;
+import com.gsm.blabla.practice.domain.MemberContent;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

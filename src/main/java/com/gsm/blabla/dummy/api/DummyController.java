@@ -5,16 +5,16 @@ import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
-import com.gsm.blabla.content.domain.Content;
-import com.gsm.blabla.content.dto.ContentListResponseDto;
-import com.gsm.blabla.content.dto.ContentResponseDto;
-import com.gsm.blabla.content.dto.ContentViewResponseDto;
+import com.gsm.blabla.practice.domain.Content;
+import com.gsm.blabla.practice.domain.MemberContent;
+import com.gsm.blabla.practice.dto.ContentListResponseDto;
+import com.gsm.blabla.practice.dto.ContentResponseDto;
+import com.gsm.blabla.practice.dto.ContentViewResponseDto;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.dummy.dto.AccuseDto;
 import com.gsm.blabla.dummy.dto.CrewDto;
 import com.gsm.blabla.dummy.dto.JoinDto;
-import com.gsm.blabla.dummy.dto.KeywordDto;
 import com.gsm.blabla.dummy.dto.MemberDto;
 import com.gsm.blabla.dummy.dto.ProfileDto;
 import com.gsm.blabla.dummy.dto.ReportDto;
@@ -31,23 +31,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.domain.MemberKeyword;
-import com.gsm.blabla.member.dto.MemberRequestDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
-import io.swagger.v3.oas.annotations.Operation;
+import com.gsm.blabla.practice.dto.PracticeFeedbackResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -348,5 +339,35 @@ public class DummyController {
                 .isCompleted(true)
                 .build();
         return DataResponseDto.of(contentViewResponseDto);
+    }
+
+    @PostMapping("/contents/{contentId}/feedback")
+    public DataResponseDto<PracticeFeedbackResponseDto> feedback(
+            @PathVariable Long contentId,
+            @RequestParam("userAnswer") String userAnswer) {
+
+        Member member = Member.builder()
+                .nickname("감자")
+                .profileImage("cat")
+                .build();
+
+        Content content = Content.builder()
+                .id(contentId)
+                .level(1L)
+                .topic("Topic 2")
+                .title("Title 2")
+                .build();
+
+        MemberContent memberContent = MemberContent.builder()
+                .member(member)
+                .content(content)
+                .userAnswer(userAnswer)
+                .shortFeedback(null)
+                .longFeedback("In Korean, both \\\"거의 다 왔어\\\" and \\\"거의 다 했어\\\" convey a similar meaning, which is \\\"I'm almost there\\\" or \\\"I'm almost done.\\\" However, there is a subtle difference in their usage.\\n\\n\\\"거의 다 왔어\\\" is used when referring to a physical location or a destination. It implies that you are almost at the place you are going to. For example, if you are meeting someone at a cafe and you are close to arriving, you would say \\\"거의 다 왔어\\\" to indicate that you are almost there.\\n\\nOn the other hand, \\\"거의 다 했어\\\" is used when talking about completing an action or task. It implies that you are almost finished doing something. For example, if you are almost done with your homework, you would say \\\"거의 다 했어\\\" to express that you are almost finished.\\n\\nIn this case, the correct answer is \\\"거의 다 왔어\\\" because the learner is referring to a physical location or a destination. They are saying that they are almost at the place, not that they are almost done with something.")
+                .starScore(0.78)
+                .contextScore(0.5)
+                .build();
+
+        return DataResponseDto.of(PracticeFeedbackResponseDto.of(memberContent));
     }
 }
