@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -53,19 +54,24 @@ public class Member extends BaseTimeEntity {
 
     private Boolean isWithdrawal = false; // 탈퇴 여부
 
+    private Boolean birthDateDisclosure = true; // 생년월일 공개 여부
+
+    private Boolean genderDisclosure = true; // 성별 공개 여부
+
+
     @Builder
     public Member(SocialLoginType socialLoginType, String nickname, String profileImage,
         LocalDate birthDate, String gender, String countryCode,
-        int korLevel, int engLevel, boolean pushNotification) {
+        Integer korLevel, Integer engLevel, Boolean pushNotification) {
         this.socialLoginType = socialLoginType;
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.birthDate = birthDate;
         this.gender = gender;
+        this.pushNotification = pushNotification;
         this.countryCode = countryCode;
         this.korLevel = korLevel;
         this.engLevel = engLevel;
-        this.pushNotification = pushNotification;
     }
 
     public void updateMember(MemberRequestDto memberRequestDto) {
