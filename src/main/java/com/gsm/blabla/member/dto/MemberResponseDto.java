@@ -38,8 +38,6 @@ public class MemberResponseDto {
     private Integer korLevel;
     private Integer engLevel;
     private Boolean isLeader;
-    private Long signedUpAfter;
-    List<Map<String, String>> keywords;
 
     public static MemberResponseDto crewProfileResponse(Long crewId, Member member,
         CrewMemberRepository crewMemberRepository) {
@@ -71,37 +69,5 @@ public class MemberResponseDto {
             .korLevel(member.getKorLevel())
             .engLevel(member.getEngLevel())
             .build();
-    }
-
-    public static MemberResponseDto getCrewMemberProfile(Member member, CrewMember crewMember, List<Map<String, String>> memberInterestList) {
-        return MemberResponseDto.builder()
-            .nickname(member.getNickname())
-            .description(member.getDescription())
-            .profileImage(member.getProfileImage())
-            .countryCode(member.getCountryCode())
-            .korLevel(member.getKorLevel())
-            .engLevel(member.getEngLevel())
-            .birthDate(member.getBirthDate())
-            .gender(member.getGender())
-            .signedUpAfter((long) member.getCreatedAt().toLocalDate().until(LocalDateTime.now().toLocalDate()).getDays() + 1)
-            .isLeader(crewMember.getRole() == CrewMemberRole.LEADER)
-            .keywords(memberInterestList)
-            .build();
-    }
-
-    public static MemberResponseDto getMemberProfile(Member member, List<Map<String, String>> memberInterestList) {
-        return MemberResponseDto.builder()
-                .nickname(member.getNickname())
-                .description(member.getDescription())
-                .profileImage(member.getProfileImage())
-                .countryCode(member.getCountryCode())
-                .korLevel(member.getKorLevel())
-                .engLevel(member.getEngLevel())
-                .gender(member.getGender())
-                .birthDate(member.getBirthDate())
-                .signedUpAfter((long) member.getCreatedAt().toLocalDate().until(LocalDateTime.now().toLocalDate()).getDays() + 1)
-                .isLeader(null)
-                .keywords(memberInterestList)
-                .build();
     }
 }
