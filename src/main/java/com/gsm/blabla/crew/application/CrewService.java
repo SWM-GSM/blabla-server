@@ -40,6 +40,7 @@ import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.MemberKeyword;
+import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.util.Collections;
 import java.util.List;
@@ -336,7 +337,7 @@ public class CrewService {
         return Collections.singletonMap("message", "강제 탈퇴가 완료되었습니다.");
     }
 
-    public MemberResponseDto getMemberProfile(String language, Long crewId, Long memberId) {
+    public MemberProfileResponseDto getMemberProfile(String language, Long crewId, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         );
@@ -367,6 +368,6 @@ public class CrewService {
                 .toList();
 
 
-        return MemberResponseDto.getCrewMemberProfile(member, crewMember, interests);
+        return MemberProfileResponseDto.getCrewMemberProfile(member, crewMember, interests);
     }
 }

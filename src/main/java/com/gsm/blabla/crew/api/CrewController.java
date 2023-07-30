@@ -7,6 +7,7 @@ import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.crew.dto.MessageRequestDto;
 import com.gsm.blabla.crew.dto.StatusRequestDto;
 import com.gsm.blabla.global.response.DataResponseDto;
+import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -123,7 +124,7 @@ public class CrewController {
 
     @Operation(summary = "멤버 프로필 조회 API")
     @GetMapping("/{language}/crews/{crewId}/profile/{memberId}")
-    public DataResponseDto<MemberResponseDto> getMemberProfile(
+    public DataResponseDto<MemberProfileResponseDto> getMemberProfile(
             @PathVariable String language,
             @PathVariable Long crewId,
             @PathVariable Long memberId) {
