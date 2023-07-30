@@ -1,15 +1,10 @@
-package com.gsm.blabla.content.dto;
+package com.gsm.blabla.practice.dto;
 
-import com.gsm.blabla.content.dao.ContentRepository;
-import com.gsm.blabla.content.dao.MemberContentRepository;
-import com.gsm.blabla.content.domain.Content;
+import com.gsm.blabla.practice.domain.Content;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Builder
