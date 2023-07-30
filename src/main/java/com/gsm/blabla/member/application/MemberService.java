@@ -12,8 +12,7 @@ import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.MemberKeyword;
-import com.gsm.blabla.member.dto.MemberRequestDto;
-import com.gsm.blabla.member.dto.MemberResponseDto;
+import com.gsm.blabla.member.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -98,5 +97,38 @@ public class MemberService {
 
 
         return MemberResponseDto.getMemberProfile(member, interests);
+    }
+
+    public Map<String, String> updatePushNotification(PushNotificationRequestDto pushNotificationRequestDto) {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        member.setPushNotification(pushNotificationRequestDto.getPushNotification());
+
+        return Collections.singletonMap("message", "푸시 알림 설정이 완료되었습니다.");
+    }
+
+    public Map<String, String> updateBirthDateDisclosure(BirthDateDisclosureRequestDto birthDateDisclosureRequestDto) {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        member.setBirthDateDisclosure(birthDateDisclosureRequestDto.getBirthDateDisclosure());
+
+        return Collections.singletonMap("message", "생년월일 공개 여부 설정이 완료되었습니다.");
+    }
+
+    public Map<String, String> updateGenderDisclosure(genderDisclosureRequestDto genderDisclosure) {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        member.setGenderDisclosure(genderDisclosure.getGenderDisclosure());
+
+        return Collections.singletonMap("message", "성별 공개 여부 설정이 완료되었습니다.");
     }
 }

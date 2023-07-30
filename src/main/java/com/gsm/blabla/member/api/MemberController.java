@@ -2,8 +2,7 @@ package com.gsm.blabla.member.api;
 
 import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.member.application.MemberService;
-import com.gsm.blabla.member.dto.MemberRequestDto;
-import com.gsm.blabla.member.dto.MemberResponseDto;
+import com.gsm.blabla.member.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;
@@ -38,5 +37,23 @@ public class MemberController {
     @GetMapping("/{language}/profile")
     public DataResponseDto<MemberResponseDto> getProfile(@PathVariable String language) {
         return DataResponseDto.of(memberService.getProfile(language));
+    }
+
+    @Operation(summary = "푸쉬 알림 설정 API")
+    @PatchMapping("/members/push-notification")
+    public DataResponseDto<Map<String, String>> updatePushNotification(@RequestBody PushNotificationRequestDto pushNotificationRequestDto) {
+        return DataResponseDto.of(memberService.updatePushNotification(pushNotificationRequestDto));
+    }
+
+    @Operation(summary = "생년월일 공개 여부 설정 API")
+    @PatchMapping("/members/birth-date-disclosure")
+    public DataResponseDto<Map<String, String>> updateBirthDateDisclosure(@RequestBody BirthDateDisclosureRequestDto birthDateDisclosureRequestDto) {
+        return DataResponseDto.of(memberService.updateBirthDateDisclosure(birthDateDisclosureRequestDto));
+    }
+
+    @Operation(summary = "성별 공개 여부 설정 API")
+    @PatchMapping("/members/gender-disclosure")
+    public DataResponseDto<Map<String, String>> updateGenderDisclosure(@RequestBody genderDisclosureRequestDto genderDisclosureRequestDto) {
+        return DataResponseDto.of(memberService.updateGenderDisclosure(genderDisclosureRequestDto));
     }
 }
