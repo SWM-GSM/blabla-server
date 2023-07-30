@@ -1,11 +1,8 @@
 package com.gsm.blabla.practice.api;
 
 import com.gsm.blabla.practice.application.PracticeService;
-import com.gsm.blabla.practice.dto.ContentListResponseDto;
-import com.gsm.blabla.practice.dto.ContentResponseDto;
-import com.gsm.blabla.practice.dto.ContentViewResponseDto;
+import com.gsm.blabla.practice.dto.*;
 import com.gsm.blabla.global.response.DataResponseDto;
-import com.gsm.blabla.practice.dto.PracticeFeedbackResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +38,8 @@ public class PracticeController {
     @PostMapping("/contents/{contentId}/feedback")
     public DataResponseDto<PracticeFeedbackResponseDto> createFeedback(
             @PathVariable Long contentId,
-            @RequestParam("userAnswer") String userAnswer) {
-        return DataResponseDto.of(practiceService.createFeedback(contentId, userAnswer));
+            @RequestBody UserAnswerRequestDto userAnswerRequestDto) {
+        return DataResponseDto.of(practiceService.createFeedback(contentId, userAnswerRequestDto));
     }
 
     @Operation(summary = "연습실 피드백 조회 API")
