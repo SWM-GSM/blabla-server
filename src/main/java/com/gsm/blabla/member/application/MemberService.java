@@ -67,7 +67,7 @@ public class MemberService {
         return Collections.singletonMap("message", "회원탈퇴가 완료되었습니다.");
     }
 
-    public MemberResponseDto getProfile(String language) {
+    public MemberProfileResponseDto getProfile(String language) {
         Long memberId = SecurityUtil.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
@@ -96,7 +96,7 @@ public class MemberService {
                 .toList();
 
 
-        return MemberResponseDto.getMemberProfile(member, interests);
+        return MemberProfileResponseDto.getMemberProfile(member, interests);
     }
 
     public Map<String, String> updatePushNotification(PushNotificationRequestDto pushNotificationRequestDto) {
