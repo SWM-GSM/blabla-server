@@ -37,6 +37,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -421,5 +422,12 @@ public class DummyController {
     @PatchMapping("/profile/keywords")
     public DataResponseDto<Map<String, String>> updateKeywords(@RequestBody KeywordsRequestDto keywordsRequestDto) {
         return DataResponseDto.of(Map.of("message", "프로필 관심사 수정이 완료되었습니다."));
+    }
+
+    @PostMapping("/contents/{contentId}/practice")
+    public DataResponseDto<Map<String, String>> createPracticeHistory(
+            @PathVariable Long contentId,
+            @RequestParam("files") List<MultipartFile> files) {
+        return DataResponseDto.of(Map.of("message", "연습 기록 음성 파일 저장이 완료되었습니다."));
     }
 }

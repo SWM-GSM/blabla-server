@@ -66,10 +66,16 @@ public enum Code {
     CONTENT_NOT_FOUND("CT001", HttpStatus.NOT_FOUND, "Content not found"),
 
     /*
-     * Content 관련 오류
+     * MemberContent 관련 오류
      * HEAD NAME - MC (MemberContent)
      * */
     MEMBER_CONTENT_NOT_FOUND("MC001", HttpStatus.NOT_FOUND, "MemberContent not found"),
+
+    /*
+     * PracticeHistory 관련 오류
+     * HEAD NAME - PH (PracticeHistory)
+     * */
+    PRACTICE_HISTORY_FILE_SIZE_EXCEEDED("PH001", HttpStatus.BAD_REQUEST, "PracticeHistory file size exceeded"),
 
     /*
     * 서버 관련 오류
