@@ -7,7 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "연습실 관련 API")
@@ -47,6 +49,14 @@ public class PracticeController {
     public DataResponseDto<PracticeFeedbackResponseDto> getFeedback(
             @PathVariable Long contentId) {
         return DataResponseDto.of(practiceService.getFeedback(contentId));
+    }
+
+    @Operation(summary = "연습 기록 음성 파일 저장 API")
+    @PostMapping("/contents/{contentId}/practice")
+    public DataResponseDto<Map<String, String>> createPracticeHistory(
+            @PathVariable Long contentId,
+            @RequestParam("files") List<MultipartFile> files) {
+        return DataResponseDto.of(practiceService.savePracticeHistory(contentId, files));
     }
 }
 
