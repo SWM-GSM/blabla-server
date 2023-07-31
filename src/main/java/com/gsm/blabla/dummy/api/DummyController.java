@@ -5,9 +5,7 @@ import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
-import com.gsm.blabla.member.dto.BirthDateDisclosureRequestDto;
-import com.gsm.blabla.member.dto.PushNotificationRequestDto;
-import com.gsm.blabla.member.dto.genderDisclosureRequestDto;
+import com.gsm.blabla.member.dto.*;
 import com.gsm.blabla.practice.domain.Content;
 import com.gsm.blabla.practice.domain.MemberContent;
 import com.gsm.blabla.practice.dto.*;
@@ -32,7 +30,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.dto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,7 +46,7 @@ public class DummyController {
     private final AgoraService agoraService;
 
     @GetMapping(value = {"/{language}/profile", "{language}/crews/{crewId}/profile/{memberId}"})
-    public DataResponseDto<MemberResponseDto> getProfile(@PathVariable String language) {
+    public DataResponseDto<MemberProfileResponseDto> getProfile(@PathVariable String language) {
         List<Keyword> keywords = new ArrayList<>();
         keywords.add(Keyword.GAME);
         keywords.add(Keyword.NETFLIX);
@@ -79,8 +76,7 @@ public class DummyController {
                 .birthDate(LocalDate.of(1995, 1, 1))
                 .build();
 
-        MemberResponseDto memberResponseDto = MemberResponseDto.builder()
-                .id(member.getId())
+        MemberProfileResponseDto memberProfileResponseDto = MemberProfileResponseDto.builder()
                 .nickname(member.getNickname())
                 .description(member.getDescription())
                 .profileImage(member.getProfileImage())
@@ -94,7 +90,7 @@ public class DummyController {
                 .keywords(interests)
                 .build();
 
-        return DataResponseDto.of(memberResponseDto);
+        return DataResponseDto.of(memberProfileResponseDto);
     }
 
     @GetMapping(value = "/{language}/crews/{crewId}")
