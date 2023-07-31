@@ -185,13 +185,13 @@ public class CrewService {
         return Collections.singletonMap("message", message);
     }
 
-    public Map<String, String> uploadAndAnalyzeVoiceFile(Long crewId, Long reportId, MultipartFile file) {
+    public Map<String, String> uploadAndAnalyzeVoiceFile(Long reportId, MultipartFile file) {
         if (file.getSize() == 0) {
             throw new GeneralException(Code.FILE_IS_EMPTY, "음성 파일이 비어있습니다.");
         }
 
         Long memberId = SecurityUtil.getMemberId();
-        String fileName = String.format("members/%s/crews/%s/reports/%s/%s.wav", String.valueOf(memberId), String.valueOf(crewId), String.valueOf(reportId), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm")));
+        String fileName = String.format("members/%s/reports/%s/%s.wav", String.valueOf(memberId), String.valueOf(reportId), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm")));
         String fileUrl = s3UploaderService.uploadFile(fileName, file);
 
         // TODO: 더미 데이터 & API URL 수정

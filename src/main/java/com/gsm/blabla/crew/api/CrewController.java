@@ -74,12 +74,11 @@ public class CrewController {
 
 
     @Operation(summary = "음성 파일 업로드 & 분석 API")
-    @PostMapping(value = "/crews/{crewId}/reports/{reportId}")
+    @PostMapping(value = "/reports/{reportId}/voice")
     public DataResponseDto<Map<String, String>> uploadAndAnalyzeVoiceFile(
-            @PathVariable("crewId") Long crewId,
             @PathVariable("reportId") Long reportId,
             @RequestParam("file") MultipartFile file) {
-        return DataResponseDto.of(crewService.uploadAndAnalyzeVoiceFile(crewId, reportId, file));
+        return DataResponseDto.of(crewService.uploadAndAnalyzeVoiceFile(reportId, file));
     }
       
       
