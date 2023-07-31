@@ -412,4 +412,14 @@ public class DummyController {
     public DataResponseDto<Map<String, String>> updateGenderDisclosure(@RequestBody genderDisclosureRequestDto genderDisclosureRequestDto) {
         return DataResponseDto.of(Map.of("message", "성별 공개 여부 설정이 완료되었습니다."));
     }
+
+    @PatchMapping("/profile/description")
+    public DataResponseDto<Map<String, String>> updateDescription(@RequestBody DescriptionRequestDto descriptionRequestDto) {
+        return DataResponseDto.of(Map.of("message", "프로필 자기소개 수정이 완료되었습니다."));
+    }
+
+    @PatchMapping("/profile/keywords")
+    public DataResponseDto<Map<String, String>> updateKeywords(@RequestBody KeywordsRequestDto keywordsRequestDto) {
+        return DataResponseDto.of(Map.of("message", "프로필 관심사 수정이 완료되었습니다."));
+    }
 }

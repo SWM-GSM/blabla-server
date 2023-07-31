@@ -1,5 +1,6 @@
 package com.gsm.blabla.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.member.domain.Member;
@@ -26,6 +27,7 @@ public class MemberProfileResponseDto {
     private String countryCode;
     private Integer korLevel;
     private Integer engLevel;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean isLeader;
     private Long signedUpAfter;
     List<Map<String, String>> keywords;
