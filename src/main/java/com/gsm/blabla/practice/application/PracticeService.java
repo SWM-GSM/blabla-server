@@ -2,12 +2,15 @@ package com.gsm.blabla.practice.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gsm.blabla.global.application.S3UploaderService;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.practice.dao.ContentRepository;
 import com.gsm.blabla.practice.dao.MemberContentRepository;
+import com.gsm.blabla.practice.dao.PracticeHistoryRepository;
 import com.gsm.blabla.practice.domain.Content;
 import com.gsm.blabla.practice.domain.MemberContent;
+import com.gsm.blabla.practice.domain.PracticeHistory;
 import com.gsm.blabla.practice.dto.*;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
@@ -19,7 +22,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,7 +36,9 @@ public class PracticeService {
     private final ContentRepository contentRepository;
     private final MemberContentRepository memberContentRepository;
     private final MemberRepository memberRepository;
+    private final PracticeHistoryRepository practiceHistoryRepository;
     private final RestTemplate restTemplate;
+    private final S3UploaderService s3UploaderService;
 
     @Transactional(readOnly = true)
     public ContentResponseDto get(Long contentId) {
@@ -141,5 +149,29 @@ public class PracticeService {
         );
 
         return PracticeFeedbackResponseDto.of(memberContent);
+    }
+
+    public Map<String, String> savePracticeHistory(Long contentId, List<MultipartFile> files) {
+        if (files.size() > 3) {
+            throw new GeneralException(Code.PRACTICE_HISTORY_FILE_SIZE_EXCEEDED, "연습 기록 음성 파일은 최대 3개까지 저장 가능합니다.");
+        }
+
+        Long memberId = SecurityUtil.getMemberId();
+        MemberContent memberContent = memberContentRepository.findByContentIdAndMemberId(contentId, memberId)
+                .orElseThrow(() -> new GeneralException(Code.MEMBER_CONTENT_NOT_FOUND, "존재하지 않는 유저 컨텐츠입니다.")
+        );
+
+        for (MultipartFile file : files) {
+            String fileName = String.format("members/%s/contents/%s/%s.wav", String.valueOf(memberId), String.valueOf(contentId), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm")));
+            String fileUrl = s3UploaderService.uploadFile(fileName, file);
+
+            practiceHistoryRepository.save(PracticeHistory.builder()
+                    .memberContent(memberContent)
+                    .practiceUrl(fileUrl)
+                    .build()
+            );
+        }
+
+        return Collections.singletonMap("message", "연습 기록 음성 파일이 저장 완료되었습니다.");
     }
 }
