@@ -36,6 +36,7 @@ import com.gsm.blabla.member.dao.MemberRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
@@ -46,6 +47,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import com.gsm.blabla.practice.dto.PracticeFeedbackResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -182,14 +185,14 @@ public class CrewService {
         return Collections.singletonMap("message", message);
     }
 
-    public Map<String, String> createCrewReport(Long crewId, Long reportId, String memberIds, List<MultipartFile> wavFiles) {
-        if (wavFiles.stream().anyMatch(wavFile -> wavFile.getSize() == 0)) {
+    public Map<String, String> uploadAndAnalyzeVoiceFile(Long crewId, Long reportId, MultipartFile file) {
+        if (file.getSize() == 0) {
             throw new GeneralException(Code.FILE_IS_EMPTY, "음성 파일이 비어있습니다.");
         }
 
-        List<String> memberIdList = Arrays.stream(memberIds.replaceAll("[\"\\[\\]\\s]", "").split(","))
-                .toList();
-        List<String> fileUrls = s3UploaderService.uploadWavFiles(crewId, reportId, memberIdList, wavFiles, "users");
+        Long memberId = SecurityUtil.getMemberId();
+        String fileName = String.format("members/%s/crews/%s/reports/%s/%s.wav", String.valueOf(memberId), String.valueOf(crewId), String.valueOf(reportId), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm")));
+        String fileUrl = s3UploaderService.uploadFile(fileName, file);
 
         // TODO: 더미 데이터 & API URL 수정
         String fastApiUrl = "http://localhost:8000/api/voice-analysis";
@@ -197,47 +200,41 @@ public class CrewService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<List<String>> requestEntity = new HttpEntity<>(fileUrls, headers);
-        String voiceAnalysisResponse = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
-        if (voiceAnalysisResponse == null) {
-            throw new GeneralException(Code.VOICE_ANALYSIS_IS_NULL, "음성 분석 결과가 없습니다.");
-        }
-        String response = voiceAnalysisResponse.replaceAll("\\\\|^\"|\"$", "");
-
         ObjectMapper objectMapper = new ObjectMapper();
-        ObjectReader reader = objectMapper.readerFor(new TypeReference<List<VoiceAnalysisResponseDto>>() {});
-        List<VoiceAnalysisResponseDto> voiceAnalysisResponseList = null;
+        String jsonFileUrl = "{\"fileUrl\":\"" + fileUrl + "\"}";
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonFileUrl, headers);
+        String response = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
+
+        VoiceAnalysisResponseDto voiceAnalysisResponseDto = null;
         try {
-            voiceAnalysisResponseList = reader.readValue(response);
+            voiceAnalysisResponseDto = objectMapper.readValue(response, VoiceAnalysisResponseDto.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        if (voiceAnalysisResponseList == null || voiceAnalysisResponseList.size() != fileUrls.size()) {
-            throw new GeneralException(Code.VOICE_ANALYSIS_IS_NULL, "음성 분석 결과가 예상한 값과 다릅니다.");
+        if (voiceAnalysisResponseDto == null) {
+            throw new GeneralException(Code.VOICE_ANALYSIS_IS_NULL, "음성 분석 결과가 비어있습니다.");
         }
 
         CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
                 () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
         );
 
-        for (VoiceAnalysisResponseDto voiceAnalysisResponseDto : voiceAnalysisResponseList) {
-            int index = voiceAnalysisResponseList.indexOf(voiceAnalysisResponseDto);
-            Long memberId = Long.parseLong(memberIdList.get(index));
-            Member member = memberRepository.findById(memberId).orElseThrow(
-                    () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-            );
-            voiceFileRepository.save(
-                    VoiceFile.builder()
-                            .member(member)
-                            .crewReport(crewReport)
-                            .fileUrl(fileUrls.get(index))
-                            .totalCallTime(voiceAnalysisResponseDto.getTotalCallTime())
-                            .koreanTime(voiceAnalysisResponseDto.getKoreanTime())
-                            .englishTime(voiceAnalysisResponseDto.getEnglishTime())
-                            .redundancyTime(voiceAnalysisResponseDto.getRedundancyTime())
-                            .build()
-            );
-        }
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        voiceFileRepository.save(
+                VoiceFile.builder()
+                        .member(member)
+                        .crewReport(crewReport)
+                        .fileUrl(fileUrl)
+                        .totalCallTime(voiceAnalysisResponseDto.getTotalCallTime())
+                        .koreanTime(voiceAnalysisResponseDto.getKoreanTime())
+                        .englishTime(voiceAnalysisResponseDto.getEnglishTime())
+                        .redundancyTime(voiceAnalysisResponseDto.getRedundancyTime())
+                        .build()
+        );
         return Collections.singletonMap("message", "음성 파일 분석이 완료되었습니다.");
     }
 
