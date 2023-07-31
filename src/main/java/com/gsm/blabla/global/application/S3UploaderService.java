@@ -56,28 +56,19 @@ public class S3UploaderService {
         return profileUrl;
     }
 
-    public List<String> uploadWavFiles(Long crewId, Long reportId, List<String> userIdList, List<MultipartFile> wavFiles, String dirName) {
-        List<String> fileUrls = new ArrayList<>();
-        IntStream.range(0, wavFiles.size()).forEach(index -> {
-            MultipartFile wavFile = wavFiles.get(index);
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentType(wavFile.getContentType());
-            objectMetadata.setContentLength(wavFile.getSize());
+    public String uploadFile(String fileName, MultipartFile file) {
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(file.getContentType());
+        objectMetadata.setContentLength(file.getSize());
 
-            // 파일명 중복을 방지하기 위해 UUID 추가
-            String fileName = String.format("%s/%s/%s/%s/%s.wav", dirName, userIdList.get(index), String.valueOf(crewId), String.valueOf(reportId), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm")));
+        try (InputStream inputStream = file.getInputStream()) {
+            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (IOException e) {
+            throw new IllegalStateException("S3 음성 파일 업로드에 실패했습니다.");
+        }
 
-            try (InputStream inputStream = wavFile.getInputStream()) {
-                amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
-                        .withCannedAcl(CannedAccessControlList.PublicRead));
-            } catch (IOException e) {
-                throw new IllegalStateException("S3 음성 파일 업로드에 실패했습니다.");
-            }
-
-            String fileUrl = amazonS3Client.getUrl(bucket, fileName).toString();
-            fileUrls.add(fileUrl);
-        });
-        return fileUrls;
+        return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
     // 이미지 삭제
