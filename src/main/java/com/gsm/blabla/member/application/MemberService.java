@@ -34,28 +34,6 @@ public class MemberService {
         return result;
     }
 
-    public Map<String, String> updateProfile(MemberRequestDto memberRequestDto) {
-        Long memberId = SecurityUtil.getMemberId();
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-        );
-
-        if (memberRequestDto.getKeywords() != null) {
-            memberKeywordRepository.deleteAllByMemberId(memberId);
-
-            for (Keyword keyword : memberRequestDto.getKeywords()) {
-                memberKeywordRepository.save(MemberKeyword.builder()
-                        .member(member)
-                        .keyword(keyword)
-                        .build());
-            }
-        }
-
-        member.updateMember(memberRequestDto);
-
-        return Collections.singletonMap("message", "프로필 수정이 완료되었습니다.");
-    }
-
     public Map<String, String> withdrawal() {
         Long memberId = SecurityUtil.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(
@@ -130,5 +108,49 @@ public class MemberService {
         member.setGenderDisclosure(genderDisclosure.getGenderDisclosure());
 
         return Collections.singletonMap("message", "성별 공개 여부 설정이 완료되었습니다.");
+    }
+
+    public Map<String, String> updateProfile(MemberProfileRequestDto memberProfileRequestDto) {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        member.updateMember(memberProfileRequestDto);
+
+        return Collections.singletonMap("message", "프로필 수정이 완료되었습니다.");
+    }
+
+    public Map<String, String> updateDescription(DescriptionRequestDto descriptionRequestDto) {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        if (descriptionRequestDto.getDescription() != null) {
+            member.setDescription(descriptionRequestDto.getDescription());
+        }
+
+        return Collections.singletonMap("message", "자기소개 수정이 완료되었습니다.");
+    }
+
+    public Map<String, String> updateKeywords(KeywordsRequestDto keywordsRequestDto) {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        if (keywordsRequestDto.getKeywords() != null) {
+            memberKeywordRepository.deleteAllByMemberId(memberId);
+
+            for (Keyword keyword : keywordsRequestDto.getKeywords()) {
+                memberKeywordRepository.save(MemberKeyword.builder()
+                        .member(member)
+                        .keyword(keyword)
+                        .build());
+            }
+        }
+
+        return Collections.singletonMap("message", "관심사 수정이 완료되었습니다.");
     }
 }

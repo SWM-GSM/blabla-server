@@ -1,6 +1,7 @@
 package com.gsm.blabla.member.domain;
 
 import com.gsm.blabla.global.domain.BaseTimeEntity;
+import com.gsm.blabla.member.dto.MemberProfileRequestDto;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import jakarta.persistence.*;
 
@@ -74,13 +75,13 @@ public class Member extends BaseTimeEntity {
         this.engLevel = engLevel;
     }
 
-    public void updateMember(MemberRequestDto memberRequestDto) {
-        Optional.ofNullable(memberRequestDto.getNickname()).ifPresent(this::setNickname);
-        Optional.ofNullable(memberRequestDto.getProfileImage()).ifPresent(this::setProfileImage);
-        Optional.ofNullable(memberRequestDto.getKorLevel()).ifPresent(this::setKorLevel);
-        Optional.ofNullable(memberRequestDto.getEngLevel()).ifPresent(this::setEngLevel);
-        Optional.ofNullable(memberRequestDto.getCountryCode()).ifPresent(this::setCountryCode);
-        Optional.ofNullable(memberRequestDto.getDescription()).ifPresent(this::setDescription);
-        Optional.ofNullable(memberRequestDto.getGender()).ifPresent(this::setGender);
+    public void updateMember(MemberProfileRequestDto memberProfileRequestDto) {
+        Optional.ofNullable(memberProfileRequestDto.getNickname()).ifPresent(this::setNickname);
+        Optional.ofNullable(memberProfileRequestDto.getProfileImage()).ifPresent(this::setProfileImage);
+        Optional.ofNullable(memberProfileRequestDto.getKorLevel()).ifPresent(this::setKorLevel);
+        Optional.ofNullable(memberProfileRequestDto.getEngLevel()).ifPresent(this::setEngLevel);
+        Optional.ofNullable(memberProfileRequestDto.getCountryCode()).ifPresent(this::setCountryCode);
+        Optional.ofNullable(memberProfileRequestDto.getGender()).ifPresent(this::setGender);
+        Optional.ofNullable(memberProfileRequestDto.getBirthDate()).ifPresent(this::setBirthDate);
     }
 }
