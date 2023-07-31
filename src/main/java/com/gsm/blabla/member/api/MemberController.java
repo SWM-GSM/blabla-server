@@ -23,9 +23,22 @@ public class MemberController {
 
     @Operation(summary = "프로필 수정 API")
     @PatchMapping("/profile")
-    public DataResponseDto<Map<String, String>> updateProfile(@RequestBody MemberRequestDto memberRequestDto) {
-        return DataResponseDto.of(memberService.updateProfile(memberRequestDto));
+    public DataResponseDto<Map<String, String>> updateProfile(@RequestBody MemberProfileRequestDto memberProfileRequestDto) {
+        return DataResponseDto.of(memberService.updateProfile(memberProfileRequestDto));
     }
+
+    @Operation(summary = "프로필 자기소개 수정 API")
+    @PatchMapping("/profile/description")
+    public DataResponseDto<Map<String, String>> updateDescription(@RequestBody DescriptionRequestDto descriptionRequestDto) {
+        return DataResponseDto.of(memberService.updateDescription(descriptionRequestDto));
+    }
+
+    @Operation(summary = "프로필 관심사 수정 API")
+    @PatchMapping("/profile/keywords")
+    public DataResponseDto<Map<String, String>> updateKeywords(@RequestBody KeywordsRequestDto keywordsRequestDto) {
+        return DataResponseDto.of(memberService.updateKeywords(keywordsRequestDto));
+    }
+
 
     @Operation(summary = "멤버 삭제 API")
     @DeleteMapping("/members/withdrawal")
