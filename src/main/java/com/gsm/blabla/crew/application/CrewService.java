@@ -191,8 +191,10 @@ public class CrewService {
         }
 
         Long memberId = SecurityUtil.getMemberId();
-        String fileName = String.format("members/%s/reports/%s/%s.wav", String.valueOf(memberId), String.valueOf(reportId), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm")));
-        String fileUrl = s3UploaderService.uploadFile(fileName, file);
+
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm"));
+        String filePath = String.format("reports/%s/members/%s/%s/%s.wav", String.valueOf(reportId), String.valueOf(memberId), fileName, fileName);
+        String fileUrl = s3UploaderService.uploadFile(filePath, file);
 
         // TODO: 더미 데이터 & API URL 수정
         String fastApiUrl = "http://localhost:8000/api/voice-analysis";
