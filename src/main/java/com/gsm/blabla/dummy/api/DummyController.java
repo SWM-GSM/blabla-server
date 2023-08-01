@@ -5,16 +5,15 @@ import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
-import com.gsm.blabla.content.domain.Content;
-import com.gsm.blabla.content.dto.ContentListResponseDto;
-import com.gsm.blabla.content.dto.ContentResponseDto;
-import com.gsm.blabla.content.dto.ContentViewResponseDto;
+import com.gsm.blabla.member.dto.*;
+import com.gsm.blabla.practice.domain.Content;
+import com.gsm.blabla.practice.domain.MemberContent;
+import com.gsm.blabla.practice.dto.*;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.dummy.dto.AccuseDto;
 import com.gsm.blabla.dummy.dto.CrewDto;
 import com.gsm.blabla.dummy.dto.JoinDto;
-import com.gsm.blabla.dummy.dto.KeywordDto;
 import com.gsm.blabla.dummy.dto.MemberDto;
 import com.gsm.blabla.dummy.dto.ProfileDto;
 import com.gsm.blabla.dummy.dto.ReportDto;
@@ -24,24 +23,21 @@ import com.gsm.blabla.dummy.dto.ScheduleDto;
 import com.gsm.blabla.dummy.dto.StatusDto;
 import com.gsm.blabla.dummy.dto.VoiceRoomDto;
 import com.gsm.blabla.global.response.DataResponseDto;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import com.gsm.blabla.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,30 +46,52 @@ public class DummyController {
 
     private final AgoraService agoraService;
 
-    @GetMapping(value = "{language}/profile/{memberId}")
-    public DataResponseDto<MemberDto> getProfile(@PathVariable String language) {
-        List<KeywordDto> keywords = "ko".equals(language) ?
-            List.of(
-                KeywordDto.builder().emoji(Keyword.DRIVE.getEmoji()).name(Keyword.GAME.getKoreanName()).build(),
-                KeywordDto.builder().emoji(Keyword.GAME.getEmoji()).name(Keyword.GAME.getKoreanName()).build()
-            ) :
-            List.of(
-                KeywordDto.builder().emoji(Keyword.DRIVE.getEmoji()).name(Keyword.GAME.getEnglishName()).build(),
-                KeywordDto.builder().emoji(Keyword.GAME.getEmoji()).name(Keyword.GAME.getEnglishName()).build()
-            );
+    @GetMapping(value = {"/{language}/profile", "{language}/crews/{crewId}/profile/{memberId}"})
+    public DataResponseDto<MemberProfileResponseDto> getProfile(@PathVariable String language) {
+        List<Keyword> keywords = new ArrayList<>();
+        keywords.add(Keyword.GAME);
+        keywords.add(Keyword.NETFLIX);
 
-        return DataResponseDto.of(
-            MemberDto.builder()
-                .profileImage("cat")
+        List<Map<String, String>> interests = keywords.stream()
+                .map(keyword -> {
+                    Map<String, String> interest = new HashMap<>();
+                    if ("ko".equals(language)) {
+                        interest.put("emoji", keyword.getEmoji());
+                        interest.put("name", keyword.getKoreanName());
+                        interest.put("tag", keyword.name());
+                    } else if ("en".equals(language)) {
+                        interest.put("emoji", keyword.getEmoji());
+                        interest.put("name", keyword.getEnglishName());
+                        interest.put("tag", keyword.name());
+                    }
+                    return interest;
+                })
+                .toList();
+        Member member = Member.builder()
                 .nickname("가나다라마바사")
+                .profileImage("cat")
+                .countryCode("KR")
                 .korLevel(5)
                 .engLevel(3)
-                .signedUpAfter(99)
-                .countryCode("KR")
-                .keywords(keywords)
-                .description("안녕하세요, 반갑습니다. Nice to meet ya!")
-                .build()
-        );
+                .gender("female")
+                .birthDate(LocalDate.of(1995, 1, 1))
+                .build();
+
+        MemberProfileResponseDto memberProfileResponseDto = MemberProfileResponseDto.builder()
+                .nickname(member.getNickname())
+                .description(member.getDescription())
+                .profileImage(member.getProfileImage())
+                .countryCode(member.getCountryCode())
+                .birthDate(member.getBirthDate())
+                .korLevel(member.getKorLevel())
+                .engLevel(member.getEngLevel())
+                .isLeader(true)
+                .gender(member.getGender())
+                .signedUpAfter(1L)
+                .keywords(interests)
+                .build();
+
+        return DataResponseDto.of(memberProfileResponseDto);
     }
 
     @GetMapping(value = "/{language}/crews/{crewId}")
@@ -319,5 +337,97 @@ public class DummyController {
                 .isCompleted(true)
                 .build();
         return DataResponseDto.of(contentViewResponseDto);
+    }
+
+    @GetMapping("/contents/{contentId}/feedback")
+    public DataResponseDto<PracticeFeedbackResponseDto> getFeedback(
+            @PathVariable Long contentId) {
+
+        Member member = Member.builder()
+                .nickname("감자")
+                .profileImage("cat")
+                .build();
+
+        Content content = Content.builder()
+                .id(contentId)
+                .level(1L)
+                .topic("Topic 2")
+                .title("Title 2")
+                .build();
+
+        MemberContent memberContent = MemberContent.builder()
+                .member(member)
+                .content(content)
+                .userAnswer("거의 다 왔어")
+                .shortFeedback(null)
+                .longFeedback("In Korean, both \\\"거의 다 왔어\\\" and \\\"거의 다 했어\\\" convey a similar meaning, which is \\\"I'm almost there\\\" or \\\"I'm almost done.\\\" However, there is a subtle difference in their usage.\\n\\n\\\"거의 다 왔어\\\" is used when referring to a physical location or a destination. It implies that you are almost at the place you are going to. For example, if you are meeting someone at a cafe and you are close to arriving, you would say \\\"거의 다 왔어\\\" to indicate that you are almost there.\\n\\nOn the other hand, \\\"거의 다 했어\\\" is used when talking about completing an action or task. It implies that you are almost finished doing something. For example, if you are almost done with your homework, you would say \\\"거의 다 했어\\\" to express that you are almost finished.\\n\\nIn this case, the correct answer is \\\"거의 다 왔어\\\" because the learner is referring to a physical location or a destination. They are saying that they are almost at the place, not that they are almost done with something.")
+                .starScore(0.78)
+                .contextScore(0.5)
+                .build();
+
+        return DataResponseDto.of(PracticeFeedbackResponseDto.of(memberContent));
+    }
+
+
+    @PostMapping("/contents/{contentId}/feedback")
+    public DataResponseDto<PracticeFeedbackResponseDto> feedback(
+            @PathVariable Long contentId,
+            @RequestBody UserAnswerRequestDto userAnswerRequestDto) {
+
+        Member member = Member.builder()
+                .nickname("감자")
+                .profileImage("cat")
+                .build();
+
+        Content content = Content.builder()
+                .id(contentId)
+                .level(1L)
+                .topic("Topic 2")
+                .title("Title 2")
+                .build();
+
+        MemberContent memberContent = MemberContent.builder()
+                .member(member)
+                .content(content)
+                .userAnswer(userAnswerRequestDto.getUserAnswer())
+                .shortFeedback(null)
+                .longFeedback("In Korean, both \\\"거의 다 왔어\\\" and \\\"거의 다 했어\\\" convey a similar meaning, which is \\\"I'm almost there\\\" or \\\"I'm almost done.\\\" However, there is a subtle difference in their usage.\\n\\n\\\"거의 다 왔어\\\" is used when referring to a physical location or a destination. It implies that you are almost at the place you are going to. For example, if you are meeting someone at a cafe and you are close to arriving, you would say \\\"거의 다 왔어\\\" to indicate that you are almost there.\\n\\nOn the other hand, \\\"거의 다 했어\\\" is used when talking about completing an action or task. It implies that you are almost finished doing something. For example, if you are almost done with your homework, you would say \\\"거의 다 했어\\\" to express that you are almost finished.\\n\\nIn this case, the correct answer is \\\"거의 다 왔어\\\" because the learner is referring to a physical location or a destination. They are saying that they are almost at the place, not that they are almost done with something.")
+                .starScore(0.78)
+                .contextScore(0.5)
+                .build();
+
+        return DataResponseDto.of(PracticeFeedbackResponseDto.of(memberContent));
+    }
+
+    @PatchMapping("/members/push-notification")
+    public DataResponseDto<Map<String, String>> updatePushNotification(@RequestBody PushNotificationRequestDto pushNotificationRequestDto) {
+        return DataResponseDto.of(Map.of("message", "푸쉬 알림 설정이 완료되었습니다."));
+    }
+
+    @PatchMapping("/members/birth-date-disclosure")
+    public DataResponseDto<Map<String, String>> updateBirthDateDisclosure(@RequestBody BirthDateDisclosureRequestDto birthDateDisclosureRequestDto) {
+        return DataResponseDto.of(Map.of("message", "생년월일 공개 여부 설정이 완료되었습니다."));
+    }
+
+    @PatchMapping("/members/gender-disclosure")
+    public DataResponseDto<Map<String, String>> updateGenderDisclosure(@RequestBody genderDisclosureRequestDto genderDisclosureRequestDto) {
+        return DataResponseDto.of(Map.of("message", "성별 공개 여부 설정이 완료되었습니다."));
+    }
+
+    @PatchMapping("/profile/description")
+    public DataResponseDto<Map<String, String>> updateDescription(@RequestBody DescriptionRequestDto descriptionRequestDto) {
+        return DataResponseDto.of(Map.of("message", "프로필 자기소개 수정이 완료되었습니다."));
+    }
+
+    @PatchMapping("/profile/keywords")
+    public DataResponseDto<Map<String, String>> updateKeywords(@RequestBody KeywordsRequestDto keywordsRequestDto) {
+        return DataResponseDto.of(Map.of("message", "프로필 관심사 수정이 완료되었습니다."));
+    }
+
+    @PostMapping("/contents/{contentId}/practice")
+    public DataResponseDto<Map<String, String>> createPracticeHistory(
+            @PathVariable Long contentId,
+            @RequestParam("files") List<MultipartFile> files) {
+        return DataResponseDto.of(Map.of("message", "연습 기록 음성 파일 저장이 완료되었습니다."));
     }
 }

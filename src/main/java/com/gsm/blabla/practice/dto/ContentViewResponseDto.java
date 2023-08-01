@@ -1,7 +1,7 @@
-package com.gsm.blabla.content.dto;
+package com.gsm.blabla.practice.dto;
 
-import com.gsm.blabla.content.dao.MemberContentRepository;
-import com.gsm.blabla.content.domain.Content;
+import com.gsm.blabla.practice.dao.MemberContentRepository;
+import com.gsm.blabla.practice.domain.Content;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
