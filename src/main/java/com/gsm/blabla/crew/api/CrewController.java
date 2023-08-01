@@ -7,6 +7,7 @@ import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.crew.dto.MessageRequestDto;
 import com.gsm.blabla.crew.dto.StatusRequestDto;
 import com.gsm.blabla.global.response.DataResponseDto;
+import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -74,12 +75,11 @@ public class CrewController {
 
     @Operation(summary = "음성 파일 업로드 & 분석 API")
     @PostMapping(value = "/crews/{crewId}/reports/{reportId}")
-    public DataResponseDto<Map<String, String>> createCrewReport(
+    public DataResponseDto<Map<String, String>> uploadAndAnalyzeVoiceFile(
             @PathVariable("crewId") Long crewId,
             @PathVariable("reportId") Long reportId,
-            @RequestParam("files") List<MultipartFile> wavFiles,
-            @RequestParam("users") String memberIds) {
-        return DataResponseDto.of(crewService.createCrewReport(crewId, reportId, memberIds, wavFiles));
+            @RequestParam("file") MultipartFile file) {
+        return DataResponseDto.of(crewService.uploadAndAnalyzeVoiceFile(crewId, reportId, file));
     }
       
       
@@ -123,7 +123,7 @@ public class CrewController {
 
     @Operation(summary = "멤버 프로필 조회 API")
     @GetMapping("/{language}/crews/{crewId}/profile/{memberId}")
-    public DataResponseDto<MemberResponseDto> getMemberProfile(
+    public DataResponseDto<MemberProfileResponseDto> getMemberProfile(
             @PathVariable String language,
             @PathVariable Long crewId,
             @PathVariable Long memberId) {
