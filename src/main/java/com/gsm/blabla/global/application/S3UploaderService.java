@@ -56,19 +56,19 @@ public class S3UploaderService {
         return profileUrl;
     }
 
-    public String uploadFile(String fileName, MultipartFile file) {
+    public String uploadFile(String filePath, MultipartFile file) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.setContentLength(file.getSize());
 
         try (InputStream inputStream = file.getInputStream()) {
-            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+            amazonS3Client.putObject(new PutObjectRequest(bucket, filePath, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (IOException e) {
             throw new IllegalStateException("S3 음성 파일 업로드에 실패했습니다.");
         }
 
-        return amazonS3Client.getUrl(bucket, fileName).toString();
+        return amazonS3Client.getUrl(bucket, filePath).toString();
     }
 
     // 이미지 삭제

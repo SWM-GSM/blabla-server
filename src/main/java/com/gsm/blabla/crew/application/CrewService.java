@@ -7,10 +7,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.crew.dao.*;
 import com.gsm.blabla.crew.domain.*;
-import com.gsm.blabla.crew.dto.CrewRequestDto;
-import com.gsm.blabla.crew.dto.CrewResponseDto;
-import com.gsm.blabla.crew.dto.MessageRequestDto;
-import com.gsm.blabla.crew.dto.VoiceAnalysisResponseDto;
+import com.gsm.blabla.crew.dto.*;
 import com.gsm.blabla.global.application.S3UploaderService;
 import com.gsm.blabla.crew.dao.ApplyMessageRepository;
 import com.gsm.blabla.crew.dao.CrewAccuseRepository;
@@ -26,8 +23,6 @@ import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.CrewTag;
-import com.gsm.blabla.crew.dto.AccuseRequestDto;
-import com.gsm.blabla.crew.dto.StatusRequestDto;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
@@ -74,6 +69,7 @@ public class CrewService {
     private final RestTemplate restTemplate;
     private final CrewAccuseRepository crewAccuseRepository;
     private final MemberKeywordRepository memberKeywordRepository;
+    private final CrewReportAnalysisRepository crewReportAnalysisRepository;
 
     public Map<String, Long> create(CrewRequestDto crewRequestDto) {
         Crew crew = crewRepository.save(crewRequestDto.toEntity());
@@ -368,5 +364,52 @@ public class CrewService {
 
 
         return MemberProfileResponseDto.getCrewMemberProfile(member, crewMember, interests);
+    }
+
+    public Map<String, String> createReport(Long reportId) {
+
+        LocalDateTime endAt = LocalDateTime.now();
+
+        List<VoiceFile> voiceFiles = voiceFileRepository.getAllByCrewReportId(reportId);
+        List<String> fileUrls = voiceFiles.stream()
+                .map(VoiceFile::getFileUrl)
+                .toList();
+
+        // TODO: 더미 데이터 & API URL 수정
+        String fastApiUrl = "http://localhost:8000/api/crew-report";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<List<String>> requestEntity = new HttpEntity<>(fileUrls, headers);
+        String response = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        CrewReportResponseDto crewReportResponseDto = null;
+        try {
+            crewReportResponseDto = objectMapper.readValue(response, CrewReportResponseDto.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        if (crewReportResponseDto == null) {
+            throw new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "리포트 분석 결과가 비어있습니다.");
+        }
+
+        CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
+                () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
+        );
+
+        crewReportAnalysisRepository.save(
+                CrewReportAnalysis.builder()
+                        .crewReport(crewReport)
+                        .koreanTime(crewReportResponseDto.getKoreanTime())
+                        .englishTime(crewReportResponseDto.getEnglishTime())
+                        .cloudUrl(crewReportResponseDto.getCloudUrl())
+                        .endAt(endAt)
+                        .build()
+                );
+
+        return Collections.singletonMap("message", "리포트 생성이 완료되었습니다.");
     }
 }
