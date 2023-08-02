@@ -74,15 +74,21 @@ public class CrewController {
 
 
     @Operation(summary = "음성 파일 업로드 & 분석 API")
-    @PostMapping(value = "/crews/{crewId}/reports/{reportId}")
+    @PostMapping(value = "/reports/{reportId}")
     public DataResponseDto<Map<String, String>> uploadAndAnalyzeVoiceFile(
-            @PathVariable("crewId") Long crewId,
             @PathVariable("reportId") Long reportId,
             @RequestParam("file") MultipartFile file) {
-        return DataResponseDto.of(crewService.uploadAndAnalyzeVoiceFile(crewId, reportId, file));
+        return DataResponseDto.of(crewService.uploadAndAnalyzeVoiceFile(reportId, file));
     }
-      
-      
+
+    @Operation(summary = "크루 리포트 생성 API")
+    @GetMapping(value = "/reports/{reportId}")
+    public DataResponseDto<Map<String, String>> createReport(
+            @PathVariable("reportId") Long reportId) {
+        return DataResponseDto.of(crewService.createReport(reportId));
+    }
+
+
     @Operation(summary = "크루 가입 승인 대기 인원 조회 API")
     @GetMapping(value = "/crews/{crewId}/waiting-list")
     public DataResponseDto<Map<String, List<MemberResponseDto>>> getWaitingList(@PathVariable("crewId") Long crewId) {
