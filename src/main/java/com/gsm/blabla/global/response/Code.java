@@ -85,6 +85,7 @@ public enum Code {
     * */
     INTERNAL_ERROR("S000", HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
     GOOGLE_SERVER_ERROR("S001", HttpStatus.INTERNAL_SERVER_ERROR , "Google server error"),
+    APPLE_SERVER_ERROR("S002", HttpStatus.INTERNAL_SERVER_ERROR , "Apple server error"),
 
     /*
      * 인증 관련 오류
