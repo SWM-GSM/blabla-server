@@ -52,12 +52,14 @@ public enum Code {
      * HEAD NAME - RE (Report)
      * */
     REPORT_NOT_FOUND("RE001", HttpStatus.NOT_FOUND, "Report not found"),
+    REPORT_ANALYSIS_IS_NULL("RE002", HttpStatus.NOT_FOUND, "Report Analysis not found"),
 
     /*
      * VoiceFile 관련 오류
      * HEAD NAME - V (VoiceFile)
      * */
     VOICE_ANALYSIS_IS_NULL("V001", HttpStatus.NOT_FOUND, "Voice Analysis not found"),
+    VOICE_FILE_NOT_FOUND("V002", HttpStatus.NOT_FOUND, "VoiceFile not found"),
 
     /*
      * Content 관련 오류
@@ -83,6 +85,7 @@ public enum Code {
     * */
     INTERNAL_ERROR("S000", HttpStatus.INTERNAL_SERVER_ERROR, "Internal error"),
     GOOGLE_SERVER_ERROR("S001", HttpStatus.INTERNAL_SERVER_ERROR , "Google server error"),
+    APPLE_SERVER_ERROR("S002", HttpStatus.INTERNAL_SERVER_ERROR , "Apple server error"),
 
     /*
      * 인증 관련 오류

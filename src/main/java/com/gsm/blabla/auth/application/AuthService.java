@@ -1,14 +1,21 @@
 package com.gsm.blabla.auth.application;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.jwt.TokenProvider;
 import com.gsm.blabla.jwt.application.JwtService;
+import com.gsm.blabla.jwt.dao.AppleAccountRepository;
 import com.gsm.blabla.jwt.dao.GoogleAccountRepository;
 import com.gsm.blabla.jwt.dao.JwtRepository;
+import com.gsm.blabla.jwt.domain.AppleAccount;
 import com.gsm.blabla.jwt.domain.GoogleAccount;
 import com.gsm.blabla.jwt.domain.Jwt;
+import com.gsm.blabla.jwt.dto.AppleAccountDto;
+import com.gsm.blabla.jwt.dto.ApplePublicKeyDto;
+import com.gsm.blabla.jwt.dto.AppleTokenDto;
 import com.gsm.blabla.jwt.dto.GoogleAccountDto;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
@@ -18,15 +25,42 @@ import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.RSAPublicKeySpec;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,6 +76,16 @@ public class AuthService {
     private final MemberKeywordRepository memberKeywordRepository;
     private final JwtRepository jwtRepository;
     private final GoogleAccountRepository googleAccountRepository;
+    private final AppleAccountRepository appleAccountRepository;
+
+    @Value("${spring.security.oauth2.provider.apple.team-id}")
+    private String appleTeamId;
+    @Value("${spring.security.oauth2.provider.apple.client-id}")
+    private String appleClientId;
+    @Value("${spring.security.oauth2.provider.apple.key-id}")
+    private String appleKeyId;
+    @Value("${spring.security.oauth2.provider.apple.private-key}")
+    private String applePrivateKey;
 
     // 회원가입
     public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto) {
@@ -50,6 +94,8 @@ public class AuthService {
         if (memberRepository.findByNickname(memberRequestDto.getNickname()).isPresent()) {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
         }
+
+        // TODO: 이미 가입한 유저 예외 처리
 
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
@@ -64,8 +110,18 @@ public class AuthService {
 
             }
             case "APPLE" -> {
-                // TODO: 추후 구현
+                AppleTokenDto appleTokenDto = getAppleToken(providerAuthorization);
+                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getIdToken());
+
+                member = memberRepository.save(memberRequestDto.toEntity());
+                appleAccountRepository.save(AppleAccount.builder()
+                    .id(appleAccountDto.getSub())
+                    .member(member)
+                    .refreshToken(appleTokenDto.getRefreshToken())
+                    .build()
+                );
             }
+            case "TEST" -> member = memberRepository.save(memberRequestDto.toEntity());
         }
 
         // 키워드
@@ -90,7 +146,7 @@ public class AuthService {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
                 member = googleAccountRepository.findById(googleAccountDto.getId()).map(GoogleAccount::getMember);
                 if (member.isEmpty()) {
-                    return googleAccountDto.toMemberRequestDto();
+                    throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
                 }
             }
             case APPLE -> {
@@ -157,5 +213,98 @@ public class AuthService {
         }
 
         return response.getBody();
+    }
+
+    private AppleAccountDto getAppleAccount(String identityToken) {
+        // public key 구성요소를 조회한 뒤 JWT의 서명을 검증한 후 Claim을 응답한다
+        try {
+            identityToken = identityToken.replace("Bearer ", "");
+
+            ApplePublicKeyDto applePublicKey = new RestTemplate().exchange(
+                "https://appleid.apple.com/auth/keys",
+                HttpMethod.GET,
+                null,
+                ApplePublicKeyDto.class
+            ).getBody();
+
+            String headerOfIdentityToken = identityToken.substring(0, identityToken.indexOf("."));
+
+            Map<String, String> header = new ObjectMapper().readValue(
+                new String(Base64Utils.decodeFromUrlSafeString(headerOfIdentityToken), StandardCharsets.UTF_8),
+                Map.class
+            );
+            ApplePublicKeyDto.Key key = applePublicKey.getMatchedKeyBy(header.get("kid"), header.get("alg"))
+                .orElseThrow(() -> new NullPointerException("Failed to get public key from apple's id server"));
+
+            byte[] nBytes = Base64.getUrlDecoder().decode(key.getN());
+            byte[] eBytes = Base64.getUrlDecoder().decode(key.getE());
+
+            BigInteger n = new BigInteger(1, nBytes);
+            BigInteger e = new BigInteger(1, eBytes);
+
+            RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(n, e);
+            KeyFactory keyFactory = KeyFactory.getInstance(key.getKty());
+            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+            Claims memberInfo = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(identityToken).getBody();
+
+            Map<String, Object> expectedMap = new HashMap<>(memberInfo);
+
+            return new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .convertValue(expectedMap, AppleAccountDto.class);
+
+        } catch (Exception e) {
+            throw new GeneralException(Code.APPLE_SERVER_ERROR, "apple server error");
+        }
+    }
+
+    private AppleTokenDto getAppleToken(String appleAuthorizationCode) {
+        try {
+            appleAuthorizationCode = appleAuthorizationCode.replace("Bearer ", "");
+
+            HttpHeaders headers = new HttpHeaders();
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            params.add("client_id", appleClientId);
+            params.add("client_secret", getAppleClientSecret());
+            params.add("code", appleAuthorizationCode);
+            params.add("grant_type", "authorization_code");
+
+            return new RestTemplate().exchange(
+                "https://appleid.apple.com/auth/token",
+                HttpMethod.POST,
+                new HttpEntity<>(params, headers),
+                AppleTokenDto.class
+            ).getBody();
+        } catch (Exception e) {
+            throw new GeneralException(Code.APPLE_SERVER_ERROR, e);
+        }
+    }
+
+    private String getAppleClientSecret() throws IOException {
+        Date expirationDate = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
+        return Jwts.builder()
+            .setHeaderParam("kid", appleKeyId)
+            .setHeaderParam("alg", "ES256")
+            .setIssuer(appleTeamId)
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(expirationDate)
+            .setAudience("https://appleid.apple.com")
+            .setSubject(appleClientId)
+            .setSubject(appleClientId)
+            .signWith(SignatureAlgorithm.ES256, getApplePrivateKey())
+            .compact();
+    }
+
+    private PrivateKey getApplePrivateKey() throws IOException {
+        ClassPathResource resource = new ClassPathResource(applePrivateKey);
+        String privateKey = new String(resource.getInputStream().readAllBytes());
+        Reader pemReader = new StringReader(privateKey);
+        PEMParser pemParser = new PEMParser(pemReader);
+        JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+        PrivateKeyInfo object = (PrivateKeyInfo) pemParser.readObject();
+        return converter.getPrivateKey(object);
     }
 }
