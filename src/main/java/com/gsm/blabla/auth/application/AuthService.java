@@ -121,6 +121,7 @@ public class AuthService {
                     .build()
                 );
             }
+            case "TEST" -> member = memberRepository.save(memberRequestDto.toEntity());
         }
 
         // 키워드

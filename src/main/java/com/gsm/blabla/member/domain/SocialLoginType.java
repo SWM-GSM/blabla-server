@@ -9,5 +9,6 @@ public enum SocialLoginType {
     GOOGLE,
     APPLE,
     FACEBOOK,
-    KAKAO;
+    KAKAO,
+    TEST;
 }
