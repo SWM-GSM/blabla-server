@@ -146,7 +146,7 @@ public class AuthService {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
                 member = googleAccountRepository.findById(googleAccountDto.getId()).map(GoogleAccount::getMember);
                 if (member.isEmpty()) {
-                    return googleAccountDto.toMemberRequestDto();
+                    throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
                 }
             }
             case APPLE -> {
