@@ -1,11 +1,7 @@
 package com.gsm.blabla.crew.api;
 
 import com.gsm.blabla.crew.application.CrewService;
-import com.gsm.blabla.crew.dto.AccuseRequestDto;
-import com.gsm.blabla.crew.dto.CrewRequestDto;
-import com.gsm.blabla.crew.dto.CrewResponseDto;
-import com.gsm.blabla.crew.dto.MessageRequestDto;
-import com.gsm.blabla.crew.dto.StatusRequestDto;
+import com.gsm.blabla.crew.dto.*;
 import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
@@ -74,7 +70,7 @@ public class CrewController {
 
 
     @Operation(summary = "음성 파일 업로드 & 분석 API")
-    @PostMapping(value = "/reports/{reportId}")
+    @PostMapping(value = "/reports/{reportId}/voice-file")
     public DataResponseDto<Map<String, String>> uploadAndAnalyzeVoiceFile(
             @PathVariable("reportId") Long reportId,
             @RequestParam("file") MultipartFile file) {
@@ -82,7 +78,7 @@ public class CrewController {
     }
 
     @Operation(summary = "크루 리포트 생성 API")
-    @GetMapping(value = "/reports/{reportId}")
+    @PostMapping(value = "/reports/{reportId}")
     public DataResponseDto<Map<String, String>> createReport(
             @PathVariable("reportId") Long reportId) {
         return DataResponseDto.of(crewService.createReport(reportId));
@@ -134,5 +130,13 @@ public class CrewController {
             @PathVariable Long crewId,
             @PathVariable Long memberId) {
         return DataResponseDto.of(crewService.getMemberProfile(language, crewId, memberId));
+    }
+
+    @Operation(summary = "음성 채팅 유저 피드백 저장 API")
+    @PostMapping(value = "/voice-files/{voiceFileId}/feedback")
+    public DataResponseDto<Map<String, String>> createFeedback(
+            @PathVariable("voiceFileId") Long voiceFileId,
+            @RequestBody VoiceFileFeedbackRequestDto voiceFileFeedbackRequestDto) {
+        return DataResponseDto.of(crewService.createFeedback(voiceFileId, voiceFileFeedbackRequestDto));
     }
 }

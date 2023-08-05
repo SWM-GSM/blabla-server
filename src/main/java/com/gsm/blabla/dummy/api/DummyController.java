@@ -5,6 +5,7 @@ import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
+import com.gsm.blabla.crew.dto.VoiceFileFeedbackRequestDto;
 import com.gsm.blabla.member.dto.*;
 import com.gsm.blabla.practice.domain.Content;
 import com.gsm.blabla.practice.domain.MemberContent;
@@ -431,16 +432,24 @@ public class DummyController {
         return DataResponseDto.of(Map.of("message", "연습 기록 음성 파일 저장이 완료되었습니다."));
     }
 
-    @PostMapping(value = "/reports/{reportId}")
+    @PostMapping(value = "/reports/{reportId}/voice-file")
     public DataResponseDto<Map<String, String>> uploadAndAnalyzeVoiceFile(
             @PathVariable("reportId") Long reportId,
             @RequestParam("file") MultipartFile file) {
         return DataResponseDto.of(Map.of("message", "음성 파일 분석이 완료되었습니다."));
     }
 
-    @GetMapping(value = "/reports/{reportId}")
+    @PostMapping(value = "/reports/{reportId}")
     public DataResponseDto<Map<String, String>> createReport(
             @PathVariable("reportId") Long reportId) {
         return DataResponseDto.of(Map.of("message", "리포트 생성이 완료되었습니다."));
+    }
+
+    @Operation(summary = "음성 채팅 유저 피드백 저장 API")
+    @PostMapping(value = "/voice-files/{voiceFileId}/feedback")
+    public DataResponseDto<Map<String, String>> createFeedback(
+            @PathVariable("voiceFileId") Long voiceFileId,
+            @RequestBody VoiceFileFeedbackRequestDto voiceFileFeedbackRequestDto) {
+        return DataResponseDto.of(Map.of("message", "음성 채팅 유저 피드백 저장이 완료되었습니다."));
     }
 }
