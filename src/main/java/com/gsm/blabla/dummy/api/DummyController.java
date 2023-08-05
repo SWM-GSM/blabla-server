@@ -432,14 +432,14 @@ public class DummyController {
         return DataResponseDto.of(Map.of("message", "연습 기록 음성 파일 저장이 완료되었습니다."));
     }
 
-    @PostMapping(value = "/reports/{reportId}")
+    @PostMapping(value = "/reports/{reportId}/voice-file")
     public DataResponseDto<Map<String, String>> uploadAndAnalyzeVoiceFile(
             @PathVariable("reportId") Long reportId,
             @RequestParam("file") MultipartFile file) {
         return DataResponseDto.of(Map.of("message", "음성 파일 분석이 완료되었습니다."));
     }
 
-    @GetMapping(value = "/reports/{reportId}")
+    @PostMapping(value = "/reports/{reportId}")
     public DataResponseDto<Map<String, String>> createReport(
             @PathVariable("reportId") Long reportId) {
         return DataResponseDto.of(Map.of("message", "리포트 생성이 완료되었습니다."));
