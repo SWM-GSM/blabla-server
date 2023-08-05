@@ -70,6 +70,7 @@ public class CrewService {
     private final CrewAccuseRepository crewAccuseRepository;
     private final MemberKeywordRepository memberKeywordRepository;
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
+    private final FeedbackRepository feedbackRepository;
 
     public Map<String, Long> create(CrewRequestDto crewRequestDto) {
         Crew crew = crewRepository.save(crewRequestDto.toEntity());
@@ -411,5 +412,26 @@ public class CrewService {
                 );
 
         return Collections.singletonMap("message", "리포트 생성이 완료되었습니다.");
+    }
+
+    public Map<String, String> createFeedback(Long voiceFileId, VoiceFileFeedbackRequestDto voiceFileFeedbackRequestDto) {
+        VoiceFile voiceFile = voiceFileRepository.findById(voiceFileId).orElseThrow(
+                () -> new GeneralException(Code.VOICE_FILE_NOT_FOUND, "존재하지 않는 음성 파일입니다.")
+        );
+
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        feedbackRepository.save(
+                Feedback.builder()
+                        .member(member)
+                        .voiceFile(voiceFile)
+                        .content(voiceFileFeedbackRequestDto.getContent())
+                        .build()
+        );
+
+        return Collections.singletonMap("message", "음성 채팅 피드백 저장이 완료되었습니다.");
     }
 }
