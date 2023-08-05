@@ -445,11 +445,11 @@ public class DummyController {
         return DataResponseDto.of(Map.of("message", "리포트 생성이 완료되었습니다."));
     }
 
-    @Operation(summary = "음성 채팅 유저 피드백 생성 API")
+    @Operation(summary = "음성 채팅 유저 피드백 저장 API")
     @PostMapping(value = "/voice-files/{voiceFileId}/feedback")
     public DataResponseDto<Map<String, String>> createFeedback(
             @PathVariable("voiceFileId") Long voiceFileId,
             @RequestBody VoiceFileFeedbackRequestDto voiceFileFeedbackRequestDto) {
-        return DataResponseDto.of(Map.of("message", "음성 채팅 유저 피드백 생성이 완료되었습니다."));
+        return DataResponseDto.of(Map.of("message", "음성 채팅 유저 피드백 저장이 완료되었습니다."));
     }
 }
