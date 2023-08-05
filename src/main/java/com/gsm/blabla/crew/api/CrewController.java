@@ -1,11 +1,7 @@
 package com.gsm.blabla.crew.api;
 
 import com.gsm.blabla.crew.application.CrewService;
-import com.gsm.blabla.crew.dto.AccuseRequestDto;
-import com.gsm.blabla.crew.dto.CrewRequestDto;
-import com.gsm.blabla.crew.dto.CrewResponseDto;
-import com.gsm.blabla.crew.dto.MessageRequestDto;
-import com.gsm.blabla.crew.dto.StatusRequestDto;
+import com.gsm.blabla.crew.dto.*;
 import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
@@ -134,5 +130,13 @@ public class CrewController {
             @PathVariable Long crewId,
             @PathVariable Long memberId) {
         return DataResponseDto.of(crewService.getMemberProfile(language, crewId, memberId));
+    }
+
+    @Operation(summary = "음성 채팅 유저 피드백 생성 API")
+    @PostMapping(value = "/voice-files/{voiceFileId}/feedback")
+    public DataResponseDto<Map<String, String>> createFeedback(
+            @PathVariable("voiceFileId") Long voiceFileId,
+            @RequestBody VoiceFileFeedbackRequestDto voiceFileFeedbackRequestDto) {
+        return DataResponseDto.of(crewService.createFeedback(voiceFileId, voiceFileFeedbackRequestDto));
     }
 }
