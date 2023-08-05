@@ -432,6 +432,6 @@ public class CrewService {
                         .build()
         );
 
-        return Collections.singletonMap("message", "음성 채팅 피드백 생성이 완료되었습니다.");
+        return Collections.singletonMap("message", "음성 채팅 피드백 저장이 완료되었습니다.");
     }
 }

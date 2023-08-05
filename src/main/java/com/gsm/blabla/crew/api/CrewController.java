@@ -132,7 +132,7 @@ public class CrewController {
         return DataResponseDto.of(crewService.getMemberProfile(language, crewId, memberId));
     }
 
-    @Operation(summary = "음성 채팅 유저 피드백 생성 API")
+    @Operation(summary = "음성 채팅 유저 피드백 저장 API")
     @PostMapping(value = "/voice-files/{voiceFileId}/feedback")
     public DataResponseDto<Map<String, String>> createFeedback(
             @PathVariable("voiceFileId") Long voiceFileId,
