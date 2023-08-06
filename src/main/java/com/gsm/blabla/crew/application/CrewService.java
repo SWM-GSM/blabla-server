@@ -124,13 +124,15 @@ public class CrewService {
     }
 
     // TODO: n + 1 문제 최적화
-    public List<CrewResponseDto> getMyCrews() {
+    public Map<String, List<CrewResponseDto>> getMyCrews() {
         Long memberId = SecurityUtil.getMemberId();
         List<CrewMember> crewMembers = crewMemberRepository.getByMemberIdAndStatus(memberId, CrewMemberStatus.JOINED);
 
-        return crewMembers.stream()
+        List<CrewResponseDto> crews = crewMembers.stream()
             .map(crewMember -> CrewResponseDto.myCrewListResponse(crewMember.getCrew(), crewMemberRepository))
             .toList();
+
+        return Collections.singletonMap("crews", crews);
     }
 
     public Map<String, String> joinCrew(Long crewId, MessageRequestDto messageRequestDto) {
