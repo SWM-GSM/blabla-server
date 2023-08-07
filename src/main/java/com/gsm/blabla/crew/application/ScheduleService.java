@@ -64,12 +64,16 @@ public class ScheduleService {
 
     @Transactional(readOnly = true)
     public Map<String, List<ScheduleResponseDto>> getAll(Long crewId) {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));
         Crew crew = crewRepository.findById(crewId).orElseThrow(
                 () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
         List<Schedule> schedules = scheduleRepository.findAllByCrewOrderByMeetingTime(crew);
 
         return Collections.singletonMap("schedules", schedules.stream()
-            .map(schedule -> ScheduleResponseDto.of(schedule, crewMemberRepository))
+            .map(schedule -> ScheduleResponseDto.scheduleListResponse(member, schedule,
+                crewMemberRepository, memberScheduleRepository))
             .toList());
     }
 
@@ -77,7 +81,11 @@ public class ScheduleService {
     public ScheduleResponseDto getUpcomingSchedule(Long crewId) {
         Schedule schedule = scheduleRepository.findNearestSchedule(crewId);
 
-        return ScheduleResponseDto.of(schedule, crewMemberRepository);
+        if (schedule == null) {
+            return new ScheduleResponseDto();
+        }
+
+        return ScheduleResponseDto.scheduleResponse(schedule, crewMemberRepository);
     }
 
     public Map<String, String> joinSchedule(Long crewId, ScheduleRequestDto scheduleRequestDto) {
