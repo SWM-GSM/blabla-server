@@ -56,7 +56,7 @@ public class CrewController {
 
     @Operation(summary = "나의 크루 조회 API")
     @GetMapping(value = "/crews/me")
-    public DataResponseDto<List<CrewResponseDto>> getMyCrews() {
+    public DataResponseDto<Map<String, List<CrewResponseDto>>> getMyCrews() {
         return DataResponseDto.of(crewService.getMyCrews());
     }
 
