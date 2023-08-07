@@ -5,9 +5,11 @@ import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.MeetingCycle;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class CrewRequestDto {
     private String coverImage;
     private String name;
