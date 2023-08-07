@@ -77,6 +77,10 @@ public class ScheduleService {
     public ScheduleResponseDto getUpcomingSchedule(Long crewId) {
         Schedule schedule = scheduleRepository.findNearestSchedule(crewId);
 
+        if (schedule == null) {
+            return new ScheduleResponseDto();
+        }
+
         return ScheduleResponseDto.of(schedule, crewMemberRepository);
     }
 
