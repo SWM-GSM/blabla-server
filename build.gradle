@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.1.1'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'jacoco'
 }
 
 group = 'com.gsm'
@@ -12,6 +13,10 @@ def queryDslVersion = '5.0.0'
 
 java {
     sourceCompatibility = '17'
+}
+
+jacoco {
+    toolVersion = "0.8.7"
 }
 
 configurations {
@@ -96,6 +101,7 @@ ext { // 전역 변수
 
 test {
     outputs.dir snippetsDir
+    finalizedBy 'jacocoTestReport'
 }
 
 asciidoctor {
@@ -113,5 +119,12 @@ bootJar {
     dependsOn asciidoctor
     from("${asciidoctor.outputDir}") {
         into 'static/docs'
+    }
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled true
+        html.destination file("${buildDir}/jacoco/index.html")
     }
 }
