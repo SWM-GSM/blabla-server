@@ -1,9 +1,7 @@
 package com.gsm.blabla.crew.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.crew.dao.*;
 import com.gsm.blabla.crew.domain.*;
@@ -29,7 +27,6 @@ import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -43,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.gsm.blabla.practice.dto.PracticeFeedbackResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -116,14 +112,12 @@ public class CrewService {
         return CrewResponseDto.crewResponse(language, crew, status, crewMemberRepository);
     }
 
-    // TODO: n + 1 문제 최적화
     @Transactional(readOnly = true)
     public Page<CrewResponseDto> getAll(String language, Pageable pageable) {
         return crewRepository.findAll(pageable).map(crew ->
             CrewResponseDto.crewListResponse(language, crew, crewMemberRepository));
     }
 
-    // TODO: n + 1 문제 최적화
     public Map<String, List<CrewResponseDto>> getMyCrews() {
         Long memberId = SecurityUtil.getMemberId();
         List<CrewMember> crewMembers = crewMemberRepository.getByMemberIdAndStatus(memberId, CrewMemberStatus.JOINED);
