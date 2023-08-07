@@ -73,7 +73,9 @@ class CrewServiceTest extends IntegrationTestSupport {
         Long response = crewService.create(crewRequestDto).get("crewId");
 
         // then
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(response, 1L).orElseThrow();
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(response, 1L).orElseThrow(
+            () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
+
         assertThat(response).isEqualTo(crewBefore + 1);
         assertThat(crewMemberRepository.count()).isEqualTo(crewMemberBefore + 1);
         assertThat(crewMember.getMember().getId()).isEqualTo(member1.getId());
@@ -234,7 +236,7 @@ class CrewServiceTest extends IntegrationTestSupport {
 
         // when
         String response = crewService.withdrawal(crewId).get("message");
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, 2L)
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, 2L)
             .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
         int countCrewMemberAfter = crewMemberRepository.countCrewMembersByCrewIdAndStatus(crewId, CrewMemberStatus.JOINED);
 
@@ -259,7 +261,7 @@ class CrewServiceTest extends IntegrationTestSupport {
         // when
         String response = crewService.forceWithdrawal(crewId, member2.getId()).get("message");
         int countCrewMemberAfter = crewMemberRepository.countCrewMembersByCrewIdAndStatus(crewId, CrewMemberStatus.JOINED);
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, member2.getId())
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, member2.getId())
             .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
 
         // then

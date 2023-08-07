@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CrewMemberRepository extends JpaRepository<CrewMember, Long> {
     int countCrewMembersByCrewIdAndStatus(Long crewId, CrewMemberStatus status);
-    Optional<CrewMember> getByCrewIdAndMemberId(Long crewId, Long memberId);
+    Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId);
     List<CrewMember> getByMemberIdAndStatus(Long memberId, CrewMemberStatus status);
     Optional<CrewMember> getByCrewAndMemberAndStatus(Crew crew, Member member, CrewMemberStatus status);
 }

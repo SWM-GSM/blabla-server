@@ -103,7 +103,7 @@ public class CrewService {
         );
 
         String status = "";
-        Optional<CrewMember> crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        Optional<CrewMember> crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId);
         Optional<ApplyMessage> applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId);
         if (crewMember.isPresent()) {
             status = crewMember.get().getStatus().toString();
@@ -142,7 +142,7 @@ public class CrewService {
         );
         String message = "";
 
-        boolean isJoined = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId).isPresent();
+        boolean isJoined = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).isPresent();
         if (isJoined) {
             throw new GeneralException(Code.CREW_ALREADY_JOINED, "이미 가입한 크루입니다.");
         }
@@ -252,7 +252,7 @@ public class CrewService {
 
     public Map<String, String> acceptOrReject(Long crewId, Long memberId, StatusRequestDto statusRequestDto) {
         Long meberId = SecurityUtil.getMemberId();
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, meberId)
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, meberId)
             .orElseThrow(
                 () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
 
@@ -308,7 +308,7 @@ public class CrewService {
     public Map<String, String> withdrawal(Long crewId) {
         Long memberId = SecurityUtil.getMemberId();
 
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId)
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
 
         crewMember.withdrawal();
@@ -319,7 +319,7 @@ public class CrewService {
     public Map<String, String> forceWithdrawal(Long crewId, Long crewMemberId) {
         Long memberId = SecurityUtil.getMemberId();
 
-        boolean isLeader = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId).orElseThrow(
+        boolean isLeader = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).orElseThrow(
             () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."))
             .getRole().equals(CrewMemberRole.LEADER);
 
@@ -342,7 +342,7 @@ public class CrewService {
 
         List<MemberKeyword> memberInterest = memberKeywordRepository.findAllByMemberId(memberId);
 
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId)
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_JOINED, "해당 멤버는 해당 크루의 멤버가 아닙니다."));
 
         List<Keyword> keywords = memberInterest.stream()
