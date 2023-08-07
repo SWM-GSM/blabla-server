@@ -1,4 +1,4 @@
-package com.gsm.blabla;
+package com.gsm.blabla.global;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gsm.blabla.crew.api.CrewController;

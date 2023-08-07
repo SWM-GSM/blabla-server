@@ -1,4 +1,4 @@
-package com.gsm.blabla;
+package com.gsm.blabla.global;
 
 import com.gsm.blabla.member.domain.Role;
 import io.jsonwebtoken.Claims;
@@ -10,7 +10,6 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,7 +40,7 @@ public class WithCustomMockUserSecurityContextFactory implements WithSecurityCon
         Key key = Keys.hmacShaKeyFor(keyBytes);
 
         String accessToken = Jwts.builder()
-            .setSubject("1")
+            .setSubject(annotation.id())
             .claim("socialLoginType", "TEST")
             .claim("nickname", "테스트")
             .claim("countryCode", "KR")

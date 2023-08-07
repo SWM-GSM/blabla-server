@@ -1,4 +1,4 @@
-package com.gsm.blabla;
+package com.gsm.blabla.global;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -8,4 +8,5 @@ import org.springframework.security.test.context.support.WithSecurityContext;
 @WithSecurityContext(factory = WithCustomMockUserSecurityContextFactory.class)
 public @interface WithCustomMockUser {
 
+    String id() default "1";
 }

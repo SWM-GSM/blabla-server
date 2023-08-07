@@ -1,4 +1,4 @@
-package com.gsm.blabla;
+package com.gsm.blabla.global;
 
 import com.google.common.base.CaseFormat;
 import jakarta.persistence.Entity;
