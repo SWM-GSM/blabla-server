@@ -129,6 +129,26 @@ public class CrewService {
         return Collections.singletonMap("crews", crews);
     }
 
+    public Map<String, List<CrewResponseDto>> getCanJoinCrews() {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        List<CrewResponseDto> crews = crewRepository.findCrewsThatCanBeJoined(memberId, member.getKorLevel(), member.getEngLevel())
+            .stream()
+            .filter(crew -> crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(), CrewMemberStatus.JOINED) < crew.getMaxNum())
+            .sorted(
+                Comparator.comparingInt(crew -> crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(), CrewMemberStatus.JOINED) - crew.getMaxNum())
+            )
+            .sorted(Comparator.comparing(Crew::getAutoApproval).reversed())
+            .map(crew -> CrewResponseDto.myCrewListResponse(crew, crewMemberRepository))
+            .limit(10)
+            .toList();
+
+        return Collections.singletonMap("crews", crews);
+    }
+
     public Map<String, String> joinCrew(Long crewId, MessageRequestDto messageRequestDto) {
         Long memberId = SecurityUtil.getMemberId();
         Crew crew = crewRepository.findById(crewId).orElseThrow(
