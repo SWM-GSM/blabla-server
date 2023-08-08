@@ -325,6 +325,10 @@ public class CrewService {
         CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
 
+        if (crewMember.getRole().equals(CrewMemberRole.LEADER)) {
+            throw new GeneralException(Code.CREW_LEADER_CANNOT_WITHDRAW, "크루장은 크루를 탈퇴할 수 없습니다.");
+        }
+
         crewMember.withdrawal();
 
         return Collections.singletonMap("message", "크루 탈퇴가 완료되었습니다.");

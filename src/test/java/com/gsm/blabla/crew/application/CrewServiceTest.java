@@ -272,6 +272,7 @@ class CrewServiceTest extends IntegrationTestSupport {
 
     @DisplayName("[GET] 크루장이 아닌 크루 멤버는 크루 가입 승인 대기 인원을 조회할 수 없다.")
     @Test
+    @WithCustomMockUser(id = "2")
     void onlyLeadergetWaitingList() {
         // TODO: API 예외처리 추가 후 작성하기
         // given
@@ -302,6 +303,19 @@ class CrewServiceTest extends IntegrationTestSupport {
         assertThat(crewMember.getStatus()).isEqualTo(CrewMemberStatus.WITHDRAWAL);
         assertThat(crewMember.getWithdrawnAt()).isNotNull();
         assertThat(countCrewMemberAfter).isEqualTo(countCrewMemberBefore - 1);
+    }
+
+    @DisplayName("[DELETE] 크루장은 크루를 탈퇴할 수 없다.")
+    @Test
+    @WithCustomMockUser
+    void leaderCannotWithdraw() {
+        // given
+        Long crewId = createCrew("테스트", true);
+
+        // when // then
+        assertThatThrownBy(() -> crewService.withdrawal(crewId))
+            .isInstanceOf(GeneralException.class)
+            .hasMessage("크루장은 크루를 탈퇴할 수 없습니다.");
     }
 
     @DisplayName("[DELETE] 크루장이 크루원을 강제 탈퇴한다.")
