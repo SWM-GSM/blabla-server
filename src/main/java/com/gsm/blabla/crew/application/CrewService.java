@@ -402,14 +402,14 @@ public class CrewService {
         String response = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        CrewReportResponseDto crewReportResponseDto = null;
+        CrewReportAnalysisResponseDto crewReportAnalysisResponseDto = null;
         try {
-            crewReportResponseDto = objectMapper.readValue(response, CrewReportResponseDto.class);
+            crewReportAnalysisResponseDto = objectMapper.readValue(response, CrewReportAnalysisResponseDto.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        if (crewReportResponseDto == null) {
+        if (crewReportAnalysisResponseDto == null) {
             throw new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "리포트 분석 결과가 비어있습니다.");
         }
 
@@ -420,9 +420,9 @@ public class CrewService {
         crewReportAnalysisRepository.save(
                 CrewReportAnalysis.builder()
                         .crewReport(crewReport)
-                        .koreanTime(crewReportResponseDto.getKoreanTime())
-                        .englishTime(crewReportResponseDto.getEnglishTime())
-                        .cloudUrl(crewReportResponseDto.getCloudUrl())
+                        .koreanTime(crewReportAnalysisResponseDto.getKoreanTime())
+                        .englishTime(crewReportAnalysisResponseDto.getEnglishTime())
+                        .cloudUrl(crewReportAnalysisResponseDto.getCloudUrl())
                         .endAt(endAt)
                         .build()
                 );
