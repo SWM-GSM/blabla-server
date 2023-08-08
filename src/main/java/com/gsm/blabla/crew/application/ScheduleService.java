@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,12 +97,37 @@ public class ScheduleService {
                 () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
         Schedule schedule = scheduleRepository.findByIdAndCrew(scheduleRequestDto.getId(), crew);
 
-        memberScheduleRepository.save(MemberSchedule.builder()
-            .member(member)
-            .schedule(schedule)
-            .build()
-        );
+        Optional<MemberSchedule> memberSchedule = memberScheduleRepository.findByMemberAndSchedule(member, schedule);
+
+        if (memberSchedule.isPresent()) {
+            memberSchedule.get().joinAgain();
+        } else {
+            memberScheduleRepository.save(MemberSchedule.builder()
+                .member(member)
+                .schedule(schedule)
+                .build()
+            );
+        }
 
         return Collections.singletonMap("message", "일정 참여가 완료되었습니다.");
+    }
+
+    public Map<String, String> cancelSchedule(Long crewId, ScheduleRequestDto scheduleRequestDto) {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));
+        Crew crew = crewRepository.findById(crewId).orElseThrow(
+                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
+        Schedule schedule = scheduleRepository.findByIdAndCrew(scheduleRequestDto.getId(), crew);
+
+        Optional<MemberSchedule> memberSchedule = memberScheduleRepository.findByMemberAndSchedule(member, schedule);
+
+        if (memberSchedule.isEmpty()) {
+            throw new GeneralException(Code.MEMBER_NOT_FOUND, "참여하지 않은 일정입니다.");
+        }
+
+        memberSchedule.get().cancel();
+
+        return Collections.singletonMap("message", "일정 참여가 취소되었습니다.");
     }
 }
