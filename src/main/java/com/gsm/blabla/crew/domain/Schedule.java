@@ -25,6 +25,7 @@ public class Schedule extends BaseTimeEntity {
 
     private LocalDateTime meetingTime;
     private String title;
+    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "crew_id")

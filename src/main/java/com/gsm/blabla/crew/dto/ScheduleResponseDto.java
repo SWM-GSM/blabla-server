@@ -8,14 +8,12 @@ import com.gsm.blabla.crew.domain.Schedule;
 import com.gsm.blabla.member.domain.Member;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @Builder
@@ -65,11 +63,15 @@ public class ScheduleResponseDto {
         List<String> profiles;
 
         if (schedule.getMeetingTime().isBefore(LocalDateTime.now())) {
-            profiles = schedule.getMemberSchedules().stream().map(
+            profiles = schedule.getMemberSchedules().stream()
+                .filter(memberSchedule -> memberSchedule.getStatus().equals("JOINED"))
+                .map(
                 memberSchedule -> memberSchedule.getMember().getProfileImage()
             ).toList();
         } else {
-            profiles = schedule.getMemberSchedules().stream().map(
+            profiles = schedule.getMemberSchedules().stream()
+                .filter(memberSchedule -> memberSchedule.getStatus().equals("JOINED"))
+                .map(
                 memberSchedule -> {
                     boolean isJoined = crewMemberRepository.getByCrewAndMemberAndStatus(schedule.getCrew(), memberSchedule.getMember(), CrewMemberStatus.JOINED).isPresent();
                     return isJoined ? memberSchedule.getMember().getProfileImage() : null;
