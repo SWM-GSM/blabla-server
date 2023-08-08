@@ -235,7 +235,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     }
 
     private void withdrawal(Member member, Crew crew) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(member.getId(), crew.getId())
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(member.getId(), crew.getId())
             .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
         crewMember.withdrawal();
     }

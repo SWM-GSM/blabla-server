@@ -73,7 +73,9 @@ class CrewServiceTest extends IntegrationTestSupport {
         Long response = crewService.create(crewRequestDto).get("crewId");
 
         // then
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(response, 1L).orElseThrow();
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(response, 1L).orElseThrow(
+            () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
+
         assertThat(response).isEqualTo(crewBefore + 1);
         assertThat(crewMemberRepository.count()).isEqualTo(crewMemberBefore + 1);
         assertThat(crewMember.getMember().getId()).isEqualTo(member1.getId());
@@ -143,12 +145,69 @@ class CrewServiceTest extends IntegrationTestSupport {
             .containsExactlyInAnyOrder("테스트1", "테스트2", "테스트3");
     }
 
+    @DisplayName("[GET] 지금 참여 가능한 크루를 조회한다.")
+    @Test
+    @WithCustomMockUser(id = "2")
+    void getCanJoinCrews() {
+        /*
+        * 페이징 없이 10개만 불러오기
+        * filtering 조건
+        * 인원이 남아있으며
+        * 최소 레벨 만족 <= 나의 레벨
+        * (혹시나해서 적음) 내가 이미 가입한 크루 제외
+        * sorting 조건
+        * (max - current)가 작은 순 (마감임박순)
+        * 자동 승인
+        * * */
+        // given
+        Member member3 = createMember("lion");
+        Member member4 = createMember("tiger");
+
+        Long crewId1 = createCrew("테스트1", true); // 이미 가입한 크루
+        Long crewId2 = createPreparedCrew(member1, "테스트2", 1, 1, 1, true); // 인원이 다 찬 크루
+        Long crewId3 = createPreparedCrew(member1, "테스트3", 1, 5, 1, true); // 영어 최소 레벨 미충족
+        Long crewId4 = createPreparedCrew(member1, "테스트4", 1, 1, 5, true); // 한국어 최소 레벨 미충족
+        Long crewId5 = createPreparedCrew(member1, "테스트5", 8, 1, 1, true);
+        Long crewId6 = createPreparedCrew(member1, "테스트6", 8, 1, 1, false); // 자동 승인이 아님
+        Long crewId7 = createPreparedCrew(member1, "테스트7", 8, 1, 1, true);
+        Long crewId8 = createPreparedCrew(member1, "테스트8", 8, 1, 1, false);
+        Long crewId9 = createPreparedCrew(member1, "테스트9", 8, 1, 1, true);
+
+        Long crewId14 = createPreparedCrew(member1, "테스트14", 8, 1, 1, true);
+        joinCrew(member3, crewRepository.getReferenceById(crewId14));
+        joinCrew(member4, crewRepository.getReferenceById(crewId14));
+
+        Long crewId15 = createPreparedCrew(member1, "테스트15", 8, 1, 1, true);
+        joinCrew(member3, crewRepository.getReferenceById(crewId15));
+        joinCrew(member4, crewRepository.getReferenceById(crewId15));
+
+        Long crewId11 = createPreparedCrew(member1, "테스트11", 8, 1, 1, false);
+        joinCrew(member3, crewRepository.getReferenceById(crewId11));
+
+        Long crewId10 = createPreparedCrew(member1, "테스트10", 8, 1, 1, true);
+        joinCrew(member3, crewRepository.getReferenceById(crewId10));
+
+        Long crewId12 = createPreparedCrew(member1, "테스트12", 8, 1, 1, true);
+        joinCrew(member3, crewRepository.getReferenceById(crewId12));
+
+        Long crewId13 = createPreparedCrew(member1, "테스트13", 8, 1, 1, true);
+        joinCrew(member3, crewRepository.getReferenceById(crewId13));
+
+        // when
+        List<CrewResponseDto> response = crewService.getCanJoinCrews().get("crews");
+
+        // then
+        assertThat(response).hasSize(10)
+            .extracting("name")
+            .containsExactly("테스트14", "테스트15", "테스트10", "테스트12", "테스트13", "테스트5", "테스트7", "테스트9", "테스트11", "테스트6");
+    }
+
     @DisplayName("[POST] 크루 가입을 신청한다. 선착순일 경우, 가입 완료 처리된다.")
     @Test
     @WithCustomMockUser(id = "2")
     void joinAutoApprovalCrew() {
         // given
-        Long crewId = createPreparedCrew(member1, true);
+        Long crewId = createPreparedCrew(member1, "테스트", 8, 1, 1, true);
 
         // when
         String response = crewService.joinCrew(crewId, null).get("message");
@@ -162,7 +221,7 @@ class CrewServiceTest extends IntegrationTestSupport {
     @WithCustomMockUser(id = "2")
     void joinNonAutoApprovalCrew() {
         // given
-        Long crewId = createPreparedCrew(member1, false);
+        Long crewId = createPreparedCrew(member1, "테스트", 8, 1, 1, false);
 
         // when
         String response = crewService.joinCrew(crewId, MessageRequestDto.builder().message("테스트").build()).get("message");
@@ -228,13 +287,13 @@ class CrewServiceTest extends IntegrationTestSupport {
     @WithCustomMockUser(id = "2")
     void withdrawal() {
         // given
-        Long crewId = createPreparedCrew(member1, true);
+        Long crewId = createPreparedCrew(member1, "테스트", 8, 1, 1, true);
         crewService.joinCrew(crewId, null);
         int countCrewMemberBefore = crewMemberRepository.countCrewMembersByCrewIdAndStatus(crewId, CrewMemberStatus.JOINED);
 
         // when
         String response = crewService.withdrawal(crewId).get("message");
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, 2L)
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, 2L)
             .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
         int countCrewMemberAfter = crewMemberRepository.countCrewMembersByCrewIdAndStatus(crewId, CrewMemberStatus.JOINED);
 
@@ -259,7 +318,7 @@ class CrewServiceTest extends IntegrationTestSupport {
         // when
         String response = crewService.forceWithdrawal(crewId, member2.getId()).get("message");
         int countCrewMemberAfter = crewMemberRepository.countCrewMembersByCrewIdAndStatus(crewId, CrewMemberStatus.JOINED);
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, member2.getId())
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, member2.getId())
             .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
 
         // then
@@ -274,7 +333,7 @@ class CrewServiceTest extends IntegrationTestSupport {
     @WithCustomMockUser(id = "2")
     void onlyLeaderCanWithdrawal() {
         // given
-        Long crewId = createPreparedCrew(member1, true);
+        Long crewId = createPreparedCrew(member1, "테스트", 8, 1, 1, true);
         crewService.joinCrew(crewId, null);
 
         // when // then

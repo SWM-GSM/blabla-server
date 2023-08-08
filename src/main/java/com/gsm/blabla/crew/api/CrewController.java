@@ -60,6 +60,12 @@ public class CrewController {
         return DataResponseDto.of(crewService.getMyCrews());
     }
 
+    @Operation(summary = "지금 참여 가능한 크루 조회 API")
+    @GetMapping(value = "/crews/can-join")
+    public DataResponseDto<Map<String, List<CrewResponseDto>>> getCanJoinCrews() {
+        return DataResponseDto.of(crewService.getCanJoinCrews());
+    }
+
     @Operation(summary = "크루 가입 신청 API")
     @PostMapping(value = "/crews/{crewId}/join")
     public DataResponseDto<Map<String, String>> joinCrew(

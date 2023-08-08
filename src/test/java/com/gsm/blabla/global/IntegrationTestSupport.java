@@ -59,8 +59,8 @@ public abstract class IntegrationTestSupport {
             .birthDate(LocalDate.parse("2001-01-01"))
             .gender("male")
             .countryCode("KR")
-            .korLevel(5)
-            .engLevel(5)
+            .korLevel(3)
+            .engLevel(3)
             .pushNotification(false)
             .build()
         );
@@ -82,16 +82,16 @@ public abstract class IntegrationTestSupport {
             .build()).get("crewId");
     }
 
-    protected Long createPreparedCrew(Member member, boolean autoApproval) {
+    protected Long createPreparedCrew(Member member, String name, int maxNum, int korLevel, int engLevel, boolean autoApproval) {
         CrewRequestDto crewRequestDto = CrewRequestDto.builder()
             .coverImage("test")
-            .name("테스트")
+            .name(name)
             .description("테스트 크루입니다.")
             .meetingCycle(MeetingCycle.EVERYDAY)
             .tags(List.of(Tag.CULTURE, Tag.FILM_MUSIC))
-            .maxNum(8)
-            .korLevel(1)
-            .engLevel(1)
+            .maxNum(maxNum)
+            .korLevel(korLevel)
+            .engLevel(engLevel)
             .preferMember(PreferMember.SAME_HOBBY)
             .detail("테스트 크루입니다.")
             .autoApproval(autoApproval)

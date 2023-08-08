@@ -1,9 +1,7 @@
 package com.gsm.blabla.crew.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.crew.dao.*;
 import com.gsm.blabla.crew.domain.*;
@@ -29,7 +27,6 @@ import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -43,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.gsm.blabla.practice.dto.PracticeFeedbackResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -103,7 +99,7 @@ public class CrewService {
         );
 
         String status = "";
-        Optional<CrewMember> crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        Optional<CrewMember> crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId);
         Optional<ApplyMessage> applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId);
         if (crewMember.isPresent()) {
             status = crewMember.get().getStatus().toString();
@@ -116,20 +112,38 @@ public class CrewService {
         return CrewResponseDto.crewResponse(language, crew, status, crewMemberRepository);
     }
 
-    // TODO: n + 1 문제 최적화
     @Transactional(readOnly = true)
     public Page<CrewResponseDto> getAll(String language, Pageable pageable) {
         return crewRepository.findAll(pageable).map(crew ->
             CrewResponseDto.crewListResponse(language, crew, crewMemberRepository));
     }
 
-    // TODO: n + 1 문제 최적화
     public Map<String, List<CrewResponseDto>> getMyCrews() {
         Long memberId = SecurityUtil.getMemberId();
         List<CrewMember> crewMembers = crewMemberRepository.getByMemberIdAndStatus(memberId, CrewMemberStatus.JOINED);
 
         List<CrewResponseDto> crews = crewMembers.stream()
             .map(crewMember -> CrewResponseDto.myCrewListResponse(crewMember.getCrew(), crewMemberRepository))
+            .toList();
+
+        return Collections.singletonMap("crews", crews);
+    }
+
+    public Map<String, List<CrewResponseDto>> getCanJoinCrews() {
+        Long memberId = SecurityUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
+        List<CrewResponseDto> crews = crewRepository.findCrewsThatCanBeJoined(memberId, member.getKorLevel(), member.getEngLevel())
+            .stream()
+            .filter(crew -> crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(), CrewMemberStatus.JOINED) < crew.getMaxNum())
+            .sorted(
+                Comparator.comparingInt(crew -> crew.getMaxNum() - crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(), CrewMemberStatus.JOINED))
+            )
+            .sorted(Comparator.comparing(Crew::getAutoApproval).reversed())
+            .map(crew -> CrewResponseDto.myCrewListResponse(crew, crewMemberRepository))
+            .limit(10)
             .toList();
 
         return Collections.singletonMap("crews", crews);
@@ -142,7 +156,7 @@ public class CrewService {
         );
         String message = "";
 
-        boolean isJoined = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId).isPresent();
+        boolean isJoined = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).isPresent();
         if (isJoined) {
             throw new GeneralException(Code.CREW_ALREADY_JOINED, "이미 가입한 크루입니다.");
         }
@@ -252,7 +266,7 @@ public class CrewService {
 
     public Map<String, String> acceptOrReject(Long crewId, Long memberId, StatusRequestDto statusRequestDto) {
         Long meberId = SecurityUtil.getMemberId();
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, meberId)
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, meberId)
             .orElseThrow(
                 () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
 
@@ -308,7 +322,7 @@ public class CrewService {
     public Map<String, String> withdrawal(Long crewId) {
         Long memberId = SecurityUtil.getMemberId();
 
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId)
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
 
         crewMember.withdrawal();
@@ -319,7 +333,7 @@ public class CrewService {
     public Map<String, String> forceWithdrawal(Long crewId, Long crewMemberId) {
         Long memberId = SecurityUtil.getMemberId();
 
-        boolean isLeader = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId).orElseThrow(
+        boolean isLeader = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).orElseThrow(
             () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."))
             .getRole().equals(CrewMemberRole.LEADER);
 
@@ -342,7 +356,7 @@ public class CrewService {
 
         List<MemberKeyword> memberInterest = memberKeywordRepository.findAllByMemberId(memberId);
 
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId)
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_JOINED, "해당 멤버는 해당 크루의 멤버가 아닙니다."));
 
         List<Keyword> keywords = memberInterest.stream()
