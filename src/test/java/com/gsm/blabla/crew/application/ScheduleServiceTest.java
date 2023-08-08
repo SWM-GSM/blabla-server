@@ -117,6 +117,25 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         assertThat(response).isEqualTo("일정 참여가 완료되었습니다.");
     }
 
+    @DisplayName("[POST] 크루 일정 참여를 취소하고 다시 참여한다.")
+    @Test
+    @WithCustomMockUser
+    void joinSceduleAgain() {
+        // given
+        Long scheduleId = scheduleService.create(crewId, scheduleRequestDto).get("scheduleId");
+        scheduleService.cancelSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build());
+        List<String> profilesBefore = scheduleService.getUpcomingSchedule(crewId).getProfiles();
+
+        // when
+        scheduleService.joinSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build());
+        List<String> profilesAfter = scheduleService.getUpcomingSchedule(crewId).getProfiles();
+
+        // then
+        assertThat(profilesBefore).isEmpty();
+        assertThat(profilesAfter).hasSize(1)
+            .containsExactly("cat");
+    }
+
     @DisplayName("[GET] 모든 크루 일정을 조회한다")
     @Test
     @WithCustomMockUser(id = "2")
@@ -197,6 +216,24 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         assertThat(true).isFalse();
     }
 
+    @DisplayName("[DELETE] 크루 일정 참여를 취소한다.")
+    @Test
+    @WithCustomMockUser
+    void cacelSchedule() {
+        // given
+        Long scheduleId = scheduleService.create(crewId, scheduleRequestDto).get("scheduleId");
+
+        // when
+        String response = scheduleService.cancelSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build()).get("message");
+
+        // then
+        assertThat(response).isEqualTo("일정 참여가 취소되었습니다.");
+        assertThat(memberScheduleRepository.findByMemberAndSchedule(member1, scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다."))
+        ).get().getStatus()
+        ).isEqualTo("CANCELED");
+    }
+
     private ScheduleRequestDto createScheduleRequestDto(String meetingTime) {
         return ScheduleRequestDto.builder()
             .title("테스트 일정")
@@ -204,7 +241,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             .build();
     }
 
-    private Long createPreparedSchedule(String meetingTimeInString) {
+    private void createPreparedSchedule(String meetingTimeInString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString, formatter);
 
@@ -221,8 +258,6 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             .schedule(schedule)
             .build()
         );
-
-        return schedule.getId();
     }
 
     private void joinSchedule(Member member, Schedule schedule) {
