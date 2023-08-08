@@ -50,7 +50,7 @@ public class MemberResponseDto {
             .countryCode(member.getCountryCode())
             .korLevel(member.getKorLevel())
             .engLevel(member.getEngLevel())
-            .isLeader(crewMemberRepository.getByCrewIdAndMemberId(crewId, member.getId())
+            .isLeader(crewMemberRepository.findByCrewIdAndMemberId(crewId, member.getId())
                 .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_JOINED, "해당 멤버는 해당 크루의 멤버가 아닙니다."))
                 .getRole() == CrewMemberRole.LEADER)
             .build();
