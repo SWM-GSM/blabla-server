@@ -20,6 +20,8 @@ public class MemberSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -30,7 +32,16 @@ public class MemberSchedule {
 
     @Builder
     public MemberSchedule(Member member, Schedule schedule) {
+        this.status = "JOINED";
         this.member = member;
         this.schedule = schedule;
+    }
+
+    public void joinAgain() {
+        this.status = "JOINED";
+    }
+
+    public void cancel() {
+        this.status = "CANCELED";
     }
 }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/crews/{crewId}/schedules")
 @RequiredArgsConstructor
 public class ScheduleController {
+
     private final ScheduleService scheduleService;
 
     @Operation(summary = "크루 일정 생성 API")
@@ -54,4 +56,12 @@ public class ScheduleController {
         return DataResponseDto.of(scheduleService.joinSchedule(crewId, scheduleRequestDto));
     }
 
+    @Operation(summary = "크루 일정 참여 취소 API")
+    @DeleteMapping(value = "")
+    public DataResponseDto<Map<String, String>> cancelSchedule(
+        @PathVariable Long crewId,
+        @RequestBody ScheduleRequestDto scheduleRequestDto
+        ) {
+        return DataResponseDto.of(scheduleService.cancelSchedule(crewId, scheduleRequestDto));
+    }
 }
