@@ -139,7 +139,7 @@ public class CrewService {
             .stream()
             .filter(crew -> crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(), CrewMemberStatus.JOINED) < crew.getMaxNum())
             .sorted(
-                Comparator.comparingInt(crew -> crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(), CrewMemberStatus.JOINED) - crew.getMaxNum())
+                Comparator.comparingInt(crew -> crew.getMaxNum() - crewMemberRepository.countCrewMembersByCrewIdAndStatus(crew.getId(), CrewMemberStatus.JOINED))
             )
             .sorted(Comparator.comparing(Crew::getAutoApproval).reversed())
             .map(crew -> CrewResponseDto.myCrewListResponse(crew, crewMemberRepository))

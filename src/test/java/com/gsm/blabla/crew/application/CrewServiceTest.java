@@ -149,6 +149,16 @@ class CrewServiceTest extends IntegrationTestSupport {
     @Test
     @WithCustomMockUser(id = "2")
     void getCanJoinCrews() {
+        /*
+        * 페이징 없이 10개만 불러오기
+        * filtering 조건
+        * 인원이 남아있으며
+        * 최소 레벨 만족 <= 나의 레벨
+        * (혹시나해서 적음) 내가 이미 가입한 크루 제외
+        * sorting 조건
+        * (max - current)가 작은 순 (마감임박순)
+        * 자동 승인
+        * * */
         // given
         Member member3 = createMember("lion");
         Member member4 = createMember("tiger");
@@ -189,7 +199,7 @@ class CrewServiceTest extends IntegrationTestSupport {
         // then
         assertThat(response).hasSize(10)
             .extracting("name")
-            .containsExactly("테스트5", "테스트7", "테스트9", "테스트10", "테스트12", "테스트13", "테스트14", "테스트15", "테스트6", "테스트8");
+            .containsExactly("테스트14", "테스트15", "테스트10", "테스트12", "테스트13", "테스트5", "테스트7", "테스트9", "테스트11", "테스트6");
     }
 
     @DisplayName("[POST] 크루 가입을 신청한다. 선착순일 경우, 가입 완료 처리된다.")
