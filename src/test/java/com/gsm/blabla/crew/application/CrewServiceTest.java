@@ -149,16 +149,6 @@ class CrewServiceTest extends IntegrationTestSupport {
     @Test
     @WithCustomMockUser(id = "2")
     void getCanJoinCrews() {
-        /*
-        * 페이징 없이 10개만 불러오기
-        * filtering 조건
-        * 인원이 남아있으며
-        * 최소 레벨 만족 <= 나의 레벨
-        * (혹시나해서 적음) 내가 이미 가입한 크루 제외
-        * sorting 조건
-        * (max - current)가 작은 순 (마감임박순)
-        * 자동 승인
-        * * */
         // given
         Member member3 = createMember("lion");
         Member member4 = createMember("tiger");
