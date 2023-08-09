@@ -3,6 +3,7 @@ package com.gsm.blabla.crew.application;
 import com.gsm.blabla.crew.dao.ApplyMessageRepository;
 import com.gsm.blabla.crew.domain.ApplyMessage;
 import com.gsm.blabla.crew.domain.Crew;
+import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
@@ -264,13 +265,22 @@ class CrewServiceTest extends IntegrationTestSupport {
     @Test
     @WithCustomMockUser(id = "2")
     void onlyLeadergetWaitingList() {
-        // TODO: API 예외처리 추가 후 작성하기
         // given
+        Long crewId = createPreparedCrew(member1, "테스트", 8, 1, 1, false);
+        Crew crew = crewRepository.findById(crewId)
+            .orElseThrow(() -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
+        Member member3 = createMember("lion");
+        Member member4 = createMember("bear");
+        joinNonAutoApprovalCrew(member2, crew);
+        joinNonAutoApprovalCrew(member3, crew);
+        joinNonAutoApprovalCrew(member4, crew);
 
-        // when
+        acceptMember(crew.getId(), member2.getId());
 
-        // then
-        assertThat(true).isFalse();
+        // when // then
+        assertThatThrownBy(() -> crewService.getWaitingList(crewId))
+            .isInstanceOf(GeneralException.class)
+            .hasMessage("크루장만 가입 승인 대기 인원을 조회할 수 있습니다.");
     }
 
     @DisplayName("[DELETE] 크루를 탈퇴한다.")
@@ -353,6 +363,20 @@ class CrewServiceTest extends IntegrationTestSupport {
                 .crew(crew)
                 .member(member)
                 .build()
+        );
+    }
+
+    void acceptMember(Long crewId, Long memberId) {
+        ApplyMessage applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId)
+            .orElseThrow(
+                () -> new GeneralException(Code.APPLY_NOT_FOUND, "존재하지 않는 신청입니다.")
+            );
+        applyMessage.acceptOrReject("accept");
+        crewMemberRepository.save(CrewMember.builder()
+            .member(applyMessage.getMember())
+            .crew(applyMessage.getCrew())
+            .role(CrewMemberRole.MEMBER)
+            .build()
         );
     }
 }
