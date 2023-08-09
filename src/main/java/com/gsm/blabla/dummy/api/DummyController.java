@@ -332,9 +332,11 @@ public class DummyController {
     public DataResponseDto<ContentViewResponseDto> getTodayContent(@PathVariable String language) {
         ContentViewResponseDto contentViewResponseDto = ContentViewResponseDto.builder()
                 .id(1L)
-                .topic("Topic 2")
+                .topic("일상 표현")
+                .contentName("오징어 게임")
+                .genre("드라마")
                 .thumbnailUrl("https://img.youtube.com/vi/BUic6FWvRDg/hqdefault.jpg")
-                .isCompleted(true)
+                .isCompleted(false)
                 .build();
         return DataResponseDto.of(contentViewResponseDto);
     }
