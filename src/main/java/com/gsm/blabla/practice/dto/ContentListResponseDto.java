@@ -12,7 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentListResponseDto {
-    private double progress; // 연습실
+    private String contentName; // 컨텐츠 제목
+    private Double progress; // 연습실
     private List<ContentViewResponseDto> contents; // 컨텐츠 리스트
 
     public static ContentListResponseDto contentListResponse(List<ContentViewResponseDto> contents) {
@@ -26,6 +27,7 @@ public class ContentListResponseDto {
         double overallProgressPercentage = Math.round(roundedOverallProgress * 10) / 10.0;
 
         return ContentListResponseDto.builder()
+                .contentName(contents.get(0).getContentName())
                 .progress(overallProgressPercentage)
                 .contents(contents)
                 .build();
