@@ -474,10 +474,11 @@ public class CrewService {
         String bubbleChart = crewReportAnalysis.getCloudUrl();
 
         // keyword
+        // TODO: 로직 추가하기
         List<Map<String, Object>> keyword = new ArrayList<>();
 
         // language ratio
-        Map<String, Double> languageRatio = new HashMap<>();
+        Map<String, Integer> languageRatio = new HashMap<>();
 
         Duration koreanTime = crewReportAnalysis.getKoreanTime();
         Duration englishTime = crewReportAnalysis.getEnglishTime();
@@ -485,10 +486,11 @@ public class CrewService {
         long totalMilliseconds = koreanTime.toMillis() + englishTime.toMillis();
 
         double koreanRatio = (double) koreanTime.toMillis() / totalMilliseconds;
-        double englishRatio = (double) englishTime.toMillis() / totalMilliseconds;
 
-        languageRatio.put("korean", koreanRatio);
-        languageRatio.put("english", englishRatio);
+        int koreanPercentage = (int) (koreanRatio * 100);
+        int englishPercentage = 100 - koreanPercentage;
+        languageRatio.put("korean", koreanPercentage);
+        languageRatio.put("english", englishPercentage);
 
         // feedbacks
         List<MemberResponseDto> feedbacks = crewReport.getVoiceFiles().stream()

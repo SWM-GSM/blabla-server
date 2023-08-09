@@ -18,11 +18,11 @@ public class CrewReportResponseDto {
     private List<MemberResponseDto> members;
     private String bubbleChart;
     private List<Map<String, Object>> keyword;
-    private Map<String, Double> languageRatio;
+    private Map<String, Integer> languageRatio;
     private List<MemberResponseDto> feedbacks;
 
     public static CrewReportResponseDto crewReportResponse(Map<String, String> info, List<MemberResponseDto> members,
-        String bubbleChart, List<Map<String, Object>> keyword, Map<String, Double> languageRatio,
+        String bubbleChart, List<Map<String, Object>> keyword, Map<String, Integer> languageRatio,
         List<MemberResponseDto> feedbacks) {
         return CrewReportResponseDto.builder()
             .info(info)

@@ -95,9 +95,9 @@ class CrewControllerTest extends ControllerTestSupport {
             Map.of("name", "한국 유머", "count", 18),
             Map.of("name", "영국 유머", "count", 8)
         );
-        Map<String, Double> languageRatio = Map.of(
-            "korean", 60.8,
-            "eng", 39.2
+        Map<String, Integer> languageRatio = Map.of(
+            "korean", 60,
+            "eng", 40
         );
         List<MemberResponseDto> feedbacks = List.of(
             MemberResponseDto.builder().nickname("테스트1").profileImage("cat").comment("테스트1").build(),
