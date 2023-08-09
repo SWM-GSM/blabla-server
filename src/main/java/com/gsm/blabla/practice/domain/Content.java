@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -15,7 +17,17 @@ public class Content {
 
     private String contentUrl; // 컨텐츠 URL
 
-    private Long level; // 컨텐츠 레벨
+    private Duration startedAt; // 컨텐츠 시작 시간
+
+    private Duration stoppedAt; // 컨텐츠 중지 시간
+
+    private Duration endAt; // 컨텐츠 종료 시간
+
+    private String contentName; // 컨텐츠 제목
+
+    private String genre; // 컨텐츠 카테고리
+
+    private String topic; // 컨텐츠 주제
 
     private String sentence; // 타켓 문장
 
@@ -23,19 +35,17 @@ public class Content {
 
     private String language; // 언어
 
-    private String topic; // 컨텐츠 주제
-
-    private String title; // 컨텐츠 제목
-
     @Builder
-    public Content(Long id, String contentUrl, Long level, String sentence, String answer, String language, String topic, String title) {
-        this.id = id;
+    public Content(String contentUrl, Duration startedAt, Duration stoppedAt, Duration endAt, String contentName, String genre, String topic, String sentence, String answer, String language) {
         this.contentUrl = contentUrl;
-        this.level = level;
+        this.startedAt = startedAt;
+        this.stoppedAt = stoppedAt;
+        this.endAt = endAt;
+        this.contentName = contentName;
+        this.genre = genre;
+        this.topic = topic;
         this.sentence = sentence;
         this.answer = answer;
         this.language = language;
-        this.topic = topic;
-        this.title = title;
     }
 }

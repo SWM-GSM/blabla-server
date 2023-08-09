@@ -49,9 +49,7 @@ public class PracticeService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, ContentListResponseDto> getAll(String language) {
-        Map<String, ContentListResponseDto> result = new HashMap<>();
-
+    public Map<String, List<ContentListResponseDto>> getAll(String language) {
         List<Content> allContents = switch (language) {
             case "ko" -> contentRepository.findAllByLanguage("ko");
             case "en" -> contentRepository.findAllByLanguage("en");
@@ -60,17 +58,14 @@ public class PracticeService {
 
         final Long memberId = SecurityUtil.getMemberId();
 
-        Map<Long, List<Content>> contentsByLevel = allContents.stream()
-                .collect(Collectors.groupingBy(Content::getLevel));
-        for (Map.Entry<Long, List<Content>> entry : contentsByLevel.entrySet()) {
-            Long level = entry.getKey();
-            List<Content> contentsForLevel = entry.getValue();
-            List<ContentViewResponseDto> contentResponseForLevel = ContentViewResponseDto.contentViewListResponse(contentsForLevel, memberId, memberContentRepository);
+        List<ContentListResponseDto> contentListResponseDtoList = allContents.stream()
+                .collect(Collectors.groupingBy(Content::getContentName))
+                .values().stream()
+                .map(contentsForContentName -> ContentViewResponseDto.contentViewListResponse(contentsForContentName, memberId, memberContentRepository))
+                .map(ContentListResponseDto::contentListResponse)
+                .toList();
 
-            result.put("level" + level, ContentListResponseDto.contentListResponse(contentResponseForLevel));
-        }
-
-        return result;
+        return Collections.singletonMap("category", contentListResponseDtoList);
     }
 
     @Transactional(readOnly = true)
