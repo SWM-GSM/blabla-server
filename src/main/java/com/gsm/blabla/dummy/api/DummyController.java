@@ -286,25 +286,27 @@ public class DummyController {
     @GetMapping("/contents/{contentId}")
     public DataResponseDto<ContentResponseDto> get(@PathVariable Long contentId) {
         ContentResponseDto contentResponseDto = ContentResponseDto.builder()
-                .contentUrl("https://www.youtube.com/watch?v=9mQk7Evt6Vs")
-                .sentence("지금 만나자!")
-                .answer("그때 만나자!")
-                .topic("시간 약속 정하기")
-                .title("애니메이션 - 아이스베어")
-                .level(1L)
+                .topic("일상 표현")
+                .contentName("오징어 게임")
+                .genre("드라마")
+                .startedAtSec(100L)
+                .stoppedAtSec(150L)
+                .endAtSec(200L)
+                .contentUrl("https://www.youtube.com/watch?v=BUic6FWvRDg")
+                .sentence("거의 다 왔어")
+                .answer("거의 다 했어")
                 .build();
         return DataResponseDto.of(contentResponseDto);
     }
 
     @GetMapping("/{language}/contents")
-    public DataResponseDto<Map<String, ContentListResponseDto>> getAll(@PathVariable String language) {
-            Map<String, ContentListResponseDto> result = new HashMap<>();
+    public DataResponseDto<Map<String, List<ContentListResponseDto>>> getAll(@PathVariable String language) {
             List<ContentViewResponseDto> contents = new ArrayList<>();
             ContentViewResponseDto contentViewResponseDto = ContentViewResponseDto.builder()
                     .id(1L)
-                    .level(1L)
-                    .topic("Topic 2")
-                    .title("Title 2")
+                    .topic("일상 표현")
+                    .contentName("오징어 게임")
+                    .genre("드라마")
                     .thumbnailUrl("https://img.youtube.com/vi/BUic6FWvRDg/hqdefault.jpg")
                     .isCompleted(true)
                     .build();
@@ -315,27 +317,26 @@ public class DummyController {
             contents.add(contentViewResponseDto);
             contents.add(contentViewResponseDto);
             ContentListResponseDto contentListResponseDto = ContentListResponseDto.builder()
+                    .contentName("오징어 게임")
                     .progress(100.0)
                     .contents(contents)
                     .build();
-        result.put("level1", contentListResponseDto);
-        result.put("level2", contentListResponseDto);
-        result.put("level3", contentListResponseDto);
-        result.put("level4", contentListResponseDto);
-        result.put("level5", contentListResponseDto);
+            List<ContentListResponseDto> contentListResponseDtoList = new ArrayList<>();
+            contentListResponseDtoList.add(contentListResponseDto);
+            contentListResponseDtoList.add(contentListResponseDto);
 
-        return DataResponseDto.of(result);
+        return DataResponseDto.of(Collections.singletonMap("category", contentListResponseDtoList));
     }
 
     @GetMapping("/{language}/contents/today")
     public DataResponseDto<ContentViewResponseDto> getTodayContent(@PathVariable String language) {
         ContentViewResponseDto contentViewResponseDto = ContentViewResponseDto.builder()
                 .id(1L)
-                .level(1L)
-                .topic("Topic 2")
-                .title("Title 2")
+                .topic("일상 표현")
+                .contentName("오징어 게임")
+                .genre("드라마")
                 .thumbnailUrl("https://img.youtube.com/vi/BUic6FWvRDg/hqdefault.jpg")
-                .isCompleted(true)
+                .isCompleted(false)
                 .build();
         return DataResponseDto.of(contentViewResponseDto);
     }
@@ -350,10 +351,8 @@ public class DummyController {
                 .build();
 
         Content content = Content.builder()
-                .id(contentId)
-                .level(1L)
                 .topic("Topic 2")
-                .title("Title 2")
+                .contentName("Title 2")
                 .build();
 
         MemberContent memberContent = MemberContent.builder()
@@ -381,10 +380,8 @@ public class DummyController {
                 .build();
 
         Content content = Content.builder()
-                .id(contentId)
-                .level(1L)
                 .topic("Topic 2")
-                .title("Title 2")
+                .contentName("Title 2")
                 .build();
 
         MemberContent memberContent = MemberContent.builder()
