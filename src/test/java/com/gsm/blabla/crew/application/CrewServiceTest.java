@@ -1,26 +1,42 @@
 package com.gsm.blabla.crew.application;
 
-import com.gsm.blabla.crew.dao.ApplyMessageRepository;
-import com.gsm.blabla.crew.domain.ApplyMessage;
-import com.gsm.blabla.crew.domain.Crew;
-import com.gsm.blabla.crew.domain.CrewMemberRole;
-import com.gsm.blabla.crew.domain.CrewMemberStatus;
-import com.gsm.blabla.global.IntegrationTestSupport;
-import com.gsm.blabla.global.WithCustomMockUser;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
+
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
+import com.gsm.blabla.crew.dao.ApplyMessageRepository;
+import com.gsm.blabla.crew.dao.CrewReportAnalysisRepository;
+import com.gsm.blabla.crew.dao.CrewReportRepository;
+import com.gsm.blabla.crew.dao.VoiceFileRepository;
+import com.gsm.blabla.crew.domain.ApplyMessage;
+import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewMember;
+import com.gsm.blabla.crew.domain.CrewMemberRole;
+import com.gsm.blabla.crew.domain.CrewMemberStatus;
+import com.gsm.blabla.crew.domain.CrewReport;
+import com.gsm.blabla.crew.domain.CrewReportAnalysis;
 import com.gsm.blabla.crew.domain.MeetingCycle;
+import com.gsm.blabla.crew.domain.VoiceFile;
+import com.gsm.blabla.crew.dto.CrewReportResponseDto;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
 import com.gsm.blabla.crew.dto.MessageRequestDto;
+import com.gsm.blabla.global.IntegrationTestSupport;
+import com.gsm.blabla.global.WithCustomMockUser;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.dto.MemberResponseDto;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,19 +44,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import static org.assertj.core.api.Assertions.*;
-
 class CrewServiceTest extends IntegrationTestSupport {
 
     Member member1;
     Member member2;
+    LocalDateTime now = LocalDateTime.now();
 
     @Autowired
     private CrewService crewService;
 
     @Autowired
     private ApplyMessageRepository applyMessageRepository;
+
+    @Autowired
+    private CrewReportRepository crewReportRepository;
+
+    @Autowired
+    private VoiceFileRepository voiceFileRepository;
+
+    @Autowired
+    private CrewReportAnalysisRepository crewReportAnalysisRepository;
 
     @BeforeEach
     void setUp() {
@@ -356,7 +379,80 @@ class CrewServiceTest extends IntegrationTestSupport {
             .hasMessage("크루장만 강제 탈퇴를 할 수 있습니다.");
     }
 
-    void joinNonAutoApprovalCrew(Member member, Crew crew) {
+    @DisplayName("[GET] 크루 리포트를 조회한다.")
+    @Test
+    @WithCustomMockUser(id = "2")
+    void getReport() {
+        // given
+        Long crewId = createPreparedCrew(member1, "테스트", 8, 1, 1, true);
+        Crew crew = crewRepository.findById(crewId)
+            .orElseThrow(() -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
+        joinCrew(member2, crew);
+        CrewReport crewReport = createReport(crew, now);
+
+        String nowToString = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        String durationTimeToString = String.format("%02d:%02d:%02d", 0, 26, 30);
+
+        // when
+        CrewReportResponseDto response = crewService.getReport(crewReport.getId());
+
+        // then
+        assertThat(response.getInfo()).containsEntry("createdAt", nowToString);
+        assertThat(response.getInfo()).containsEntry("durationTime", durationTimeToString);
+        assertThat(response.getMembers()).hasSize(2)
+            .extracting("profileImage")
+            .containsExactlyInAnyOrder("cat", "dog");
+        assertThat(response.getBubbleChart()).isEqualTo("www.test.com");
+        // TODO: CrewService 로직 추가 후 테스트 코드 수정하기
+//        assertThat(response.getKeyword()).extracting("name")
+//            .containsExactlyInAnyOrder("테스트1", "테스트2", "테스트3");
+        assertThat(response.getKeyword()).isEmpty();
+        assertThat(response.getLanguageRatio()).containsEntry("korean", 76);
+        assertThat(response.getLanguageRatio()).containsEntry("english", 24);
+        assertThat(response.getFeedbacks()).hasSize(2)
+            .extracting("comment")
+            .containsExactlyInAnyOrder("테스트 피드백 by cat", "테스트 피드백 by dog");
+    }
+
+    // TODO: generated = false인 경우에 대해 테스트 케이스 추가
+    @DisplayName("[GET] 크루 리포트 목록을 조회한다.")
+    @Test
+    @WithCustomMockUser(id = "2")
+    void getAllReports() {
+        // given
+        Long crewId = createPreparedCrew(member1, "테스트", 8, 1, 1, true);
+        Crew crew = crewRepository.findById(crewId)
+            .orElseThrow(() -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
+        joinCrew(member2, crew);
+
+        CrewReport crewReport1 = createReport(crew, now); // 리포트 1
+        CrewReport crewReport2 = createReport(crew, now.plusDays(1)); // 리포트 2
+        CrewReport crewReport3 = createReport(crew, now.plusDays(2)); // 리포트 3
+
+        // when
+        List<CrewReportResponseDto> response = crewService.getAllReports(crewId, "desc").get("reports");
+
+        // then
+        assertThat(response).hasSize(3)
+            .extracting("id", "generated")
+            .containsExactlyInAnyOrder(
+                tuple(crewReport1.getId(), true),
+                tuple(crewReport2.getId(), true),
+                tuple(crewReport3.getId(), true)
+            );
+        // TODO: createdAt 검증 좀 더 구체적으로
+        assertThat(response).hasSize(3)
+            .extracting("info")
+            .extracting("createdAt")
+            .allMatch(createdAt -> Pattern.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}", createdAt.toString()));
+        assertThat(response).hasSize(3)
+            .extracting("info")
+            .extracting("durationTime")
+            .containsExactlyInAnyOrder("00:26:30", "00:26:30", "00:26:30");
+        // TODO: members에 대한 검증 추가
+    }
+
+    private void joinNonAutoApprovalCrew(Member member, Crew crew) {
         applyMessageRepository.save(
             ApplyMessage.builder()
                 .message("테스트")
@@ -366,7 +462,7 @@ class CrewServiceTest extends IntegrationTestSupport {
         );
     }
 
-    void acceptMember(Long crewId, Long memberId) {
+    private void acceptMember(Long crewId, Long memberId) {
         ApplyMessage applyMessage = applyMessageRepository.getByCrewIdAndMemberId(crewId, memberId)
             .orElseThrow(
                 () -> new GeneralException(Code.APPLY_NOT_FOUND, "존재하지 않는 신청입니다.")
@@ -378,5 +474,54 @@ class CrewServiceTest extends IntegrationTestSupport {
             .role(CrewMemberRole.MEMBER)
             .build()
         );
+    }
+
+    private CrewReport startVoiceRoom(Crew crew, LocalDateTime startedAt) {
+        return crewReportRepository.save(
+            CrewReport.builder()
+                .crew(crew)
+                .startedAt(startedAt)
+                .build()
+        );
+    }
+
+    private void exitVoiceRoom(Member member, CrewReport crewReport) {
+        VoiceFile voiceFile = voiceFileRepository.save(
+            VoiceFile.builder()
+                .member(member)
+                .crewReport(crewReport)
+                .fileUrl("www.test.com")
+                .totalCallTime(Duration.ofMinutes(26).plusSeconds(30))
+                .koreanTime(Duration.ofMinutes(20))
+                .englishTime(Duration.ofMinutes(6))
+                .redundancyTime(Duration.ofSeconds(30))
+                .feedback("테스트 피드백 by " + member.getProfileImage())
+                .build()
+        );
+
+        voiceFile.createFeedback("테스트 피드백 ");
+    }
+
+    private void createReportAnalysis(CrewReport crewReport, LocalDateTime startedAt) {
+        crewReportAnalysisRepository.save(
+            CrewReportAnalysis.builder()
+                .crewReport(crewReport)
+                .koreanTime(Duration.ofMinutes(20))
+                .englishTime(Duration.ofMinutes(6))
+                .cloudUrl("www.test.com")
+                .endAt(startedAt.plusMinutes(26).plusSeconds(30))
+                .build()
+        );
+
+        // TODO: 키워드 엔티티 생성 로직
+    }
+
+    private CrewReport createReport(Crew crew, LocalDateTime startedAt) {
+        CrewReport crewReport = startVoiceRoom(crew, startedAt);
+        exitVoiceRoom(member1, crewReport);
+        exitVoiceRoom(member2, crewReport);
+        createReportAnalysis(crewReport, startedAt);
+
+        return crewReport;
     }
 }
