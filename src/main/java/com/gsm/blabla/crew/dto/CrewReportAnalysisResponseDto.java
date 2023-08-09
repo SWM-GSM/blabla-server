@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import java.time.Duration;
 
 @Getter
-@Builder
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CrewReportAnalysisResponseDto {

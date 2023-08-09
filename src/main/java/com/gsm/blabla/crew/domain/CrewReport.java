@@ -1,6 +1,7 @@
 package com.gsm.blabla.crew.domain;
 
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +22,11 @@ public class CrewReport {
     private Crew crew;
     private LocalDateTime startedAt;
 
+    @OneToMany(mappedBy = "crewReport")
+    private List<VoiceFile> voiceFiles;
+
     @Builder
-public CrewReport(Crew crew, LocalDateTime startedAt) {
+    public CrewReport(Crew crew, LocalDateTime startedAt) {
         this.crew = crew;
         this.startedAt = startedAt;
     }

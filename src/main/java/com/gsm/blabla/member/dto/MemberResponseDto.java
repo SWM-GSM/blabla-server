@@ -1,21 +1,15 @@
 package com.gsm.blabla.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.crew.dao.ApplyMessageRepository;
 import com.gsm.blabla.crew.dao.CrewMemberRepository;
-import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
+import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.domain.Member;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
-import com.gsm.blabla.member.domain.MemberKeyword;
-import com.gsm.blabla.member.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,6 +32,7 @@ public class MemberResponseDto {
     private Integer korLevel;
     private Integer engLevel;
     private Boolean isLeader;
+    private String comment;
 
     public static MemberResponseDto crewProfileResponse(Long crewId, Member member,
         CrewMemberRepository crewMemberRepository) {
@@ -68,6 +63,22 @@ public class MemberResponseDto {
             .countryCode(member.getCountryCode())
             .korLevel(member.getKorLevel())
             .engLevel(member.getEngLevel())
+            .build();
+    }
+
+    public static MemberResponseDto crewReportResponse(Member member) {
+        return MemberResponseDto.builder()
+            .id(member.getId())
+            .nickname(member.getNickname())
+            .profileImage(member.getProfileImage())
+            .build();
+    }
+
+    public static MemberResponseDto feedbackResponse(Member member, VoiceFile voiceFile) {
+        return MemberResponseDto.builder()
+            .nickname(member.getNickname())
+            .profileImage(member.getProfileImage())
+            .comment(voiceFile.getFeedback())
             .build();
     }
 }

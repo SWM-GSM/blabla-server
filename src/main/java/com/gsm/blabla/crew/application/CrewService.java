@@ -27,6 +27,7 @@ import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -459,8 +460,82 @@ public class CrewService {
             () -> new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "존재하지 않는 리포트 분석입니다.")
         );
 
+        // info
+        Map<String, String> info = getReportInfo(crewReport, crewReportAnalysis);
+
+        // members
+        List<MemberResponseDto> members = crewReport.getVoiceFiles().stream()
+                .map(VoiceFile::getMember)
+                .distinct()
+                .map(MemberResponseDto::crewReportResponse)
+                .toList();
+
+        // bubble chart
+        String bubbleChart = crewReportAnalysis.getCloudUrl();
+
+        // keyword
+        List<Map<String, Object>> keyword = new ArrayList<>();
+
+        // language ratio
+        Map<String, Double> languageRatio = new HashMap<>();
+
+        Duration koreanTime = crewReportAnalysis.getKoreanTime();
+        Duration englishTime = crewReportAnalysis.getEnglishTime();
+
+        long totalMilliseconds = koreanTime.toMillis() + englishTime.toMillis();
+
+        double koreanRatio = (double) koreanTime.toMillis() / totalMilliseconds;
+        double englishRatio = (double) englishTime.toMillis() / totalMilliseconds;
+
+        languageRatio.put("korean", koreanRatio);
+        languageRatio.put("english", englishRatio);
+
+        // feedbacks
+        List<MemberResponseDto> feedbacks = crewReport.getVoiceFiles().stream()
+            .map(voiceFile -> MemberResponseDto.feedbackResponse(voiceFile.getMember(), voiceFile))
+            .toList();
+
+        return CrewReportResponseDto.crewReportResponse(info, members, bubbleChart, keyword, languageRatio, feedbacks);
+    }
+
+    public Map<String, List<CrewReportResponseDto>> getAllReports(Long crewId) {
+        Crew crew = crewRepository.findById(crewId).orElseThrow(
+            () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
+        );
+        List<CrewReport> crewReports = crewReportRepository.findAllByCrew(crew).orElseThrow(
+            () -> new GeneralException(Code.REPORT_NOT_FOUND, "크루 리포트가 존재하지 않습니다.")
         );
 
-        return Collections.singletonMap("message", "음성 채팅 피드백 저장이 완료되었습니다.");
+        List<CrewReportResponseDto> reports = crewReports.stream()
+            .map(crewReport -> {
+                boolean generated = crewReportAnalysisRepository.findByCrewReport(crewReport).isPresent();
+                List<MemberResponseDto> members = crewReport.getVoiceFiles().stream()
+                    .map(VoiceFile::getMember)
+                    .distinct()
+                    .map(MemberResponseDto::crewReportResponse)
+                    .toList();
+
+                CrewReportAnalysis crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(crewReport).orElseThrow(
+                    () -> new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "존재하지 않는 리포트 분석입니다.")
+                );
+                Map<String, String> info = getReportInfo(crewReport, crewReportAnalysis);
+
+                return CrewReportResponseDto.crewReportListResponse(crewId, generated, members, info);
+            })
+            .toList();
+        return Collections.singletonMap("reports", reports);
+    }
+
+    private Map<String, String> getReportInfo(CrewReport crewReport, CrewReportAnalysis crewReportAnalysis) {
+        Map<String, String> info = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        info.put("createdAt", crewReportAnalysis.getCreatedAt().format(formatter));
+
+        Duration duration = Duration.between(crewReport.getStartedAt(), crewReportAnalysis.getEndAt());
+        String durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
+        info.put("durationTime", durationTime);
+
+        return info;
     }
 }
