@@ -255,6 +255,14 @@ public class CrewService {
 
 
     public Map<String, List<MemberResponseDto>> getWaitingList(Long crewId) {
+        Long meberId = SecurityUtil.getMemberId();
+        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, meberId)
+            .orElseThrow(
+                () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
+
+        if (!crewMember.getRole().equals(CrewMemberRole.LEADER)) {
+            throw new GeneralException(Code.CREW_MEMBER_NOT_LEADER, "크루장만 가입 승인 대기 인원을 조회할 수 있습니다.");
+        }
 
         List<MemberResponseDto> members = applyMessageRepository.getByCrewIdAndStatus(crewId, ApplyMessageStatus.WAITING).stream()
             .map(ApplyMessage::getMember)
@@ -324,6 +332,10 @@ public class CrewService {
 
         CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
+
+        if (crewMember.getRole().equals(CrewMemberRole.LEADER)) {
+            throw new GeneralException(Code.CREW_LEADER_CANNOT_WITHDRAW, "크루장은 크루를 탈퇴할 수 없습니다.");
+        }
 
         crewMember.withdrawal();
 
