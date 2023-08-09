@@ -144,8 +144,6 @@ public class AuthService {
     public Object login(SocialLoginType socialLoginType, String providerAuthorization) {
         Optional<Member> member = Optional.empty();
 
-        // 가입된 회원 - access / refresh token 발급
-        // 가입되지 않은 회원 - provider token으로 얻은 정보 반환
         switch (socialLoginType) {
             case GOOGLE -> {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
@@ -155,7 +153,12 @@ public class AuthService {
                 }
             }
             case APPLE -> {
-                // TODO: 추후 구현
+                AppleTokenDto appleTokenDto = getAppleToken(providerAuthorization);
+                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getIdToken());
+                member = appleAccountRepository.findById(appleAccountDto.getSub()).map(AppleAccount::getMember);
+                if (member.isEmpty()) {
+                    throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
+                }
             }
         }
 
