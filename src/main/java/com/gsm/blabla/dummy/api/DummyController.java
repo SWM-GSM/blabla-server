@@ -1,6 +1,7 @@
 package com.gsm.blabla.dummy.api;
 
 import com.gsm.blabla.agora.application.AgoraService;
+import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
@@ -160,7 +161,7 @@ public class DummyController {
     @GetMapping(value = "/crews/{crewId}/voice-room")
     public DataResponseDto<VoiceRoomDto> getVoiceRoomToken() {
         long now = (new Date()).getTime();
-        return DataResponseDto.of(VoiceRoomDto.builder().channelName("crew-1").token(agoraService.create(1L, 1L).getToken()).expiresIn(new Date(now + 3600).getTime()).build());
+        return DataResponseDto.of(VoiceRoomDto.builder().channelName("crew-1").token(agoraService.create(1L, VoiceRoomRequestDto.builder().isActivated(true).build()).getToken()).expiresIn(new Date(now + 3600).getTime()).build());
     }
 
     @GetMapping(value = "/crews/{crewId}/waiting-list")

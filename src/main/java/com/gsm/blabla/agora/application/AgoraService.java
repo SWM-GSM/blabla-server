@@ -3,6 +3,7 @@ package com.gsm.blabla.agora.application;
 import com.gsm.blabla.agora.RtcTokenBuilder2;
 import com.gsm.blabla.agora.RtcTokenBuilder2.Role;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
+import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
 import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.domain.CrewReport;
@@ -30,13 +31,13 @@ public class AgoraService {
     static final int TOKEN_EXPIRATION_IN_SECONDS = 3600; // 1 hour
     static final int PRIVILEGE_EXPIRATION_IN_SECONDS = 3600; // 1 hour
 
-    public RtcTokenDto create(Long crewId,  boolean isActivated) {
+    public RtcTokenDto create(Long crewId,  VoiceRoomRequestDto voiceRoomRequestDto) {
         Long memberId = SecurityUtil.getMemberId();
-
         String channelName = "crew-" + crewId;
         RtcTokenBuilder2 token = new RtcTokenBuilder2();
         long now = (new Date()).getTime();
 
+        boolean isActivated = voiceRoomRequestDto.getIsActivated();
         if (!isActivated) {
              crewReportRepository.save(
                 CrewReport.builder()
