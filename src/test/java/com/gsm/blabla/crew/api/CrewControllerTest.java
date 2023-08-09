@@ -19,6 +19,7 @@ import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,16 +86,8 @@ class CrewControllerTest extends ControllerTestSupport {
     @WithCustomMockUser
     void getReport() throws Exception {
         // given
-        Map<String, String> info = Map.of(
-            "createdAt", "2023.05.30 16:00",
-            "durationTime", "00:23:40"
-        );
-        List<MemberResponseDto> members = List.of(
-            MemberResponseDto.builder().id(1L).nickname("테스트1").profileImage("cat").build(),
-            MemberResponseDto.builder().id(2L).nickname("테스트2").profileImage("dog").build(),
-            MemberResponseDto.builder().id(3L).nickname("테스트3").profileImage("lion").build(),
-            MemberResponseDto.builder().id(4L).nickname("테스트4").profileImage("bear").build()
-        );
+        Map<String, String> info = getInfo();
+        List<MemberResponseDto> members = getMembers();
         String bubbleChart = "www.test.com";
         List<Map<String, Object>> keyword = List.of(
             Map.of("name", "미국 유머", "count", 38),
@@ -130,5 +123,43 @@ class CrewControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.data.keyword").isArray())
             .andExpect(jsonPath("$.data.languageRatio").isMap())
             .andExpect(jsonPath("$.data.feedbacks").isArray());
+    }
+
+    @DisplayName("[GET] 크루 리포트 목록을 조회한다.")
+    @Test
+    @WithCustomMockUser
+    void getAllReports() throws Exception {
+        // given
+        Map<String, List<CrewReportResponseDto>> reports = new HashMap<>();
+        List<MemberResponseDto> members = getMembers();
+        Map<String, String> info = getInfo();
+        reports.put("reports", Collections.nCopies(6, CrewReportResponseDto.crewReportListResponse(
+            1L, true, members, info)));
+
+        given(crewService.getAllReports(any(Long.class)))
+            .willReturn(reports);
+
+        // when // then
+        mockMvc.perform(
+            get("/crews/1/reports")
+        )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.reports").isArray());
+    }
+
+    private Map<String, String> getInfo() {
+        return Map.of(
+            "createdAt", "2023.05.30 16:00",
+            "durationTime", "00:23:40"
+        );
+    }
+    private List<MemberResponseDto> getMembers() {
+        return List.of(
+            MemberResponseDto.builder().id(1L).nickname("테스트1").profileImage("cat").build(),
+            MemberResponseDto.builder().id(2L).nickname("테스트2").profileImage("dog").build(),
+            MemberResponseDto.builder().id(3L).nickname("테스트3").profileImage("lion").build(),
+            MemberResponseDto.builder().id(4L).nickname("테스트4").profileImage("bear").build()
+        );
     }
 }
