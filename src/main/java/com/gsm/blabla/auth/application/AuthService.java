@@ -100,9 +100,11 @@ public class AuthService {
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
+                if (googleAccountRepository.findById(googleAccountDto.getId()).isPresent()) {
+                    throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 구글 계정입니다.");
+                }
 
                 member = memberRepository.save(memberRequestDto.toEntity());
-
                 googleAccountRepository.save(GoogleAccount.builder()
                     .id(googleAccountDto.getId())
                     .member(member)
@@ -112,6 +114,9 @@ public class AuthService {
             case "APPLE" -> {
                 AppleTokenDto appleTokenDto = getAppleToken(providerAuthorization);
                 AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getIdToken());
+                if (appleAccountRepository.findById(appleTokenDto.getIdToken()).isPresent()) {
+                    throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 애플 계정입니다.");
+                }
 
                 member = memberRepository.save(memberRequestDto.toEntity());
                 appleAccountRepository.save(AppleAccount.builder()

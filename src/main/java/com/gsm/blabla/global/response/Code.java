@@ -41,6 +41,8 @@ public enum Code {
     CREW_MEMBER_NOT_FOUND("C007", HttpStatus.NOT_FOUND, "Crew member not found"),
     CREW_MEMBER_NOT_LEADER("C008", HttpStatus.FORBIDDEN, "Crew member not leader"),
     FILE_IS_EMPTY("C009", HttpStatus.BAD_REQUEST, "File is empty"),
+    CREW_LEADER_CANNOT_WITHDRAW("C010", HttpStatus.FORBIDDEN, "Crew leader cannot withdraw"),
+
     /*
      * Schedule 관련 오류
      * HEAD NAME - SCH (Schedule)
