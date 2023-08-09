@@ -2,6 +2,7 @@ package com.gsm.blabla.crew.domain;
 
 import com.gsm.blabla.member.domain.Member;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,7 @@ public class VoiceFile {
     private Duration englishTime;
     private Duration redundancyTime;
     private LocalDateTime createdAt;
+    private String feedback;
 
     @Builder
     public VoiceFile(Member member, CrewReport crewReport, String fileUrl, Duration totalCallTime, Duration koreanTime, Duration englishTime, Duration redundancyTime) {
@@ -43,5 +45,9 @@ public class VoiceFile {
         this.englishTime = englishTime;
         this.redundancyTime = redundancyTime;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void createFeedback(String feedback) {
+        this.feedback = feedback;
     }
 }
