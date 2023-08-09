@@ -286,10 +286,15 @@ public class DummyController {
     @GetMapping("/contents/{contentId}")
     public DataResponseDto<ContentResponseDto> get(@PathVariable Long contentId) {
         ContentResponseDto contentResponseDto = ContentResponseDto.builder()
-                .contentUrl("https://www.youtube.com/watch?v=9mQk7Evt6Vs")
-                .sentence("지금 만나자!")
-                .answer("그때 만나자!")
-                .topic("시간 약속 정하기")
+                .topic("일상 표현")
+                .contentName("오징어 게임")
+                .genre("드라마")
+                .startedAtSec(100L)
+                .stoppedAtSec(150L)
+                .endAtSec(200L)
+                .contentUrl("https://www.youtube.com/watch?v=BUic6FWvRDg")
+                .sentence("거의 다 왔어")
+                .answer("거의 다 했어")
                 .build();
         return DataResponseDto.of(contentResponseDto);
     }
