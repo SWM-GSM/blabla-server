@@ -1,5 +1,7 @@
 package com.gsm.blabla.practice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.practice.dao.MemberContentRepository;
 import com.gsm.blabla.practice.domain.Content;
 import lombok.AllArgsConstructor;
@@ -16,9 +18,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ContentViewResponseDto {
     private Long id;
-    private Long level; // 컨텐츠 레벨
+    private String contentName; // 컨텐츠 제목
+    private String genre; // 컨텐츠 카테고리
     private String topic; // 컨텐츠 주제
-    private String title; // 컨텐츠 제목
 
     private String thumbnailUrl; // 컨텐츠 썸네일 URL
     private Boolean isCompleted; // 컨텐츠 완료 여부
@@ -27,11 +29,11 @@ public class ContentViewResponseDto {
 
         return ContentViewResponseDto.builder()
                 .id(content.getId())
+                .contentName(content.getContentName())
                 .thumbnailUrl("https://img.youtube.com/vi/" + content.getContentUrl().split("/watch\\?v=")[1] + "/hqdefault.jpg")
-                .level(content.getLevel())
                 .topic(content.getTopic())
-                .title(content.getTitle())
                 .isCompleted(memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isPresent())
+                .genre(content.getGenre())
                 .build();
     }
 
@@ -40,13 +42,14 @@ public class ContentViewResponseDto {
                 .map(content -> {
                     return ContentViewResponseDto.builder()
                             .id(content.getId())
+                            .contentName(content.getContentName())
                             .thumbnailUrl("https://img.youtube.com/vi/" + content.getContentUrl().split("/watch\\?v=")[1] + "/hqdefault.jpg")
-                            .level(content.getLevel())
                             .topic(content.getTopic())
-                            .title(content.getTitle())
                             .isCompleted(memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isPresent())
+                            .genre(content.getGenre())
                             .build();
                 })
                 .collect(Collectors.toList());
     }
+
 }

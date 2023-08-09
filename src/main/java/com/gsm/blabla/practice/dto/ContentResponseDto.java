@@ -12,21 +12,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ContentResponseDto {
     private String contentUrl; // 컨텐츠 URL
-    private Long level; // 컨텐츠 레벨
     private String sentence; // 타켓 문장
     private String answer; // 모범 답안
     private String topic; // 컨텐츠 주제
-    private String title; // 컨텐츠 제목
+    private String contentName; // 컨텐츠 제목
 
     public static ContentResponseDto contentResponse(Content content) {
 
         return ContentResponseDto.builder()
                 .contentUrl(content.getContentUrl())
-                .level(content.getLevel())
                 .sentence(content.getSentence())
                 .answer(content.getAnswer())
                 .topic(content.getTopic())
-                .title(content.getTitle())
+                .contentName(content.getContentName())
                 .build();
     }
 }
