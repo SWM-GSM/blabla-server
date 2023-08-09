@@ -154,15 +154,15 @@ class CrewServiceTest extends IntegrationTestSupport {
         Member member3 = createMember("lion");
         Member member4 = createMember("tiger");
 
-        Long crewId1 = createCrew("테스트1", true); // 이미 가입한 크루
-        Long crewId2 = createPreparedCrew(member1, "테스트2", 1, 1, 1, true); // 인원이 다 찬 크루
-        Long crewId3 = createPreparedCrew(member1, "테스트3", 1, 5, 1, true); // 영어 최소 레벨 미충족
-        Long crewId4 = createPreparedCrew(member1, "테스트4", 1, 1, 5, true); // 한국어 최소 레벨 미충족
-        Long crewId5 = createPreparedCrew(member1, "테스트5", 8, 1, 1, true);
-        Long crewId6 = createPreparedCrew(member1, "테스트6", 8, 1, 1, false); // 자동 승인이 아님
-        Long crewId7 = createPreparedCrew(member1, "테스트7", 8, 1, 1, true);
-        Long crewId8 = createPreparedCrew(member1, "테스트8", 8, 1, 1, false);
-        Long crewId9 = createPreparedCrew(member1, "테스트9", 8, 1, 1, true);
+        createCrew("테스트1", true);
+        createPreparedCrew(member1, "테스트2", 1, 1, 1, true); // 인원이 다 찬 크루
+        createPreparedCrew(member1, "테스트3", 1, 5, 1, true); // 영어 최소 레벨 미충족
+        createPreparedCrew(member1, "테스트4", 1, 1, 5, true); // 한국어 최소 레벨 미충족
+        createPreparedCrew(member1, "테스트5", 8, 1, 1, true);
+        createPreparedCrew(member1, "테스트6", 8, 1, 1, false); // 자동 승인이 아님
+        createPreparedCrew(member1, "테스트7", 8, 1, 1, true);
+        createPreparedCrew(member1, "테스트8", 8, 1, 1, false);
+        createPreparedCrew(member1, "테스트9", 8, 1, 1, true);
 
         Long crewId14 = createPreparedCrew(member1, "테스트14", 8, 1, 1, true);
         joinCrew(member3, crewRepository.getReferenceById(crewId14));
