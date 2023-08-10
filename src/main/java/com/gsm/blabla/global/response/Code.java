@@ -19,6 +19,7 @@ public enum Code {
      * */
     BAD_REQUEST("RQ000", HttpStatus.BAD_REQUEST, "Bad request"),
     VALIDATION_ERROR("RQ001", HttpStatus.BAD_REQUEST, "Validation error"),
+    LANGUAGE_NOT_SUPPORTED("RQ002", HttpStatus.BAD_REQUEST, "Language not supported"),
 
     /*
     * Member 관련 오류

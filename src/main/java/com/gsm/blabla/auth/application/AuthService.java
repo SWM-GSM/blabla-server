@@ -95,8 +95,6 @@ public class AuthService {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
         }
 
-        // TODO: 이미 가입한 유저 예외 처리
-
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
@@ -129,6 +127,11 @@ public class AuthService {
             case "TEST" -> member = memberRepository.save(memberRequestDto.toEntity());
         }
 
+        int size = memberRequestDto.getKeywords().size();
+        if (size != 0 && (size < 3 || size > 10)) {
+            throw new GeneralException(Code.VALIDATION_ERROR, "관심사는 0개 또는 3개 이상 10개 이하로 설정해야 합니다.");
+        }
+        
         // 키워드
         for (Keyword keyword : memberRequestDto.getKeywords()) {
             memberKeywordRepository.save(MemberKeyword.builder()

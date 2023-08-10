@@ -33,6 +33,7 @@ public class MemberService {
 
     private final AuthService authService;
 
+    @Transactional(readOnly = true)
     public Map<String, Boolean> isNicknameDuplicated(String nickname) {
         Map<String, Boolean> result = new HashMap<>();
         result.put("isDuplicated", memberRepository.findByNickname(nickname).isPresent());
@@ -61,6 +62,7 @@ public class MemberService {
         return Collections.singletonMap("message", "회원탈퇴가 완료되었습니다.");
     }
 
+    @Transactional(readOnly = true)
     public MemberProfileResponseDto getProfile(String language) {
         Long memberId = SecurityUtil.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(
