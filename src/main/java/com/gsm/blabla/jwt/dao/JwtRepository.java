@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JwtRepository extends JpaRepository<Jwt, Long> {
     Optional<Jwt> findOneByMemberId(Long memberId);
+
+    void deleteByMemberId(Long memberId);
 }

@@ -318,4 +318,34 @@ public class AuthService {
         PrivateKeyInfo object = (PrivateKeyInfo) pemParser.readObject();
         return converter.getPrivateKey(object);
     }
+
+    public void revokeAppleAccount(Long memberId) {
+        try {
+            String appleRefreshToken = appleAccountRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")).getRefreshToken();
+
+            HttpHeaders headers = new HttpHeaders();
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+            params.add("client_id", appleClientId);
+            params.add("client_secret", getAppleClientSecret());
+            params.add("token", appleRefreshToken);
+            params.add("token_type_hint", "refresh_token");
+
+            new RestTemplate().exchange(
+                "https://appleid.apple.com/auth/revoke",
+                HttpMethod.POST,
+                new HttpEntity<>(params, headers),
+                String.class
+            );
+
+            appleAccountRepository.deleteByMemberId(memberId);
+        } catch (Exception e) {
+            throw new GeneralException(Code.APPLE_SERVER_ERROR, e);
+        }
+    }
+
+    public void unlinkGoogleAccount(Long memberId) {
+        googleAccountRepository.deleteByMemberId(memberId);
+    }
 }
