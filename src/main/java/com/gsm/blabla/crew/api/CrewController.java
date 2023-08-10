@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 public class CrewController {
+
     private final CrewService crewService;
 
     @Operation(summary = "크루 생성 API")
@@ -87,6 +88,21 @@ public class CrewController {
     public DataResponseDto<Map<String, String>> createReport(
             @PathVariable("reportId") Long reportId) {
         return DataResponseDto.of(crewService.createReport(reportId));
+    }
+
+    @Operation(summary = "크루 리포트 조회 API")
+    @GetMapping(value = "/crews/{crewId}/reports/{reportId}")
+    public DataResponseDto<CrewReportResponseDto> getReport(
+            @PathVariable("reportId") Long reportId) {
+        return DataResponseDto.of(crewService.getReport(reportId));
+    }
+
+    @Operation(summary = "크루 리포트 목록 조회 API")
+    @GetMapping(value = "/crews/{crewId}/reports")
+    public DataResponseDto<Map<String, List<CrewReportResponseDto>>> getAllReports(
+        @PathVariable("crewId") Long crewId,
+        @RequestParam(value = "sort", defaultValue = "desc") String sort) {
+        return DataResponseDto.of(crewService.getAllReports(crewId, sort));
     }
 
 
