@@ -383,8 +383,9 @@ public class DummyController {
                 .build();
 
         Content content = Content.builder()
-                .topic("Topic 2")
-                .contentName("Title 2")
+            .topic("Topic 2")
+            .contentName("Title 2")
+            .answer("거의 다 왔어")
                 .build();
 
         MemberContent memberContent = MemberContent.builder()
