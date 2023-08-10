@@ -100,9 +100,9 @@ public class CrewController {
     @Operation(summary = "크루 리포트 목록 조회 API")
     @GetMapping(value = "/crews/{crewId}/reports")
     public DataResponseDto<Map<String, List<CrewReportResponseDto>>> getAllReports(
-            @PathVariable("crewId") Long crewId) {
-        // TODO: query parameter로 정렬 조건 추가
-        return DataResponseDto.of(crewService.getAllReports(crewId));
+        @PathVariable("crewId") Long crewId,
+        @RequestParam(value = "sort", defaultValue = "desc") String sort) {
+        return DataResponseDto.of(crewService.getAllReports(crewId, sort));
     }
 
 

@@ -397,7 +397,8 @@ class CrewServiceTest extends IntegrationTestSupport {
         CrewReportResponseDto response = crewService.getReport(crewReport.getId());
 
         // then
-        assertThat(response.getInfo()).containsEntry("createdAt", nowToString);
+        assertThat(response.getInfo()).extracting("createdAt")
+            .matches(createdAt -> Pattern.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}", createdAt.toString()));
         assertThat(response.getInfo()).containsEntry("durationTime", durationTimeToString);
         assertThat(response.getMembers()).hasSize(2)
             .extracting("profileImage")

@@ -500,7 +500,7 @@ public class CrewService {
         return CrewReportResponseDto.crewReportResponse(info, members, bubbleChart, keyword, languageRatio, feedbacks);
     }
 
-    public Map<String, List<CrewReportResponseDto>> getAllReports(Long crewId) {
+    public Map<String, List<CrewReportResponseDto>> getAllReports(Long crewId, String sort) {
         Crew crew = crewRepository.findById(crewId).orElseThrow(
             () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
         );
@@ -508,23 +508,36 @@ public class CrewService {
             () -> new GeneralException(Code.REPORT_NOT_FOUND, "크루 리포트가 존재하지 않습니다.")
         );
 
-        List<CrewReportResponseDto> reports = crewReports.stream()
+        List<CrewReportResponseDto> reports = new ArrayList<>(
+            crewReports.stream()
             .map(crewReport -> {
-                boolean generated = crewReportAnalysisRepository.findByCrewReport(crewReport).isPresent();
+                boolean generated = crewReportAnalysisRepository.findByCrewReport(crewReport)
+                    .isPresent();
                 List<MemberResponseDto> members = crewReport.getVoiceFiles().stream()
                     .map(VoiceFile::getMember)
                     .distinct()
                     .map(MemberResponseDto::crewReportResponse)
                     .toList();
 
-                CrewReportAnalysis crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(crewReport).orElseThrow(
+                CrewReportAnalysis crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(
+                    crewReport).orElseThrow(
                     () -> new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "존재하지 않는 리포트 분석입니다.")
                 );
                 Map<String, String> info = getReportInfo(crewReport, crewReportAnalysis);
-
-                return CrewReportResponseDto.crewReportListResponse(crewId, generated, members, info);
+                return CrewReportResponseDto.crewReportListResponse(crewReport.getId(), generated,
+                    members, info);
             })
-            .toList();
+            .sorted(Comparator.comparing((CrewReportResponseDto report) -> {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                return LocalDateTime.parse(report.getInfo().get("createdAt"), formatter);
+            }).reversed())
+            .toList()
+        );
+
+        if (sort.equals("asc")) {
+            Collections.reverse(reports);
+        }
+
         return Collections.singletonMap("reports", reports);
     }
 

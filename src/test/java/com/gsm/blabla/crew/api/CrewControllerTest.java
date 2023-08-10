@@ -1,6 +1,8 @@
 package com.gsm.blabla.crew.api;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -136,7 +138,7 @@ class CrewControllerTest extends ControllerTestSupport {
         reports.put("reports", Collections.nCopies(6, CrewReportResponseDto.crewReportListResponse(
             1L, true, members, info)));
 
-        given(crewService.getAllReports(any(Long.class)))
+        given(crewService.getAllReports(anyLong(), anyString()))
             .willReturn(reports);
 
         // when // then
