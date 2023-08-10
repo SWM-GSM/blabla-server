@@ -127,6 +127,7 @@ public class CrewService {
             CrewResponseDto.crewListResponse(language, crew, crewMemberRepository));
     }
 
+    @Transactional(readOnly = true)
     public Map<String, List<CrewResponseDto>> getMyCrews() {
         Long memberId = SecurityUtil.getMemberId();
         List<CrewMember> crewMembers = crewMemberRepository.getByMemberIdAndStatus(memberId, CrewMemberStatus.JOINED);
@@ -138,6 +139,7 @@ public class CrewService {
         return Collections.singletonMap("crews", crews);
     }
 
+    @Transactional(readOnly = true)
     public Map<String, List<CrewResponseDto>> getCanJoinCrews() {
         Long memberId = SecurityUtil.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(
@@ -262,7 +264,7 @@ public class CrewService {
         return Collections.singletonMap("message", "음성 파일 분석이 완료되었습니다.");
     }
 
-
+    @Transactional(readOnly = true)
     public Map<String, List<MemberResponseDto>> getWaitingList(Long crewId) {
         Long meberId = SecurityUtil.getMemberId();
         CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, meberId)
@@ -370,6 +372,7 @@ public class CrewService {
         return Collections.singletonMap("message", "강제 탈퇴가 완료되었습니다.");
     }
 
+    @Transactional(readOnly = true)
     public MemberProfileResponseDto getMemberProfile(String language, Long crewId, Long memberId) {
         if (!Objects.equals(language, "ko") && !Objects.equals(language, "en")) {
             throw new GeneralException(Code.LANGUAGE_NOT_SUPPORTED, "ko 또는 en만 지원합니다.");
@@ -475,6 +478,7 @@ public class CrewService {
         return Collections.singletonMap("message", "음성 채팅 피드백 저장이 완료되었습니다.");
     }
 
+    @Transactional(readOnly = true)
     public CrewReportResponseDto getReport(Long reportId) {
         CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
             () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
@@ -529,6 +533,7 @@ public class CrewService {
         return CrewReportResponseDto.crewReportResponse(info, members, bubbleChart, keyword, languageRatio, feedbacks);
     }
 
+    @Transactional(readOnly = true)
     public Map<String, List<CrewReportResponseDto>> getAllReports(Long crewId, String sort) {
         Crew crew = crewRepository.findById(crewId).orElseThrow(
             () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
