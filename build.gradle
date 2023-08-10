@@ -78,6 +78,10 @@ dependencies {
     // rest docs
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    // fcm
+    implementation 'com.google.firebase:firebase-admin:8.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
 }
 
 tasks.named('test') {
