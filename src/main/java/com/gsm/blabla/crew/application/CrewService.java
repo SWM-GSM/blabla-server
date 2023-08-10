@@ -67,6 +67,7 @@ public class CrewService {
     private final CrewAccuseRepository crewAccuseRepository;
     private final MemberKeywordRepository memberKeywordRepository;
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
+    private final CrewReportKeywordRepository crewReportKeywordRepository;
 
     public Map<String, Long> create(CrewRequestDto crewRequestDto) {
         Crew crew = crewRepository.save(crewRequestDto.toEntity());
@@ -414,14 +415,14 @@ public class CrewService {
         String response = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        CrewReportAnalysisResponseDto crewReportAnalysisResponseDto = null;
+        AiCrewReportResponseDto aiCrewReportResponseDto = null;
         try {
-            crewReportAnalysisResponseDto = objectMapper.readValue(response, CrewReportAnalysisResponseDto.class);
+            aiCrewReportResponseDto = objectMapper.readValue(response, AiCrewReportResponseDto.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        if (crewReportAnalysisResponseDto == null) {
+        if (aiCrewReportResponseDto == null) {
             throw new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "리포트 분석 결과가 비어있습니다.");
         }
 
@@ -432,12 +433,22 @@ public class CrewService {
         crewReportAnalysisRepository.save(
                 CrewReportAnalysis.builder()
                         .crewReport(crewReport)
-                        .koreanTime(crewReportAnalysisResponseDto.getKoreanTime())
-                        .englishTime(crewReportAnalysisResponseDto.getEnglishTime())
-                        .cloudUrl(crewReportAnalysisResponseDto.getCloudUrl())
+                        .koreanTime(aiCrewReportResponseDto.getKoreanTime())
+                        .englishTime(aiCrewReportResponseDto.getEnglishTime())
+                        .cloudUrl(aiCrewReportResponseDto.getCloudUrl())
                         .endAt(endAt)
                         .build()
                 );
+
+        crewReportKeywordRepository.saveAll(
+                aiCrewReportResponseDto.getKeywords().stream()
+                        .map(crewReportKeywordDto -> CrewReportKeyword.builder()
+                                .crewReport(crewReport)
+                                .keyword(crewReportKeywordDto.getKeyword())
+                                .count(crewReportKeywordDto.getCount())
+                                .build()
+                        )
+                        .toList());
 
         return Collections.singletonMap("message", "리포트 생성이 완료되었습니다.");
     }
