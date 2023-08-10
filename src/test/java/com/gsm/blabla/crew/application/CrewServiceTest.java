@@ -17,9 +17,7 @@ import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.CrewReport;
-import com.gsm.blabla.crew.domain.CrewReportAnalysis;
 import com.gsm.blabla.crew.domain.MeetingCycle;
-import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.crew.dto.CrewReportResponseDto;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.CrewResponseDto;
@@ -30,12 +28,10 @@ import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.dto.MemberResponseDto;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -388,7 +384,7 @@ class CrewServiceTest extends IntegrationTestSupport {
         Crew crew = crewRepository.findById(crewId)
             .orElseThrow(() -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
         joinCrew(member2, crew);
-        CrewReport crewReport = createReport(crew, now);
+        CrewReport crewReport = createReport(member1, member2, crew, now);
 
         String nowToString = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         String durationTimeToString = String.format("%02d:%02d:%02d", 0, 26, 30);
@@ -426,9 +422,9 @@ class CrewServiceTest extends IntegrationTestSupport {
             .orElseThrow(() -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
         joinCrew(member2, crew);
 
-        CrewReport crewReport1 = createReport(crew, now); // 리포트 1
-        CrewReport crewReport2 = createReport(crew, now.plusDays(1)); // 리포트 2
-        CrewReport crewReport3 = createReport(crew, now.plusDays(2)); // 리포트 3
+        CrewReport crewReport1 = createReport(member1, member2, crew, now); // 리포트 1
+        CrewReport crewReport2 = createReport(member1, member2, crew, now.plusDays(1)); // 리포트 2
+        CrewReport crewReport3 = createReport(member1, member2, crew, now.plusDays(2)); // 리포트 3
 
         // when
         List<CrewReportResponseDto> response = crewService.getAllReports(crewId, "desc").get("reports");
@@ -477,52 +473,4 @@ class CrewServiceTest extends IntegrationTestSupport {
         );
     }
 
-    private CrewReport startVoiceRoom(Crew crew, LocalDateTime startedAt) {
-        return crewReportRepository.save(
-            CrewReport.builder()
-                .crew(crew)
-                .startedAt(startedAt)
-                .build()
-        );
-    }
-
-    private void exitVoiceRoom(Member member, CrewReport crewReport) {
-        VoiceFile voiceFile = voiceFileRepository.save(
-            VoiceFile.builder()
-                .member(member)
-                .crewReport(crewReport)
-                .fileUrl("www.test.com")
-                .totalCallTime(Duration.ofMinutes(26).plusSeconds(30))
-                .koreanTime(Duration.ofMinutes(20))
-                .englishTime(Duration.ofMinutes(6))
-                .redundancyTime(Duration.ofSeconds(30))
-                .feedback("테스트 피드백 by " + member.getProfileImage())
-                .build()
-        );
-
-        voiceFile.createFeedback("테스트 피드백 ");
-    }
-
-    private void createReportAnalysis(CrewReport crewReport, LocalDateTime startedAt) {
-        crewReportAnalysisRepository.save(
-            CrewReportAnalysis.builder()
-                .crewReport(crewReport)
-                .koreanTime(Duration.ofMinutes(20))
-                .englishTime(Duration.ofMinutes(6))
-                .cloudUrl("www.test.com")
-                .endAt(startedAt.plusMinutes(26).plusSeconds(30))
-                .build()
-        );
-
-        // TODO: 키워드 엔티티 생성 로직
-    }
-
-    private CrewReport createReport(Crew crew, LocalDateTime startedAt) {
-        CrewReport crewReport = startVoiceRoom(crew, startedAt);
-        exitVoiceRoom(member1, crewReport);
-        exitVoiceRoom(member2, crewReport);
-        createReportAnalysis(crewReport, startedAt);
-
-        return crewReport;
-    }
 }

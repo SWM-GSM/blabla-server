@@ -504,9 +504,7 @@ public class CrewService {
         Crew crew = crewRepository.findById(crewId).orElseThrow(
             () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
         );
-        List<CrewReport> crewReports = crewReportRepository.findAllByCrew(crew).orElseThrow(
-            () -> new GeneralException(Code.REPORT_NOT_FOUND, "크루 리포트가 존재하지 않습니다.")
-        );
+        List<CrewReport> crewReports = crewReportRepository.findAllByCrew(crew);
 
         List<CrewReportResponseDto> reports = new ArrayList<>(
             crewReports.stream()

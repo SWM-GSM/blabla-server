@@ -4,18 +4,26 @@ import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.crew.application.CrewService;
 import com.gsm.blabla.crew.dao.CrewMemberRepository;
+import com.gsm.blabla.crew.dao.CrewReportAnalysisRepository;
+import com.gsm.blabla.crew.dao.CrewReportRepository;
 import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.CrewTagRepository;
+import com.gsm.blabla.crew.dao.VoiceFileRepository;
 import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
+import com.gsm.blabla.crew.domain.CrewReport;
+import com.gsm.blabla.crew.domain.CrewReportAnalysis;
 import com.gsm.blabla.crew.domain.CrewTag;
 import com.gsm.blabla.crew.domain.MeetingCycle;
+import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +53,15 @@ public abstract class IntegrationTestSupport {
 
     @Autowired
     protected CrewTagRepository crewTagRepository;
+
+    @Autowired
+    private CrewReportRepository crewReportRepository;
+
+    @Autowired
+    private VoiceFileRepository voiceFileRepository;
+
+    @Autowired
+    private CrewReportAnalysisRepository crewReportAnalysisRepository;
 
     @AfterEach
     void cleanUpDatabase() {
@@ -125,5 +142,54 @@ public abstract class IntegrationTestSupport {
                 .role(CrewMemberRole.MEMBER)
                 .build()
         );
+    }
+
+    protected CrewReport startVoiceRoom(Crew crew, LocalDateTime startedAt) {
+        return crewReportRepository.save(
+            CrewReport.builder()
+                .crew(crew)
+                .startedAt(startedAt)
+                .build()
+        );
+    }
+
+    protected void exitVoiceRoom(Member member, CrewReport crewReport) {
+        VoiceFile voiceFile = voiceFileRepository.save(
+            VoiceFile.builder()
+                .member(member)
+                .crewReport(crewReport)
+                .fileUrl("www.test.com")
+                .totalCallTime(Duration.ofMinutes(26).plusSeconds(30))
+                .koreanTime(Duration.ofMinutes(20))
+                .englishTime(Duration.ofMinutes(6))
+                .redundancyTime(Duration.ofSeconds(30))
+                .feedback("테스트 피드백 by " + member.getProfileImage())
+                .build()
+        );
+
+        voiceFile.createFeedback("테스트 피드백 ");
+    }
+
+    protected void createReportAnalysis(CrewReport crewReport, LocalDateTime startedAt) {
+        crewReportAnalysisRepository.save(
+            CrewReportAnalysis.builder()
+                .crewReport(crewReport)
+                .koreanTime(Duration.ofMinutes(20))
+                .englishTime(Duration.ofMinutes(6))
+                .cloudUrl("www.test.com")
+                .endAt(startedAt.plusMinutes(26).plusSeconds(30))
+                .build()
+        );
+
+        // TODO: 키워드 엔티티 생성 로직
+    }
+
+    public CrewReport createReport(Member member1, Member member2, Crew crew, LocalDateTime startedAt) {
+        CrewReport crewReport = startVoiceRoom(crew, startedAt);
+        exitVoiceRoom(member1, crewReport);
+        exitVoiceRoom(member2, crewReport);
+        createReportAnalysis(crewReport, startedAt);
+
+        return crewReport;
     }
 }
