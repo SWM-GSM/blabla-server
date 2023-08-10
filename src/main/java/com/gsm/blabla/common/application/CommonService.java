@@ -7,6 +7,8 @@ import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.common.enums.Level;
 import com.gsm.blabla.common.enums.PreferMember;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.response.Code;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +22,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CommonService {
     public Map<String, List<LevelDto>> getLevels(String language) {
+        if (!Objects.equals(language, "ko") && !Objects.equals(language, "en")) {
+            throw new GeneralException(Code.LANGUAGE_NOT_SUPPORTED, "ko 또는 en만 지원합니다.");
+        }
+
         List<LevelDto> levels = Arrays.stream(Level.values())
             .filter(level -> level.getLanguage().equals(language))
             .map(level -> LevelDto.of(level.getDegree(), level.getDescription()))
@@ -47,8 +53,11 @@ public class CommonService {
         for (Tag tag : Tag.values()) {
             if (Objects.equals(language, "ko")) {
                 crewTags.add(CommonCodeDto.of(tag.getEmoji(), tag.getKoreanName(), tag.name()));
-            } else {
+            } else if (Objects.equals(language, "en")){
                 crewTags.add(CommonCodeDto.of(tag.getEmoji(), tag.getEnglishName(), tag.name()));
+            }
+            else {
+                throw new GeneralException(Code.LANGUAGE_NOT_SUPPORTED, "ko 또는 en만 지원합니다.");
             }
         }
         result.put("tags", crewTags);
@@ -63,8 +72,10 @@ public class CommonService {
         for (PreferMember preferMember : PreferMember.values()) {
             if (Objects.equals(language, "ko")) {
                 preferMembers.add(CommonCodeDto.of(preferMember.getEmoji(), preferMember.getKoreanName(), preferMember.name()));
-            } else {
+            } else if (Objects.equals(language, "en")){
                 preferMembers.add(CommonCodeDto.of(preferMember.getEmoji(), preferMember.getEnglishName(), preferMember.name()));
+            } else {
+                throw new GeneralException(Code.LANGUAGE_NOT_SUPPORTED, "ko 또는 en만 지원합니다.");
             }
         }
         result.put("preferMembers", preferMembers);
@@ -81,11 +92,13 @@ public class CommonService {
                     keywords.add(
                         CommonCodeDto.of(keyword.getEmoji(), keyword.getKoreanName(), keyword.name()));
                 }
-            } else {
+            } else if (Objects.equals(language, "en")) {
                 if (Objects.equals(keyword.getCategory(), category)) {
                     keywords.add(
                         CommonCodeDto.of(keyword.getEmoji(), keyword.getEnglishName(), keyword.name()));
                 }
+            } else {
+                throw new GeneralException(Code.LANGUAGE_NOT_SUPPORTED, "ko 또는 en만 지원합니다.");
             }
         }
 
