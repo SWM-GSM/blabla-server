@@ -27,6 +27,7 @@ import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -66,7 +67,6 @@ public class CrewService {
     private final CrewAccuseRepository crewAccuseRepository;
     private final MemberKeywordRepository memberKeywordRepository;
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
-    private final FeedbackRepository feedbackRepository;
 
     public Map<String, Long> create(CrewRequestDto crewRequestDto) {
         Crew crew = crewRepository.save(crewRequestDto.toEntity());
@@ -414,14 +414,14 @@ public class CrewService {
         String response = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        CrewReportResponseDto crewReportResponseDto = null;
+        CrewReportAnalysisResponseDto crewReportAnalysisResponseDto = null;
         try {
-            crewReportResponseDto = objectMapper.readValue(response, CrewReportResponseDto.class);
+            crewReportAnalysisResponseDto = objectMapper.readValue(response, CrewReportAnalysisResponseDto.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        if (crewReportResponseDto == null) {
+        if (crewReportAnalysisResponseDto == null) {
             throw new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "리포트 분석 결과가 비어있습니다.");
         }
 
@@ -432,9 +432,9 @@ public class CrewService {
         crewReportAnalysisRepository.save(
                 CrewReportAnalysis.builder()
                         .crewReport(crewReport)
-                        .koreanTime(crewReportResponseDto.getKoreanTime())
-                        .englishTime(crewReportResponseDto.getEnglishTime())
-                        .cloudUrl(crewReportResponseDto.getCloudUrl())
+                        .koreanTime(crewReportAnalysisResponseDto.getKoreanTime())
+                        .englishTime(crewReportAnalysisResponseDto.getEnglishTime())
+                        .cloudUrl(crewReportAnalysisResponseDto.getCloudUrl())
                         .endAt(endAt)
                         .build()
                 );
@@ -447,19 +447,110 @@ public class CrewService {
                 () -> new GeneralException(Code.VOICE_FILE_NOT_FOUND, "존재하지 않는 음성 파일입니다.")
         );
 
-        Long memberId = SecurityUtil.getMemberId();
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-        );
-
-        feedbackRepository.save(
-                Feedback.builder()
-                        .member(member)
-                        .voiceFile(voiceFile)
-                        .content(voiceFileFeedbackRequestDto.getContent())
-                        .build()
-        );
+        voiceFile.createFeedback(voiceFileFeedbackRequestDto.getContent());
 
         return Collections.singletonMap("message", "음성 채팅 피드백 저장이 완료되었습니다.");
+    }
+
+    public CrewReportResponseDto getReport(Long reportId) {
+        CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
+            () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
+        );
+        CrewReportAnalysis crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(crewReport).orElseThrow(
+            () -> new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "존재하지 않는 리포트 분석입니다.")
+        );
+
+        // info
+        Map<String, String> info = getReportInfo(crewReport, crewReportAnalysis);
+
+        // members
+        List<MemberResponseDto> members = crewReport.getVoiceFiles().stream()
+                .map(VoiceFile::getMember)
+                .distinct()
+                .map(MemberResponseDto::crewReportResponse)
+                .toList();
+
+        // bubble chart
+        String bubbleChart = crewReportAnalysis.getCloudUrl();
+
+        // keyword
+        // TODO: 로직 추가하기
+        List<Map<String, Object>> keyword = new ArrayList<>();
+
+        // language ratio
+        Map<String, Integer> languageRatio = new HashMap<>();
+
+        Duration koreanTime = crewReportAnalysis.getKoreanTime();
+        Duration englishTime = crewReportAnalysis.getEnglishTime();
+
+        long totalMilliseconds = koreanTime.toMillis() + englishTime.toMillis();
+
+        double koreanRatio = (double) koreanTime.toMillis() / totalMilliseconds;
+
+        int koreanPercentage = (int) (koreanRatio * 100);
+        int englishPercentage = 100 - koreanPercentage;
+        languageRatio.put("korean", koreanPercentage);
+        languageRatio.put("english", englishPercentage);
+
+        // feedbacks
+        List<MemberResponseDto> feedbacks = crewReport.getVoiceFiles().stream()
+            .map(voiceFile -> MemberResponseDto.feedbackResponse(voiceFile.getMember(), voiceFile))
+            .toList();
+
+        return CrewReportResponseDto.crewReportResponse(info, members, bubbleChart, keyword, languageRatio, feedbacks);
+    }
+
+    public Map<String, List<CrewReportResponseDto>> getAllReports(Long crewId, String sort) {
+        Crew crew = crewRepository.findById(crewId).orElseThrow(
+            () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
+        );
+        List<CrewReport> crewReports = crewReportRepository.findAllByCrew(crew).orElseThrow(
+            () -> new GeneralException(Code.REPORT_NOT_FOUND, "크루 리포트가 존재하지 않습니다.")
+        );
+
+        List<CrewReportResponseDto> reports = new ArrayList<>(
+            crewReports.stream()
+            .map(crewReport -> {
+                boolean generated = crewReportAnalysisRepository.findByCrewReport(crewReport)
+                    .isPresent();
+                List<MemberResponseDto> members = crewReport.getVoiceFiles().stream()
+                    .map(VoiceFile::getMember)
+                    .distinct()
+                    .map(MemberResponseDto::crewReportResponse)
+                    .toList();
+
+                CrewReportAnalysis crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(
+                    crewReport).orElseThrow(
+                    () -> new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "존재하지 않는 리포트 분석입니다.")
+                );
+                Map<String, String> info = getReportInfo(crewReport, crewReportAnalysis);
+                return CrewReportResponseDto.crewReportListResponse(crewReport.getId(), generated,
+                    members, info);
+            })
+            .sorted(Comparator.comparing((CrewReportResponseDto report) -> {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                return LocalDateTime.parse(report.getInfo().get("createdAt"), formatter);
+            }).reversed())
+            .toList()
+        );
+
+        if (sort.equals("asc")) {
+            Collections.reverse(reports);
+        }
+
+        return Collections.singletonMap("reports", reports);
+    }
+
+    private Map<String, String> getReportInfo(CrewReport crewReport, CrewReportAnalysis crewReportAnalysis) {
+        Map<String, String> info = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        info.put("createdAt", crewReportAnalysis.getCreatedAt().format(formatter));
+
+        Duration duration = Duration.between(crewReport.getStartedAt(), crewReportAnalysis.getEndAt());
+        String durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
+        info.put("durationTime", durationTime);
+
+        return info;
     }
 }
