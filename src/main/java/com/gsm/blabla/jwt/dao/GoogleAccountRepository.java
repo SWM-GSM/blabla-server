@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GoogleAccountRepository extends JpaRepository<GoogleAccount, String> {
     Optional<GoogleAccount> findById(String id);
+
+    void deleteByMemberId(Long memberId);
 }
