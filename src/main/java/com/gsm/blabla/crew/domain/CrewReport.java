@@ -25,6 +25,9 @@ public class CrewReport {
     @OneToMany(mappedBy = "crewReport")
     private List<VoiceFile> voiceFiles;
 
+    @OneToMany(mappedBy = "crewReport")
+    private List<CrewReportKeyword> keywords;
+
     @Builder
     public CrewReport(Crew crew, LocalDateTime startedAt) {
         this.crew = crew;

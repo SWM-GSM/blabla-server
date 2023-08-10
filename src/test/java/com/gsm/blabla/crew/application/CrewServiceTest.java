@@ -400,10 +400,8 @@ class CrewServiceTest extends IntegrationTestSupport {
             .extracting("profileImage")
             .containsExactlyInAnyOrder("cat", "dog");
         assertThat(response.getBubbleChart()).isEqualTo("www.test.com");
-        // TODO: CrewService 로직 추가 후 테스트 코드 수정하기
-//        assertThat(response.getKeyword()).extracting("name")
-//            .containsExactlyInAnyOrder("테스트1", "테스트2", "테스트3");
-        assertThat(response.getKeyword()).isEmpty();
+        assertThat(response.getKeyword()).extracting("name")
+            .containsExactlyInAnyOrder("테스트1", "테스트2", "테스트3");
         assertThat(response.getLanguageRatio()).containsEntry("korean", 76);
         assertThat(response.getLanguageRatio()).containsEntry("english", 24);
         assertThat(response.getFeedbacks()).hasSize(2)
