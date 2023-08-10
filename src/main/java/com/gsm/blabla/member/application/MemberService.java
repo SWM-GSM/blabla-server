@@ -1,10 +1,12 @@
 package com.gsm.blabla.member.application;
 
+import com.gsm.blabla.auth.application.AuthService;
 import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
+import com.gsm.blabla.jwt.dao.JwtRepository;
 import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 
@@ -24,8 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class MemberService {
+
     private final MemberRepository memberRepository;
     private final MemberKeywordRepository memberKeywordRepository;
+    private final JwtRepository jwtRepository;
+
+    private final AuthService authService;
 
     public Map<String, Boolean> isNicknameDuplicated(String nickname) {
         Map<String, Boolean> result = new HashMap<>();
@@ -40,7 +46,17 @@ public class MemberService {
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         );
 
+        jwtRepository.deleteByMemberId(memberId);
         memberRepository.delete(member);
+
+        switch (member.getSocialLoginType()) {
+            case GOOGLE -> {
+                authService.unlinkGoogleAccount(memberId);
+            }
+            case APPLE -> {
+                authService.revokeAppleAccount(memberId);
+            }
+        }
 
         return Collections.singletonMap("message", "회원탈퇴가 완료되었습니다.");
     }
