@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
-public class RtcTokenDto {
-    private String channelName;
-    private String token;
-    private Long expiresIn;
+@NoArgsConstructor
+@AllArgsConstructor
+public class VoiceRoomRequestDto {
+    private Boolean isActivated;
 }

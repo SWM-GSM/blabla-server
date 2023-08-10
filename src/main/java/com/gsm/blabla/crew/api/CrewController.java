@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 public class CrewController {
+
     private final CrewService crewService;
 
     @Operation(summary = "크루 생성 API")
@@ -75,7 +76,7 @@ public class CrewController {
 
 
     @Operation(summary = "음성 파일 업로드 & 분석 API")
-    @PostMapping(value = "/reports/{reportId}/voice-file")
+    @PostMapping(value = "/crews/reports/{reportId}/voice-file")
     public DataResponseDto<Map<String, String>> uploadAndAnalyzeVoiceFile(
             @PathVariable("reportId") Long reportId,
             @RequestParam("file") MultipartFile file) {
@@ -83,10 +84,25 @@ public class CrewController {
     }
 
     @Operation(summary = "크루 리포트 생성 API")
-    @PostMapping(value = "/reports/{reportId}")
+    @PostMapping(value = "/crews/reports/{reportId}")
     public DataResponseDto<Map<String, String>> createReport(
             @PathVariable("reportId") Long reportId) {
         return DataResponseDto.of(crewService.createReport(reportId));
+    }
+
+    @Operation(summary = "크루 리포트 조회 API")
+    @GetMapping(value = "/crews/reports/{reportId}")
+    public DataResponseDto<CrewReportResponseDto> getReport(
+            @PathVariable("reportId") Long reportId) {
+        return DataResponseDto.of(crewService.getReport(reportId));
+    }
+
+    @Operation(summary = "크루 리포트 목록 조회 API")
+    @GetMapping(value = "/crews/{crewId}/reports")
+    public DataResponseDto<Map<String, List<CrewReportResponseDto>>> getAllReports(
+        @PathVariable("crewId") Long crewId,
+        @RequestParam(value = "sort", defaultValue = "desc") String sort) {
+        return DataResponseDto.of(crewService.getAllReports(crewId, sort));
     }
 
 
