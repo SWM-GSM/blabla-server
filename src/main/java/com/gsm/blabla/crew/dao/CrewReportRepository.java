@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CrewReportRepository extends JpaRepository<CrewReport, Long> {
 
-    Optional<List<CrewReport>> findAllByCrew(Crew crew);
+    List<CrewReport> findAllByCrew(Crew crew);
 }
