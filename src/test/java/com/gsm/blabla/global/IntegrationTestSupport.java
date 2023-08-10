@@ -5,6 +5,7 @@ import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.crew.application.CrewService;
 import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.dao.CrewReportAnalysisRepository;
+import com.gsm.blabla.crew.dao.CrewReportKeywordRepository;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
 import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.CrewTagRepository;
@@ -14,6 +15,7 @@ import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.crew.domain.CrewReport;
 import com.gsm.blabla.crew.domain.CrewReportAnalysis;
+import com.gsm.blabla.crew.domain.CrewReportKeyword;
 import com.gsm.blabla.crew.domain.CrewTag;
 import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.crew.domain.VoiceFile;
@@ -62,6 +64,9 @@ public abstract class IntegrationTestSupport {
 
     @Autowired
     private CrewReportAnalysisRepository crewReportAnalysisRepository;
+
+    @Autowired
+    private CrewReportKeywordRepository crewReportKeywordRepository;
 
     @AfterEach
     void cleanUpDatabase() {
@@ -181,10 +186,22 @@ public abstract class IntegrationTestSupport {
                 .build()
         );
 
-        // TODO: 키워드 엔티티 생성 로직
+        createKeyword(crewReport, "테스트1", 38L);
+        createKeyword(crewReport, "테스트2", 30L);
+        createKeyword(crewReport, "테스트3", 20L);
     }
 
-    public CrewReport createReport(Member member1, Member member2, Crew crew, LocalDateTime startedAt) {
+    protected void createKeyword(CrewReport crewReport, String keyword, Long count) {
+        crewReportKeywordRepository.save(
+            CrewReportKeyword.builder()
+                .crewReport(crewReport)
+                .keyword(keyword)
+                .count(count)
+                .build()
+        );
+    }
+
+    protected CrewReport createReport(Member member1, Member member2, Crew crew, LocalDateTime startedAt) {
         CrewReport crewReport = startVoiceRoom(crew, startedAt);
         exitVoiceRoom(member1, crewReport);
         exitVoiceRoom(member2, crewReport);

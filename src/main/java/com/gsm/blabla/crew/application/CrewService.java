@@ -485,8 +485,14 @@ public class CrewService {
         String bubbleChart = crewReportAnalysis.getCloudUrl();
 
         // keyword
-        // TODO: 로직 추가하기
-        List<Map<String, Object>> keyword = new ArrayList<>();
+        List<Map<String, Object>> keyword = crewReport.getKeywords().stream()
+                .map(crewReportKeyword -> {
+                    Map<String, Object> keywordMap = new HashMap<>();
+                    keywordMap.put("name", crewReportKeyword.getKeyword());
+                    keywordMap.put("count", crewReportKeyword.getCount());
+                    return keywordMap;
+                })
+                .toList();
 
         // language ratio
         Map<String, Integer> languageRatio = new HashMap<>();
