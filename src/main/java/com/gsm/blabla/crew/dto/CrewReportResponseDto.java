@@ -1,7 +1,6 @@
 package com.gsm.blabla.crew.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.util.List;
 import java.util.Map;
