@@ -95,8 +95,6 @@ public class AuthService {
             throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
         }
 
-        // TODO: 이미 가입한 유저 예외 처리
-
         switch (memberRequestDto.getSocialLoginType()) {
             case "GOOGLE" -> {
                 GoogleAccountDto googleAccountDto = getGoogleAccountInfo(providerAuthorization);
