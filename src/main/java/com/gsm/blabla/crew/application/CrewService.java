@@ -94,6 +94,10 @@ public class CrewService {
 
     @Transactional(readOnly = true)
     public CrewResponseDto get(String language, Long crewId) {
+        if (!Objects.equals(language, "ko") && !Objects.equals(language, "en")) {
+            throw new GeneralException(Code.LANGUAGE_NOT_SUPPORTED, "ko 또는 en만 지원합니다.");
+        }
+
         Long memberId = SecurityUtil.getMemberId();
         Crew crew = crewRepository.findById(crewId).orElseThrow(
             () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
@@ -115,6 +119,10 @@ public class CrewService {
 
     @Transactional(readOnly = true)
     public Page<CrewResponseDto> getAll(String language, Pageable pageable) {
+        if (!Objects.equals(language, "ko") && !Objects.equals(language, "en")) {
+            throw new GeneralException(Code.LANGUAGE_NOT_SUPPORTED, "ko 또는 en만 지원합니다.");
+        }
+
         return crewRepository.findAll(pageable).map(crew ->
             CrewResponseDto.crewListResponse(language, crew, crewMemberRepository));
     }
@@ -363,6 +371,10 @@ public class CrewService {
     }
 
     public MemberProfileResponseDto getMemberProfile(String language, Long crewId, Long memberId) {
+        if (!Objects.equals(language, "ko") && !Objects.equals(language, "en")) {
+            throw new GeneralException(Code.LANGUAGE_NOT_SUPPORTED, "ko 또는 en만 지원합니다.");
+        }
+
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         );
