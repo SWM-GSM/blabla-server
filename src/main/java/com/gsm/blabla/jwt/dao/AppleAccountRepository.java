@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AppleAccountRepository extends JpaRepository<AppleAccount, String> {
 
     Optional<AppleAccount> findByMemberId(Long memberId);
+
+    void deleteByMemberId(Long memberId);
 }
