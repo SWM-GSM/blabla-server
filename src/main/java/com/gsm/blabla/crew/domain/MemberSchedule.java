@@ -42,6 +42,6 @@ public class MemberSchedule {
     }
 
     public void cancel() {
-        this.status = "CANCELED";
+        this.status = "NOT_JOINED";
     }
 }
