@@ -220,8 +220,7 @@ public class CrewService {
         String filePath = String.format("reports/%s/members/%s/%s/%s.wav", String.valueOf(reportId), String.valueOf(memberId), fileName, fileName);
         String fileUrl = s3UploaderService.uploadFile(filePath, file);
 
-        // TODO: 더미 데이터 & API URL 수정
-        String fastApiUrl = "http://localhost:8000/api/voice-analysis";
+        String fastApiUrl = "http://13.209.117.21:8000/ai/voice-analysis";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -420,8 +419,7 @@ public class CrewService {
                 .map(VoiceFile::getFileUrl)
                 .toList();
 
-        // TODO: 더미 데이터 & API URL 수정
-        String fastApiUrl = "http://localhost:8000/api/crew-report";
+        String fastApiUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
