@@ -99,8 +99,7 @@ public class PracticeService {
                 .answer(content.getAnswer())
                 .build();
 
-        // TODO: API URL 수정 & 로그 추가
-        String fastApiUrl = String.format("http://localhost:8000/api/%s/feedback", language);
+        String fastApiUrl = String.format("https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/%s/feedback", language);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
