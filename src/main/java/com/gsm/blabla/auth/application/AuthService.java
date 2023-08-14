@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -67,6 +68,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class AuthService {
 
     private final RestTemplate restTemplate;
@@ -140,6 +142,7 @@ public class AuthService {
                     .build());
         }
 
+        log.info("{} 님이 {} 타입으로 회원가입을 했습니다.", member.getNickname(), memberRequestDto.getSocialLoginType());
         return jwtService.issueJwt(member);
     }
 
