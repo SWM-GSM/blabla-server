@@ -1,8 +1,15 @@
 package com.gsm.blabla.global.exception;
 
+import com.fasterxml.jackson.databind.util.ExceptionUtil;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.response.ErrorResponseDto;
+import com.gsm.blabla.global.webhook.service.WebhookService;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,7 +23,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice(annotations = {RestController.class})
 @Slf4j
+@RequiredArgsConstructor
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final WebhookService webhookService;
 
     @org.springframework.web.bind.annotation.ExceptionHandler
     public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
@@ -56,7 +66,9 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleExceptionInternal(Exception e, Code errorCode,
         HttpHeaders headers, HttpStatus status, WebRequest request) {
+        webhookService.sendErrorLog(e.getMessage(), e.toString());
         log.error(e.getMessage(), e);
+
         return super.handleExceptionInternal(
             e,
             ErrorResponseDto.of(errorCode, errorCode.getMessage(e)),
