@@ -38,7 +38,6 @@ public class ContentViewResponseDto {
     }
 
     public static List<ContentViewResponseDto> contentViewListResponse(List<Content> contents, Long memberId, MemberContentRepository memberContentRepository) {
-        Boolean isCompleted = memberContentRepository.findByContentIdAndMemberId(contents.get(0).getId(), memberId).isPresent();
         return contents.stream()
                 .map(content -> {
                     return ContentViewResponseDto.builder()
@@ -46,7 +45,7 @@ public class ContentViewResponseDto {
                             .contentName(content.getContentName())
                             .thumbnailUrl("https://img.youtube.com/vi/" + content.getContentUrl().split("/watch\\?v=")[1] + "/hqdefault.jpg")
                             .topic(content.getTopic())
-                            .isCompleted(isCompleted)
+                            .isCompleted(memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isPresent())
                             .genre(content.getGenre())
                             .build();
                 })
