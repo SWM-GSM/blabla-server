@@ -35,13 +35,13 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-        MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Code code = Code.VALIDATION_ERROR;
 
-        String errorMessage = ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+        String errorMessage = e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
         String message = code.getMessage() + " - " + errorMessage;
 
-        return handleExceptionInternal(ex,
+        return handleExceptionInternal(e,
             ErrorResponseDto.of(code, message),
             headers,
             status,
