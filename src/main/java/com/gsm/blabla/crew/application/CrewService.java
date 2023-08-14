@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
@@ -53,6 +54,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CrewService {
 
     private final CrewRepository crewRepository;
@@ -80,15 +82,18 @@ public class CrewService {
                 )
         );
 
+        Member member = memberRepository.findById(SecurityUtil.getMemberId()).orElseThrow(
+            () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+
         crewMemberRepository.save(CrewMember.builder()
-            .member(memberRepository.findById(SecurityUtil.getMemberId()).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-            ))
+            .member(member)
             .crew(crew)
             .role(CrewMemberRole.LEADER)
             .build()
         );
 
+        log.info("{} 님이 크루를 생성하였습니다: {}", member.getNickname(), crew.getName());
         return Collections.singletonMap("crewId", crew.getId());
     }
 
@@ -322,18 +327,21 @@ public class CrewService {
     public Map<String, String> accuse(Long crewId, AccuseRequestDto accuseRequestDto) {
         Long memberId = SecurityUtil.getMemberId();
 
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        );
+        Crew crew = crewRepository.findById(crewId).orElseThrow(
+            () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
+        );
         crewAccuseRepository.save(CrewAccuse.builder()
             .type(CrewAccuseType.valueOf(accuseRequestDto.getType()))
             .description(accuseRequestDto.getDescription())
-            .crew(crewRepository.findById(crewId).orElseThrow(
-                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
-            ))
-            .member(memberRepository.findById(memberId).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-            ))
+            .crew(crew)
+            .member(member)
             .build()
         );
 
+        log.info("{} 님이 {} 크루를 신고하였습니다.", member.getNickname(), crew.getName());
         return Collections.singletonMap("message", "신고가 완료되었습니다.");
     }
 
@@ -349,6 +357,7 @@ public class CrewService {
 
         crewMember.withdrawal();
 
+        log.info("{} 님이 {} 크루를 탈퇴하였습니다.", crewMember.getMember().getNickname(), crewMember.getCrew().getName());
         return Collections.singletonMap("message", "크루 탈퇴가 완료되었습니다.");
     }
 
@@ -367,7 +376,8 @@ public class CrewService {
             () -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
 
         crewMember.withdrawal();
-        
+
+        log.info("{} 님이 {} 크루에서 {} 님을 강제 탈퇴시켰습니다.", memberId, crewId, crewMemberId);
         return Collections.singletonMap("message", "강제 탈퇴가 완료되었습니다.");
     }
 
