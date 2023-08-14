@@ -16,6 +16,7 @@ import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.dto.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -59,6 +61,7 @@ public class MemberService {
             }
         }
 
+        log.info("{} 님이 회원 탈퇴를 하였습니다.", member.getNickname());
         return Collections.singletonMap("message", "회원탈퇴가 완료되었습니다.");
     }
 
