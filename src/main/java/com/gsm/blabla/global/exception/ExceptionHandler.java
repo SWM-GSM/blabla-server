@@ -2,6 +2,7 @@ package com.gsm.blabla.global.exception;
 
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.response.ErrorResponseDto;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice(annotations = {RestController.class})
+@Slf4j
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
     @org.springframework.web.bind.annotation.ExceptionHandler
@@ -54,6 +56,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleExceptionInternal(Exception e, Code errorCode,
         HttpHeaders headers, HttpStatus status, WebRequest request) {
+        log.error(e.getMessage(), e);
         return super.handleExceptionInternal(
             e,
             ErrorResponseDto.of(errorCode, errorCode.getMessage(e)),
