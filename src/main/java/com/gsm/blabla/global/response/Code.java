@@ -56,6 +56,7 @@ public enum Code {
      * */
     REPORT_NOT_FOUND("RE001", HttpStatus.NOT_FOUND, "Report not found"),
     REPORT_ANALYSIS_IS_NULL("RE002", HttpStatus.NOT_FOUND, "Report Analysis not found"),
+    REPORT_ANALYSIS_TRIGGER_FAILED("RE003", HttpStatus.INTERNAL_SERVER_ERROR, "Report Analysis trigger failed"),
 
     /*
      * VoiceFile 관련 오류
