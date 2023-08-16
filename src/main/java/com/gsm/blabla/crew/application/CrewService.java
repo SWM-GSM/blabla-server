@@ -427,8 +427,8 @@ public class CrewService {
         String crewReportAnalysisTriggerUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis/sqs";
 
         Map<String, Long> paramMap = new HashMap<>();
-        paramMap.put("reportId", 1L);
-        paramMap.put("targetVoiceFileCount", 9L);
+        paramMap.put("reportId", reportId);
+        paramMap.put("targetVoiceFileCount", voiceFileCount);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
