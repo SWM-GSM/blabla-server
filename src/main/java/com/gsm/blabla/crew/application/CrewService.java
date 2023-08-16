@@ -420,6 +420,27 @@ public class CrewService {
         return MemberProfileResponseDto.getCrewMemberProfile(member, crewMember, interests);
     }
 
+    public Map<String, String> createReportRequest(Long reportId) {
+
+        Long voiceFileCount = voiceFileRepository.countAllByCrewReportId(reportId);
+
+        String crewReportAnalysisTriggerUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis/sqs";
+
+        Map<String, Long> paramMap = new HashMap<>();
+        paramMap.put("reportId", 1L);
+        paramMap.put("targetVoiceFileCount", 9L);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(paramMap, headers);
+
+        // TODO: response 예외 처리
+        restTemplate.postForObject(crewReportAnalysisTriggerUrl, requestEntity, String.class);
+
+        return Collections.singletonMap("message", "리포트 생성 요청이 완료되었습니다.");
+    }
+
     public Map<String, String> createReport(Long reportId) {
 
         LocalDateTime endAt = LocalDateTime.now();
@@ -429,13 +450,13 @@ public class CrewService {
                 .map(VoiceFile::getFileUrl)
                 .toList();
 
-        String fastApiUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis";
+        String crewReportAnalysisUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<List<String>> requestEntity = new HttpEntity<>(fileUrls, headers);
-        String response = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
+        String response = restTemplate.postForObject(crewReportAnalysisUrl, requestEntity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         AiCrewReportResponseDto aiCrewReportResponseDto = null;
