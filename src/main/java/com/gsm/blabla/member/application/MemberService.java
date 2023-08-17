@@ -197,4 +197,25 @@ public class MemberService {
 
         return Collections.singletonMap("settings", settings);
     }
+
+    public Map<String, Long> getMyId() {
+        return Collections.singletonMap("id", SecurityUtil.getMemberId());
+    }
+
+    public Map<String, List<MemberResponseDto>> getInfosFromIds(MemberRequestDto memberRequestDto) {
+        List<MemberResponseDto> members = memberRequestDto.getIds().stream()
+            .map(id -> memberRepository.findById(id)
+                .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."))
+            )
+            .map(member -> MemberResponseDto.builder()
+                .profileImage(member.getProfileImage())
+                .nickname(member.getNickname())
+                .countryCode(member.getCountryCode())
+                .build()
+            )
+            .toList();
+
+
+        return Collections.singletonMap("members", members);
+    }
 }
