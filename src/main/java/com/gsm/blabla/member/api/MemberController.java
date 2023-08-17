@@ -39,6 +39,11 @@ public class MemberController {
         return DataResponseDto.of(memberService.updateKeywords(keywordsRequestDto));
     }
 
+    @Operation(summary = "설정값 조회 API")
+    @GetMapping("/profile/settings")
+    public DataResponseDto<Map<String, Map<String, Boolean>>> getSettings() {
+        return DataResponseDto.of(memberService.getSettings());
+    }
 
     @Operation(summary = "멤버 삭제 API")
     @DeleteMapping("/members/withdrawal")
