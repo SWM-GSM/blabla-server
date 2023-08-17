@@ -197,4 +197,8 @@ public class MemberService {
 
         return Collections.singletonMap("settings", settings);
     }
+
+    public Map<String, Long> getMyId() {
+        return Collections.singletonMap("id", SecurityUtil.getMemberId());
+    }
 }

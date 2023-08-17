@@ -74,4 +74,10 @@ public class MemberController {
     public DataResponseDto<Map<String, String>> updateGenderDisclosure(@RequestBody genderDisclosureRequestDto genderDisclosureRequestDto) {
         return DataResponseDto.of(memberService.updateGenderDisclosure(genderDisclosureRequestDto));
     }
+
+    @Operation(summary = "나의 memberId 조회")
+    @GetMapping("/members/my-id")
+    public DataResponseDto<Map<String, Long>> getMyId() {
+        return DataResponseDto.of(memberService.getMyId());
+    }
 }
