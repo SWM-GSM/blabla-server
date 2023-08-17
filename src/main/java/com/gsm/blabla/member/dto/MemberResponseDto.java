@@ -75,6 +75,8 @@ public class MemberResponseDto {
     }
 
     public static MemberResponseDto feedbackResponse(Member member, VoiceFile voiceFile) {
+        if (voiceFile.getFeedback() == null) return null;
+
         return MemberResponseDto.builder()
             .nickname(member.getNickname())
             .profileImage(member.getProfileImage())
