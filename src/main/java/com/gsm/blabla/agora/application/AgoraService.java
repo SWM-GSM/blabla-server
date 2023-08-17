@@ -54,6 +54,7 @@ public class AgoraService {
             .token(token.buildTokenWithUid(appId, appCertificate, channelName, memberId,
                 Role.ROLE_PUBLISHER, TOKEN_EXPIRATION_IN_SECONDS, PRIVILEGE_EXPIRATION_IN_SECONDS))
             .expiresIn(new Date(now + TOKEN_EXPIRATION_IN_SECONDS).getTime())
+            .reportId(crewReportRepository.findCurrentId(crewId))
             .build();
     }
 }
