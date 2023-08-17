@@ -5,6 +5,7 @@ import com.gsm.blabla.member.application.MemberService;
 import com.gsm.blabla.member.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -79,5 +80,11 @@ public class MemberController {
     @GetMapping("/members/my-id")
     public DataResponseDto<Map<String, Long>> getMyId() {
         return DataResponseDto.of(memberService.getMyId());
+    }
+
+    @Operation(summary = "memberId로 프로필 리스트 조회")
+    @PostMapping("/members/id-to-info")
+    public DataResponseDto<Map<String, List<MemberResponseDto>>> getInfosFromIds(@RequestBody MemberRequestDto memberRequestDto) {
+        return DataResponseDto.of(memberService.getInfosFromIds(memberRequestDto));
     }
 }
