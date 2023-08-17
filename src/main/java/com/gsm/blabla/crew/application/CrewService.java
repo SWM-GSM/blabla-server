@@ -557,6 +557,7 @@ public class CrewService {
         // feedbacks
         List<MemberResponseDto> feedbacks = crewReport.getVoiceFiles().stream()
             .map(voiceFile -> MemberResponseDto.feedbackResponse(voiceFile.getMember(), voiceFile))
+            .filter(Objects::nonNull)
             .toList();
 
         return CrewReportResponseDto.crewReportResponse(info, members, bubbleChart, keyword, languageRatio, feedbacks);
