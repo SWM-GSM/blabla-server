@@ -113,7 +113,6 @@ public class CrewController {
         return DataResponseDto.of(crewService.getAllReports(crewId, sort));
     }
 
-
     @Operation(summary = "크루 가입 승인 대기 인원 조회 API")
     @GetMapping(value = "/crews/{crewId}/waiting-list")
     public DataResponseDto<Map<String, List<MemberResponseDto>>> getWaitingList(@PathVariable("crewId") Long crewId) {
