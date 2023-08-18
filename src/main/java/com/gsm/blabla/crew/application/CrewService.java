@@ -581,11 +581,12 @@ public class CrewService {
                     .map(MemberResponseDto::crewReportResponse)
                     .toList();
 
-                CrewReportAnalysis crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(
-                    crewReport).orElseThrow(
-                    () -> new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "존재하지 않는 리포트 분석입니다.")
-                );
-                Map<String, String> info = getReportInfo(crewReport, crewReportAnalysis);
+                Optional<CrewReportAnalysis> crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(
+                    crewReport);
+
+                Map<String, String> info = crewReportAnalysis.map(
+                    reportAnalysis -> getReportInfo(crewReport, reportAnalysis)).orElse(null);
+
                 return CrewReportResponseDto.crewReportListResponse(crewReport.getId(), generated,
                     members, info);
             })
