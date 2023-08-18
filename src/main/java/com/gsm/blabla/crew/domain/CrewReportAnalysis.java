@@ -24,16 +24,14 @@ public class CrewReportAnalysis {
     private Duration englishTime;
     private String cloudUrl;
 
-    private LocalDateTime endAt;
     private LocalDateTime createdAt;
 
     @Builder
-    public CrewReportAnalysis(CrewReport crewReport, Duration koreanTime, Duration englishTime, String cloudUrl, LocalDateTime endAt) {
+    public CrewReportAnalysis(CrewReport crewReport, Duration koreanTime, Duration englishTime, String cloudUrl) {
         this.crewReport = crewReport;
         this.koreanTime = koreanTime;
         this.englishTime = englishTime;
         this.cloudUrl = cloudUrl;
-        this.endAt = endAt;
         this.createdAt = LocalDateTime.now();
     }
 }
