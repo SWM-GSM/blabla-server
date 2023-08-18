@@ -589,8 +589,8 @@ public class CrewService {
 
                 Map<String, String> info = crewReportAnalysis.map(
                     reportAnalysis -> getReportInfo(crewReport, reportAnalysis)).orElse(
-                        Map.of("createdAt", "",
-                            "durationTime", ""
+                        Map.of("createdAt", "0000-00-00 00:00",
+                            "durationTime", "0000-00-00 00:00"
                         )
                 );
 
