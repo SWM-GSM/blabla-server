@@ -422,6 +422,12 @@ public class CrewService {
 
     public Map<String, String> createReportRequest(Long reportId) {
 
+        LocalDateTime endAt = LocalDateTime.now();
+        CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
+                () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
+        );
+        crewReport.updateEndAt(endAt);
+
         Long voiceFileCount = voiceFileRepository.countAllByCrewReportId(reportId);
 
         String crewReportAnalysisTriggerUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis/sqs";
@@ -442,8 +448,6 @@ public class CrewService {
     }
 
     public Map<String, String> createReport(Long reportId) {
-
-        LocalDateTime endAt = LocalDateTime.now();
 
         List<VoiceFile> voiceFiles = voiceFileRepository.getAllByCrewReportId(reportId);
         List<String> fileUrls = voiceFiles.stream()
@@ -480,7 +484,6 @@ public class CrewService {
                         .koreanTime(aiCrewReportResponseDto.getKoreanTime())
                         .englishTime(aiCrewReportResponseDto.getEnglishTime())
                         .cloudUrl(aiCrewReportResponseDto.getCloudUrl())
-                        .endAt(endAt)
                         .build()
                 );
 
@@ -614,7 +617,7 @@ public class CrewService {
 
         info.put("createdAt", crewReportAnalysis.getCreatedAt().format(formatter));
 
-        Duration duration = Duration.between(crewReport.getStartedAt(), crewReportAnalysis.getEndAt());
+        Duration duration = Duration.between(crewReport.getStartedAt(), crewReport.getEndAt());
         String durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
         info.put("durationTime", durationTime);
 
