@@ -597,10 +597,12 @@ public class CrewService {
                 return CrewReportResponseDto.crewReportListResponse(crewReport.getId(), generated,
                     members, info);
             })
-            .sorted(Comparator.comparing((CrewReportResponseDto report) -> {
+            .sorted(Comparator
+                .comparing(CrewReportResponseDto::getGenerated, Comparator.reverseOrder())
+                .thenComparing((CrewReportResponseDto report) -> {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 return LocalDateTime.parse(report.getInfo().get("createdAt"), formatter);
-            }, Comparator.nullsFirst(Comparator.reverseOrder())))
+            }))
             .toList()
         );
 
