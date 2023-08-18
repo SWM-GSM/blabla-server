@@ -50,7 +50,7 @@ public class ReportService {
             Optional<CrewReportAnalysis> crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(crewReport);
             crewReportAnalysis.ifPresent(
                 analysis -> {
-                    Duration duration = Duration.between(crewReport.getStartedAt(), analysis.getEndAt());
+                    Duration duration = Duration.between(crewReport.getStartedAt(), crewReport.getEndAt());
                     String durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
 
                     String datetime = analysis.getCreatedAt().format(formatter);

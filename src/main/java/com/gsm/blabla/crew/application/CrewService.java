@@ -617,7 +617,7 @@ public class CrewService {
 
         info.put("createdAt", crewReportAnalysis.getCreatedAt().format(formatter));
 
-        Duration duration = Duration.between(crewReport.getStartedAt(), crewReportAnalysis.getEndAt());
+        Duration duration = Duration.between(crewReport.getStartedAt(), crewReport.getEndAt());
         String durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
         info.put("durationTime", durationTime);
 
