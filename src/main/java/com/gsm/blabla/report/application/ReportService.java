@@ -76,6 +76,7 @@ public class ReportService {
         List<HistoryReportResponseDto> personalHistory = new ArrayList<>();
         for (MemberContent memberContent : memberContents) {
             String subTitle = memberContent.getContent().getGenre() + " - " + memberContent.getContent().getContentName();
+            String datetime = memberContent.getJoinedAt().format(formatter);
             personalHistory.add(
                 HistoryReportResponseDto.builder()
                     .id(memberContent.getContent().getId())
@@ -86,6 +87,7 @@ public class ReportService {
                             "subTitle", subTitle
                         )
                     )
+                    .dateTime(datetime)
                     .build()
 
             );
