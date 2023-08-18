@@ -585,11 +585,12 @@ public class CrewService {
                     crewReport);
 
                 Map<String, String> info = crewReportAnalysis.map(
-                    reportAnalysis -> getReportInfo(crewReport, reportAnalysis)).orElse(null);
+                    reportAnalysis -> getReportInfo(crewReport, reportAnalysis)).orElse(
+                        Map.of("createdAt", "",
+                            "durationTime", ""
+                        )
+                );
 
-                if (info == null) {
-                    return null;
-                }
                 return CrewReportResponseDto.crewReportListResponse(crewReport.getId(), generated,
                     members, info);
             })
