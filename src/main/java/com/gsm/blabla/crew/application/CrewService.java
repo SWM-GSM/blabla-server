@@ -587,13 +587,16 @@ public class CrewService {
                 Map<String, String> info = crewReportAnalysis.map(
                     reportAnalysis -> getReportInfo(crewReport, reportAnalysis)).orElse(null);
 
+                if (info == null) {
+                    return null;
+                }
                 return CrewReportResponseDto.crewReportListResponse(crewReport.getId(), generated,
                     members, info);
             })
             .sorted(Comparator.comparing((CrewReportResponseDto report) -> {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 return LocalDateTime.parse(report.getInfo().get("createdAt"), formatter);
-            }).reversed())
+            }, Comparator.nullsFirst(Comparator.reverseOrder())))
             .toList()
         );
 
