@@ -21,7 +21,7 @@ public class CrewReport {
     @JoinColumn(name = "crew_id")
     private Crew crew;
     private LocalDateTime startedAt;
-    private LocalDateTime endAt;
+    private LocalDateTime endAt = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
 
     @OneToMany(mappedBy = "crewReport")
     private List<VoiceFile> voiceFiles;
