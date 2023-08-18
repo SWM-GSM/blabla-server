@@ -598,7 +598,7 @@ public class CrewService {
                     members, info);
             })
             .sorted(Comparator
-                .comparing(CrewReportResponseDto::getGenerated, Comparator.reverseOrder())
+                .comparing(CrewReportResponseDto::getGenerated)
                 .thenComparing((CrewReportResponseDto report) -> {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 return LocalDateTime.parse(report.getInfo().get("createdAt"), formatter);
