@@ -52,8 +52,8 @@ public class ReportService {
             Optional<CrewReportAnalysis> crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(crewReport);
             crewReportAnalysis.ifPresent(
                 analysis -> {
-                    String durationTime = "0000-00-00 00:00";
-                    if (!Objects.equals(crewReport.getEndAt(), LocalDateTime.of(2023, 1, 1, 0, 0, 0))) {
+                    String durationTime = "2000-01-01 00:00";
+                    if (!Objects.equals(crewReport.getEndAt(), LocalDateTime.of(2000, 1, 1, 0, 0, 0))) {
                         Duration duration = Duration.between(crewReport.getStartedAt(), crewReport.getEndAt());
                         durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
                     }
