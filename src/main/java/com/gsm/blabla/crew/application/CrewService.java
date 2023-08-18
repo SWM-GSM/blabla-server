@@ -602,7 +602,7 @@ public class CrewService {
                 .thenComparing((CrewReportResponseDto report) -> {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 return LocalDateTime.parse(report.getInfo().get("createdAt"), formatter);
-            }))
+            }).reversed())
             .toList()
         );
 
