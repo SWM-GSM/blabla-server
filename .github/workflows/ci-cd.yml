@@ -1,0 +1,49 @@
+name: API Server - CI/CD
+
+on:
+  push:
+    branches: ["main", "develop"]
+
+permissions:
+  contents: read
+
+jobs:
+  CI-CD:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.ACTION_TOKEN }}
+          submodules: true
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Run build with Gradle Wrapper
+        run: ./gradlew clean build -x test
+
+      - name: Make zip file
+        run: zip -qq -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+          aws-region: ap-northeast-2
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://${{ secrets.S3_BUCKET_NAME }}/deploy/$GITHUB_SHA.zip --source .
+
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name ${{ secrets.CODE_DEPLOY_APP_NAME }}
+          --deployment-config-name CodeDeployDefault.AllAtOnce
+          --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
+          --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=deploy/$GITHUB_SHA.zip
