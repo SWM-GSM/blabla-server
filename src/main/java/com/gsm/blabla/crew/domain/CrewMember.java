@@ -1,0 +1,60 @@
+package com.gsm.blabla.crew.domain;
+
+import com.gsm.blabla.member.domain.Member;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+
+@Entity
+@Getter
+@BatchSize(size = 1000)
+@NoArgsConstructor
+public class CrewMember {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "crew_id")
+    private Crew crew;
+
+    @Enumerated(EnumType.STRING)
+    private CrewMemberStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private CrewMemberRole role;
+
+    private LocalDateTime joinedAt;
+
+    private LocalDateTime withdrawnAt;
+
+    @Builder
+    public CrewMember(Member member, Crew crew, CrewMemberRole role) {
+        this.member = member;
+        this.crew = crew;
+        this.status = CrewMemberStatus.JOINED;
+        this.role = role;
+        this.joinedAt = LocalDateTime.now();
+    }
+
+    public void withdrawal() {
+        this.status = CrewMemberStatus.WITHDRAWAL;
+        this.withdrawnAt = LocalDateTime.now();
+    }
+}

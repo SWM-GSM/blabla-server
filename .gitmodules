@@ -1,0 +1,4 @@
+[submodule "security"]
+	path = security
+	url = https://github.com/SWM-GSM/security.git
+	branch = main
