@@ -157,6 +157,7 @@ public abstract class IntegrationTestSupport {
             CrewReport.builder()
                 .crew(crew)
                 .startedAt(startedAt)
+                .endAt(startedAt.plusMinutes(26).plusSeconds(30))
                 .build()
         );
     }
