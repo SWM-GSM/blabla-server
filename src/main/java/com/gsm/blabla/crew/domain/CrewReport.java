@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,9 +29,10 @@ public class CrewReport {
     private List<CrewReportKeyword> keywords;
 
     @Builder
-    public CrewReport(Crew crew, LocalDateTime startedAt) {
+    public CrewReport(Crew crew, LocalDateTime startedAt, LocalDateTime endAt) {
         this.crew = crew;
         this.startedAt = startedAt;
+        this.endAt = endAt;
     }
 
     public void updateEndAt(LocalDateTime endAt) {
