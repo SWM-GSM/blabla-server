@@ -174,4 +174,48 @@ public class MemberService {
 
         return Collections.singletonMap("message", "관심사 수정이 완료되었습니다.");
     }
+
+    @Transactional(readOnly = true)
+    public Map<String, Map<String, Boolean>> getSettings() {
+        Long memberId = SecurityUtil.getMemberId();
+
+        boolean genderDisclosure = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        ).getGenderDisclosure();
+        boolean birthDateDisclosure = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        ).getBirthDateDisclosure();
+        boolean pushNotification = memberRepository.findById(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        ).getPushNotification();
+
+        Map<String, Boolean> settings = Map.of(
+            "genderDisclosure", genderDisclosure,
+            "birthDateDisclosure", birthDateDisclosure,
+            "pushNotification", pushNotification
+        );
+
+        return Collections.singletonMap("settings", settings);
+    }
+
+    public Map<String, Long> getMyId() {
+        return Collections.singletonMap("id", SecurityUtil.getMemberId());
+    }
+
+    public Map<String, List<MemberResponseDto>> getInfosFromIds(MemberRequestDto memberRequestDto) {
+        List<MemberResponseDto> members = memberRequestDto.getIds().stream()
+            .map(id -> memberRepository.findById(id)
+                .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."))
+            )
+            .map(member -> MemberResponseDto.builder()
+                .profileImage(member.getProfileImage())
+                .nickname(member.getNickname())
+                .countryCode(member.getCountryCode())
+                .build()
+            )
+            .toList();
+
+
+        return Collections.singletonMap("members", members);
+    }
 }

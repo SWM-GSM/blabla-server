@@ -420,22 +420,47 @@ public class CrewService {
         return MemberProfileResponseDto.getCrewMemberProfile(member, crewMember, interests);
     }
 
-    public Map<String, String> createReport(Long reportId) {
+    public Map<String, String> createReportRequest(Long reportId) {
 
         LocalDateTime endAt = LocalDateTime.now();
+        CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
+                () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
+        );
+        crewReport.updateEndAt(endAt);
+
+        Long voiceFileCount = voiceFileRepository.countAllByCrewReportId(reportId);
+
+        String crewReportAnalysisTriggerUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis/sqs";
+
+        Map<String, Long> paramMap = new HashMap<>();
+        paramMap.put("reportId", reportId);
+        paramMap.put("targetVoiceFileCount", voiceFileCount);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(paramMap, headers);
+
+        // TODO: response 예외 처리
+        restTemplate.postForObject(crewReportAnalysisTriggerUrl, requestEntity, String.class);
+
+        return Collections.singletonMap("message", "리포트 생성 요청이 완료되었습니다.");
+    }
+
+    public Map<String, String> createReport(Long reportId) {
 
         List<VoiceFile> voiceFiles = voiceFileRepository.getAllByCrewReportId(reportId);
         List<String> fileUrls = voiceFiles.stream()
                 .map(VoiceFile::getFileUrl)
                 .toList();
 
-        String fastApiUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis";
+        String crewReportAnalysisUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<List<String>> requestEntity = new HttpEntity<>(fileUrls, headers);
-        String response = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
+        String response = restTemplate.postForObject(crewReportAnalysisUrl, requestEntity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         AiCrewReportResponseDto aiCrewReportResponseDto = null;
@@ -459,7 +484,6 @@ public class CrewService {
                         .koreanTime(aiCrewReportResponseDto.getKoreanTime())
                         .englishTime(aiCrewReportResponseDto.getEnglishTime())
                         .cloudUrl(aiCrewReportResponseDto.getCloudUrl())
-                        .endAt(endAt)
                         .build()
                 );
 
@@ -536,6 +560,7 @@ public class CrewService {
         // feedbacks
         List<MemberResponseDto> feedbacks = crewReport.getVoiceFiles().stream()
             .map(voiceFile -> MemberResponseDto.feedbackResponse(voiceFile.getMember(), voiceFile))
+            .filter(Objects::nonNull)
             .toList();
 
         return CrewReportResponseDto.crewReportResponse(info, members, bubbleChart, keyword, languageRatio, feedbacks);
@@ -559,18 +584,25 @@ public class CrewService {
                     .map(MemberResponseDto::crewReportResponse)
                     .toList();
 
-                CrewReportAnalysis crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(
-                    crewReport).orElseThrow(
-                    () -> new GeneralException(Code.REPORT_ANALYSIS_IS_NULL, "존재하지 않는 리포트 분석입니다.")
+                Optional<CrewReportAnalysis> crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(
+                    crewReport);
+
+                Map<String, String> info = crewReportAnalysis.map(
+                    reportAnalysis -> getReportInfo(crewReport, reportAnalysis)).orElse(
+                        Map.of("createdAt", "2000-01-01 00:00",
+                            "durationTime", "2000-01-01 00:00"
+                        )
                 );
-                Map<String, String> info = getReportInfo(crewReport, crewReportAnalysis);
+
                 return CrewReportResponseDto.crewReportListResponse(crewReport.getId(), generated,
                     members, info);
             })
-            .sorted(Comparator.comparing((CrewReportResponseDto report) -> {
+            .sorted(Comparator
+                .comparing(CrewReportResponseDto::getGenerated)
+                .thenComparing((CrewReportResponseDto report) -> {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
                 return LocalDateTime.parse(report.getInfo().get("createdAt"), formatter);
-            }).reversed())
+            }, Comparator.reverseOrder()))
             .toList()
         );
 
@@ -587,8 +619,11 @@ public class CrewService {
 
         info.put("createdAt", crewReportAnalysis.getCreatedAt().format(formatter));
 
-        Duration duration = Duration.between(crewReport.getStartedAt(), crewReportAnalysis.getEndAt());
-        String durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
+        String durationTime = "2000-01-01 00:00";
+        if (!Objects.equals(crewReport.getEndAt(), LocalDateTime.of(2000, 1, 1, 0, 0, 0))) {
+            Duration duration = Duration.between(crewReport.getStartedAt(), crewReport.getEndAt());
+            durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
+        }
         info.put("durationTime", durationTime);
 
         return info;

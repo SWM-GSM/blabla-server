@@ -23,6 +23,7 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MemberRequestDto {
+
     private String socialLoginType;
     private String profileImage;
     @Length(max = 12, message = "닉네임은 12자 이내여야 합니다.")
@@ -40,6 +41,7 @@ public class MemberRequestDto {
     private List<Keyword> keywords;
     private String description;
     private Boolean pushNotification;
+    private List<Long> ids;
 
     public Member toEntity() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

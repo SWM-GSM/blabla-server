@@ -11,12 +11,14 @@ import com.gsm.blabla.practice.domain.MemberContent;
 import com.gsm.blabla.report.dto.HistoryReportResponseDto;
 import com.gsm.blabla.report.dto.HistoryResponseDto;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,8 +52,11 @@ public class ReportService {
             Optional<CrewReportAnalysis> crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(crewReport);
             crewReportAnalysis.ifPresent(
                 analysis -> {
-                    Duration duration = Duration.between(crewReport.getStartedAt(), analysis.getEndAt());
-                    String durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
+                    String durationTime = "2000-01-01 00:00";
+                    if (!Objects.equals(crewReport.getEndAt(), LocalDateTime.of(2000, 1, 1, 0, 0, 0))) {
+                        Duration duration = Duration.between(crewReport.getStartedAt(), crewReport.getEndAt());
+                        durationTime = String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
+                    }
 
                     String datetime = analysis.getCreatedAt().format(formatter);
                     crewHistory.add(
@@ -76,6 +81,7 @@ public class ReportService {
         List<HistoryReportResponseDto> personalHistory = new ArrayList<>();
         for (MemberContent memberContent : memberContents) {
             String subTitle = memberContent.getContent().getGenre() + " - " + memberContent.getContent().getContentName();
+            String datetime = memberContent.getJoinedAt().format(formatter);
             personalHistory.add(
                 HistoryReportResponseDto.builder()
                     .id(memberContent.getContent().getId())
@@ -86,6 +92,7 @@ public class ReportService {
                             "subTitle", subTitle
                         )
                     )
+                    .dateTime(datetime)
                     .build()
 
             );

@@ -28,8 +28,8 @@ public class AgoraService {
     private final CrewReportRepository crewReportRepository;
 
     // TODO: 유효 기간 변경하기
-    static final int TOKEN_EXPIRATION_IN_SECONDS = 3600; // 1 hour
-    static final int PRIVILEGE_EXPIRATION_IN_SECONDS = 3600; // 1 hour
+    static final int TOKEN_EXPIRATION_TIME = 1000 * 60 * 30;
+    static final int PRIVILEGE_EXPIRATION_TIME = 1000 * 60 * 30;
 
     public RtcTokenDto create(Long crewId,  VoiceRoomRequestDto voiceRoomRequestDto) {
         Long memberId = SecurityUtil.getMemberId();
@@ -52,8 +52,9 @@ public class AgoraService {
         return RtcTokenDto.builder()
             .channelName(channelName)
             .token(token.buildTokenWithUid(appId, appCertificate, channelName, memberId,
-                Role.ROLE_PUBLISHER, TOKEN_EXPIRATION_IN_SECONDS, PRIVILEGE_EXPIRATION_IN_SECONDS))
-            .expiresIn(new Date(now + TOKEN_EXPIRATION_IN_SECONDS).getTime())
+                Role.ROLE_PUBLISHER, TOKEN_EXPIRATION_TIME, PRIVILEGE_EXPIRATION_TIME))
+            .expiresIn(new Date(now + TOKEN_EXPIRATION_TIME).getTime())
+            .reportId(crewReportRepository.findCurrentId(crewId))
             .build();
     }
 }
