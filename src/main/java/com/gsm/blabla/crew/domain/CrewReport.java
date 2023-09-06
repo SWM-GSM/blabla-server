@@ -21,6 +21,7 @@ public class CrewReport {
     @JoinColumn(name = "crew_id")
     private Crew crew;
     private LocalDateTime startedAt;
+    private LocalDateTime endAt = LocalDateTime.of(2000, 1, 1, 0, 0, 0);
 
     @OneToMany(mappedBy = "crewReport")
     private List<VoiceFile> voiceFiles;
@@ -32,5 +33,9 @@ public class CrewReport {
     public CrewReport(Crew crew, LocalDateTime startedAt) {
         this.crew = crew;
         this.startedAt = startedAt;
+    }
+
+    public void updateEndAt(LocalDateTime endAt) {
+        this.endAt = endAt;
     }
 }
