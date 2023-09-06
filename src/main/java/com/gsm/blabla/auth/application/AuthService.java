@@ -307,7 +307,6 @@ public class AuthService {
             .setExpiration(expirationDate)
             .setAudience("https://appleid.apple.com")
             .setSubject(appleClientId)
-            .setSubject(appleClientId)
             .signWith(SignatureAlgorithm.ES256, getApplePrivateKey())
             .compact();
     }
