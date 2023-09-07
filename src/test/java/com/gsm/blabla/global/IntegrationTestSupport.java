@@ -32,7 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = "spring.profiles.active=local"
+)
 public abstract class IntegrationTestSupport {
 
     @LocalServerPort
@@ -154,6 +157,7 @@ public abstract class IntegrationTestSupport {
             CrewReport.builder()
                 .crew(crew)
                 .startedAt(startedAt)
+                .endAt(startedAt.plusMinutes(26).plusSeconds(30))
                 .build()
         );
     }
@@ -182,7 +186,6 @@ public abstract class IntegrationTestSupport {
                 .koreanTime(Duration.ofMinutes(20))
                 .englishTime(Duration.ofMinutes(6))
                 .cloudUrl("www.test.com")
-                .endAt(startedAt.plusMinutes(26).plusSeconds(30))
                 .build()
         );
 
