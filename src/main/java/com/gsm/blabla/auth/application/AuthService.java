@@ -113,7 +113,7 @@ public class AuthService {
             }
             case "APPLE" -> {
                 AppleTokenDto appleTokenDto = getAppleToken(providerAuthorization);
-                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getId_token());
+                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getIdToken());
                 if (appleAccountRepository.findById(appleAccountDto.getSub()).isPresent()) {
                     throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 애플 계정입니다.");
                 }
@@ -122,7 +122,7 @@ public class AuthService {
                 appleAccountRepository.save(AppleAccount.builder()
                     .id(appleAccountDto.getSub())
                     .member(member)
-                    .refreshToken(appleTokenDto.getRefresh_token())
+                    .refreshToken(appleTokenDto.getRefreshToken())
                     .build()
                 );
             }
@@ -133,7 +133,7 @@ public class AuthService {
         if (size != 0 && (size < 3 || size > 10)) {
             throw new GeneralException(Code.VALIDATION_ERROR, "관심사는 0개 또는 3개 이상 10개 이하로 설정해야 합니다.");
         }
-        
+
         // 키워드
         for (Keyword keyword : memberRequestDto.getKeywords()) {
             memberKeywordRepository.save(MemberKeyword.builder()
@@ -160,7 +160,7 @@ public class AuthService {
             }
             case APPLE -> {
                 AppleTokenDto appleTokenDto = getAppleToken(providerAuthorization);
-                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getId_token());
+                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getIdToken());
                 member = appleAccountRepository.findById(appleAccountDto.getSub()).map(AppleAccount::getMember);
                 if (member.isEmpty()) {
                     throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
