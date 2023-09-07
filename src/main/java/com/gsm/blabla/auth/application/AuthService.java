@@ -114,7 +114,7 @@ public class AuthService {
             case "APPLE" -> {
                 AppleTokenDto appleTokenDto = getAppleToken(providerAuthorization);
                 AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getIdToken());
-                if (appleAccountRepository.findById(appleTokenDto.getIdToken()).isPresent()) {
+                if (appleAccountRepository.findById(appleAccountDto.getSub()).isPresent()) {
                     throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 애플 계정입니다.");
                 }
 
@@ -133,7 +133,7 @@ public class AuthService {
         if (size != 0 && (size < 3 || size > 10)) {
             throw new GeneralException(Code.VALIDATION_ERROR, "관심사는 0개 또는 3개 이상 10개 이하로 설정해야 합니다.");
         }
-        
+
         // 키워드
         for (Keyword keyword : memberRequestDto.getKeywords()) {
             memberKeywordRepository.save(MemberKeyword.builder()
@@ -237,7 +237,7 @@ public class AuthService {
             ApplePublicKeyDto applePublicKey = new RestTemplate().exchange(
                 "https://appleid.apple.com/auth/keys",
                 HttpMethod.GET,
-                null,
+                new HttpEntity<>(null, null),
                 ApplePublicKeyDto.class
             ).getBody();
 
@@ -278,9 +278,9 @@ public class AuthService {
             appleAuthorizationCode = appleAuthorizationCode.replace("Bearer ", "");
 
             HttpHeaders headers = new HttpHeaders();
-            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("client_id", appleClientId);
             params.add("client_secret", getAppleClientSecret());
             params.add("code", appleAuthorizationCode);
