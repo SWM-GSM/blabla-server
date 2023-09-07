@@ -113,8 +113,8 @@ public class AuthService {
             }
             case "APPLE" -> {
                 AppleTokenDto appleTokenDto = getAppleToken(providerAuthorization);
-                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getIdToken());
-                if (appleAccountRepository.findById(appleTokenDto.getIdToken()).isPresent()) {
+                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getId_token());
+                if (appleAccountRepository.findById(appleAccountDto.getSub()).isPresent()) {
                     throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 애플 계정입니다.");
                 }
 
@@ -122,7 +122,7 @@ public class AuthService {
                 appleAccountRepository.save(AppleAccount.builder()
                     .id(appleAccountDto.getSub())
                     .member(member)
-                    .refreshToken(appleTokenDto.getRefreshToken())
+                    .refreshToken(appleTokenDto.getRefresh_token())
                     .build()
                 );
             }
@@ -160,7 +160,7 @@ public class AuthService {
             }
             case APPLE -> {
                 AppleTokenDto appleTokenDto = getAppleToken(providerAuthorization);
-                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getIdToken());
+                AppleAccountDto appleAccountDto = getAppleAccount(appleTokenDto.getId_token());
                 member = appleAccountRepository.findById(appleAccountDto.getSub()).map(AppleAccount::getMember);
                 if (member.isEmpty()) {
                     throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
@@ -237,7 +237,7 @@ public class AuthService {
             ApplePublicKeyDto applePublicKey = new RestTemplate().exchange(
                 "https://appleid.apple.com/auth/keys",
                 HttpMethod.GET,
-                null,
+                new HttpEntity<>(null, null),
                 ApplePublicKeyDto.class
             ).getBody();
 
@@ -278,9 +278,9 @@ public class AuthService {
             appleAuthorizationCode = appleAuthorizationCode.replace("Bearer ", "");
 
             HttpHeaders headers = new HttpHeaders();
-            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("client_id", appleClientId);
             params.add("client_secret", getAppleClientSecret());
             params.add("code", appleAuthorizationCode);

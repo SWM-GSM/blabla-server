@@ -7,7 +7,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppleTokenDto {
 
-    String accessToken;
-    String refreshToken;
-    String idToken;
+    String access_token;
+    String refresh_token;
+    String id_token;
 }
