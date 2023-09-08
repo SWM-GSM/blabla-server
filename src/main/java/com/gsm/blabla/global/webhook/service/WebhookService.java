@@ -12,15 +12,15 @@ import org.springframework.web.client.RestTemplate;
 public class WebhookService {
 
     @Value("${discord.webhook.url.dev}")
-    private String devWebhookUrl;
+    private static String devWebhookUrl;
 
     @Value("${discord.webhook.url.prod}")
-    private String prodWebhookUrl;
+    private static String prodWebhookUrl;
 
     @Value("${spring.profiles.active}")
-    private String activeProfile;
+    private static String activeProfile;
 
-    public void sendErrorLog(String title, String description) {
+    public static void sendErrorLog(String title, String description) {
         String webhookUrl = "";
         if (activeProfile.equals("local")) {
             return;

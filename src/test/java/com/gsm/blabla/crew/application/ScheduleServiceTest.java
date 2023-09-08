@@ -231,7 +231,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         assertThat(memberScheduleRepository.findByMemberAndSchedule(member1, scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다."))
         ).get().getStatus()
-        ).isEqualTo("CANCELED");
+        ).isEqualTo("NOT_JOINED");
     }
 
     private ScheduleRequestDto createScheduleRequestDto(String meetingTime) {

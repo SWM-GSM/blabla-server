@@ -105,7 +105,7 @@ public enum Code {
     UNSUPPORTED_JWT("AUTH007", HttpStatus.UNAUTHORIZED, "Unsupported jwt format"),
     ILLEGAL_JWT("AUTH008", HttpStatus.UNAUTHORIZED, "Illegal jwt format"),
     FORBIDDEN("AUTH009", HttpStatus.FORBIDDEN, "Forbidden"),
-    NO_CREDENTIALS_IN_CONETEXT("AUTH010", HttpStatus.UNAUTHORIZED, "No credentials in Security Context")
+    NO_CREDENTIALS_IN_CONTEXT("AUTH010", HttpStatus.UNAUTHORIZED, "No credentials in Security Context")
     ;
 
     private final String code;

@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,8 +26,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 @RequiredArgsConstructor
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
-
-    private final WebhookService webhookService;
 
     @org.springframework.web.bind.annotation.ExceptionHandler
     public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
@@ -66,7 +65,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleExceptionInternal(Exception e, Code errorCode,
         HttpHeaders headers, HttpStatus status, WebRequest request) {
-        webhookService.sendErrorLog(e.getMessage(), e.toString());
+        WebhookService.sendErrorLog(e.getMessage(), e.toString());
         log.error(e.getMessage(), e);
 
         return super.handleExceptionInternal(

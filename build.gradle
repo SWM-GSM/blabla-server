@@ -131,4 +131,19 @@ jacocoTestReport {
         html.enabled true
         html.destination file("${buildDir}/jacoco/index.html")
     }
+
+    def Qdomains = []
+    for(qPattern in "**/QA" .. "**/QZ"){
+        Qdomains.add(qPattern+"*")
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, exclude: [
+                            '**/dummy/**/*.*'
+                    ] + Qdomains)
+                })
+        )
+    }
 }

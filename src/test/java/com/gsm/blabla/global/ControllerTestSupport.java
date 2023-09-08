@@ -12,11 +12,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = {
+@WebMvcTest(
+    controllers = {
     CrewController.class,
     AgoraController.class,
     ReportController.class
-})
+    },
+    properties = "spring.profiles.active=local"
+)
 public abstract class ControllerTestSupport {
 
     @Autowired

@@ -18,7 +18,7 @@ public class SecurityUtil {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication.getName() == null || authentication.getName().equals("anonymousUser")) {
-            throw new GeneralException(Code.NO_CREDENTIALS_IN_CONETEXT, "Security Context에 인증 정보가 없습니다.");
+            throw new GeneralException(Code.NO_CREDENTIALS_IN_CONTEXT, "Security Context에 인증 정보가 없습니다.");
         }
 
         return Long.parseLong(authentication.getName());
