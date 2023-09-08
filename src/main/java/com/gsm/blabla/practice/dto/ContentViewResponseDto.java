@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.practice.dao.MemberContentRepository;
 import com.gsm.blabla.practice.domain.Content;
+import com.gsm.blabla.practice.domain.ContentCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,22 +19,20 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class ContentViewResponseDto {
     private Long id;
-    private String contentName; // 컨텐츠 제목
-    private String genre; // 컨텐츠 카테고리
-    private String topic; // 컨텐츠 주제
+    private String title; // 컨텐츠 제목
+    private String description; // 컨텐츠 설명
 
-    private String thumbnailUrl; // 컨텐츠 썸네일 URL
+    private String youtubeId; // 컨텐츠 썸네일 URL
     private Boolean isCompleted; // 컨텐츠 완료 여부
 
-    public static ContentViewResponseDto contentViewResponse(Content content, Long memberId, MemberContentRepository memberContentRepository) {
+    public static ContentViewResponseDto contentViewResponse(ContentCategory contentCategory, Content content, Long memberId, MemberContentRepository memberContentRepository) {
 
         return ContentViewResponseDto.builder()
                 .id(content.getId())
-                .contentName(content.getContentName())
-                .thumbnailUrl("https://img.youtube.com/vi/" + content.getContentUrl().split("/watch\\?v=")[1] + "/hqdefault.jpg")
-                .topic(content.getTopic())
+                .title(contentCategory.getTitle())
+                .youtubeId(content.getContentUrl().split("/watch\\?v=")[1])
+                .description(content.getDescription())
                 .isCompleted(memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isPresent())
-                .genre(content.getGenre())
                 .build();
     }
 
@@ -42,11 +41,10 @@ public class ContentViewResponseDto {
                 .map(content -> {
                     return ContentViewResponseDto.builder()
                             .id(content.getId())
-                            .contentName(content.getContentName())
-                            .thumbnailUrl("https://img.youtube.com/vi/" + content.getContentUrl().split("/watch\\?v=")[1] + "/hqdefault.jpg")
-                            .topic(content.getTopic())
+                            .title(content.getContentCategory().getTitle())
+                            .youtubeId(content.getContentUrl().split("/watch\\?v=")[1])
                             .isCompleted(memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isPresent())
-                            .genre(content.getGenre())
+                            .description(content.getDescription())
                             .build();
                 })
                 .collect(Collectors.toList());

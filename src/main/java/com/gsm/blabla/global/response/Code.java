@@ -72,6 +72,12 @@ public enum Code {
     CONTENT_NOT_FOUND("CT001", HttpStatus.NOT_FOUND, "Content not found"),
 
     /*
+     * Content Category 관련 오류
+     * HEAD NAME - CTC (ConTent Category)
+     * */
+    CONTENT_CATEGORY_NOT_FOUND("CTC001", HttpStatus.NOT_FOUND, "Content Category not found"),
+
+    /*
      * MemberContent 관련 오류
      * HEAD NAME - MC (MemberContent)
      * */
