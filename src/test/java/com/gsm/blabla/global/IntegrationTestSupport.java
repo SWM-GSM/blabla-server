@@ -91,22 +91,6 @@ public abstract class IntegrationTestSupport {
         );
     }
 
-    protected Long createCrew(String name, boolean autoApproval) {
-        return crewService.create(CrewRequestDto.builder()
-            .coverImage("test")
-            .name(name)
-            .description("테스트 크루입니다.")
-            .meetingCycle(MeetingCycle.EVERYDAY)
-            .tags(List.of(Tag.CULTURE, Tag.FILM_MUSIC))
-            .maxNum(8)
-            .korLevel(1)
-            .engLevel(1)
-            .preferMember(PreferMember.SAME_HOBBY)
-            .detail("테스트 크루입니다.")
-            .autoApproval(autoApproval)
-            .build()).get("crewId");
-    }
-
     protected Long createPreparedCrew(Member member, String name, int maxNum, int korLevel, int engLevel, boolean autoApproval) {
         CrewRequestDto crewRequestDto = CrewRequestDto.builder()
             .coverImage("test")

@@ -1,21 +1,15 @@
 package com.gsm.blabla.global.exception;
 
-import com.fasterxml.jackson.databind.util.ExceptionUtil;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.response.ErrorResponseDto;
 import com.gsm.blabla.global.webhook.service.WebhookService;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
