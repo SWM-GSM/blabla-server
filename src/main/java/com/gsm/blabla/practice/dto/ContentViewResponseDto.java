@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentViewResponseDto {
+
     private Long id;
     private String title; // 컨텐츠 제목
     private String description; // 컨텐츠 설명

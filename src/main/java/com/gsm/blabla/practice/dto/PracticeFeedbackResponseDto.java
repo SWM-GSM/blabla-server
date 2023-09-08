@@ -12,6 +12,7 @@ import lombok.*;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PracticeFeedbackResponseDto {
+
     // TODO: 인공지능 서버 Response와 DTO 분리 고민
     private Double starScore;
     private Double contextScore;

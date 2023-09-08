@@ -13,6 +13,7 @@ import java.time.Duration;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentResponseDto {
+
     private String title; // 컨텐츠 제목
     private String description; // 컨텐츠 설명
 

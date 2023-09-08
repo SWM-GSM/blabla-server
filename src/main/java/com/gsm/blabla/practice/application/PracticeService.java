@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class PracticeService {
+
     private final ContentRepository contentRepository;
     private final ContentCategoryRepository contentCategoryRepository;
     private final MemberContentRepository memberContentRepository;
