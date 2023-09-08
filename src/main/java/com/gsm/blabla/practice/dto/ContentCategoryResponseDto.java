@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentCategoryResponseDto {
+
     private Long id;
     private String title; // 컨텐츠 제목
     private String subtitle; // 컨텐츠 소제목
@@ -21,7 +22,7 @@ public class ContentCategoryResponseDto {
     private Double progress; // 연습실 진행도
 
     public static ContentCategoryResponseDto contentCategoryResponse(ContentCategory contentCategory, List<ContentViewResponseDto> contents) {
-        int totalContents = contents.size();
+        long totalContents = contents.size();
         long completedCount = contents.stream()
                 .filter(ContentViewResponseDto::getIsCompleted)
                 .count();

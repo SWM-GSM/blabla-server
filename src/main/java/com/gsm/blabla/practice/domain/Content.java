@@ -12,7 +12,6 @@ import java.time.Duration;
 @NoArgsConstructor
 public class Content {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="content_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
