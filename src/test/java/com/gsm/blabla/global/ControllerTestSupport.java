@@ -1,6 +1,7 @@
 package com.gsm.blabla.global;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gsm.blabla.admin.api.AdminController;
 import com.gsm.blabla.agora.api.AgoraController;
 import com.gsm.blabla.agora.application.AgoraService;
 import com.gsm.blabla.crew.api.CrewController;
@@ -14,9 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(
     controllers = {
-    CrewController.class,
-    AgoraController.class,
-    ReportController.class
+        CrewController.class,
+        AgoraController.class,
+        ReportController.class,
+        AdminController.class
     },
     properties = "spring.profiles.active=local"
 )
