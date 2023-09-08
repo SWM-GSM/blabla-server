@@ -17,7 +17,7 @@ public class ContentCategoryResponseDto {
     private String title; // 컨텐츠 제목
     private String subtitle; // 컨텐츠 소제목
     private String description; // 컨텐츠 설명
-    private String thumbnail; // 컨텐츠 썸네일 URL
+    private String thumbnailUrl; // 컨텐츠 썸네일 URL
     private Double progress; // 연습실 진행도
 
     public static ContentCategoryResponseDto contentCategoryResponse(ContentCategory contentCategory, List<ContentViewResponseDto> contents) {
@@ -33,7 +33,7 @@ public class ContentCategoryResponseDto {
         return ContentCategoryResponseDto.builder()
                 .id(contentCategory.getId())
                 .title(contentCategory.getTitle())
-                .thumbnail(contentCategory.getThumbnail())
+                .thumbnailUrl(contentCategory.getThumbnailURL())
                 .subtitle(contentCategory.getSubtitle())
                 .description(contentCategory.getDescription())
                 .progress(overallProgressPercentage)
