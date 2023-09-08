@@ -8,5 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ApplyMessageRepository extends JpaRepository<ApplyMessage, Long> {
     Optional<ApplyMessage> getByCrewIdAndMemberId(Long crewId, Long memberId);
-    List<ApplyMessage> getByCrewIdAndStatus(Long crewId, ApplyMessageStatus status);
 }
