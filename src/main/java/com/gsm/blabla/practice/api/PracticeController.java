@@ -24,17 +24,23 @@ public class PracticeController {
         return DataResponseDto.of(practiceService.get(contentId));
     }
 
+    @Operation(summary = "컨텐츠 조회 API")
+    @GetMapping("/{language}/contents/{contentCategoryId}")
+    public DataResponseDto<Map<String, List<ContentViewResponseDto>>> getContent(@PathVariable String language, @PathVariable Long contentCategoryId) {
+        return DataResponseDto.of(practiceService.getContent(language, contentCategoryId));
+    }
+
     @Operation(summary = "컨텐츠 전체 조회 API")
     @GetMapping("/{language}/contents")
-    public DataResponseDto<Map<String, List<ContentListResponseDto>>> getAll(@PathVariable String language) {
+    public DataResponseDto<Map<String, List<ContentCategoryResponseDto>>> getAll(@PathVariable String language) {
         return DataResponseDto.of(practiceService.getAll(language));
     }
 
-    @Operation(summary = "오늘의 컨텐츠 조회 API")
-    @GetMapping("/{language}/contents/today")
-    public DataResponseDto<ContentViewResponseDto> getTodayContent(@PathVariable String language) {
-        return DataResponseDto.of(practiceService.getTodayContent(language));
-    }
+//    @Operation(summary = "오늘의 컨텐츠 조회 API")
+//    @GetMapping("/{language}/contents/today")
+//    public DataResponseDto<ContentViewResponseDto> getTodayContent(@PathVariable String language) {
+//        return DataResponseDto.of(practiceService.getTodayContent(language));
+//    }
 
     @Operation(summary = "연습실 피드백 생성 & 조회 API")
     @PostMapping("/contents/{contentId}/feedback")

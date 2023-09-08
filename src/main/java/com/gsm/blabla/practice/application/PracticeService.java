@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gsm.blabla.global.application.S3UploaderService;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
+import com.gsm.blabla.practice.dao.ContentCategoryRepository;
 import com.gsm.blabla.practice.dao.ContentRepository;
 import com.gsm.blabla.practice.dao.MemberContentRepository;
 import com.gsm.blabla.practice.dao.PracticeHistoryRepository;
 import com.gsm.blabla.practice.domain.Content;
+import com.gsm.blabla.practice.domain.ContentCategory;
 import com.gsm.blabla.practice.domain.MemberContent;
 import com.gsm.blabla.practice.domain.PracticeHistory;
 import com.gsm.blabla.practice.dto.*;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class PracticeService {
     private final ContentRepository contentRepository;
+    private final ContentCategoryRepository contentCategoryRepository;
     private final MemberContentRepository memberContentRepository;
     private final MemberRepository memberRepository;
     private final PracticeHistoryRepository practiceHistoryRepository;
@@ -49,54 +52,75 @@ public class PracticeService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, List<ContentListResponseDto>> getAll(String language) {
-        List<Content> allContents = switch (language) {
-            case "ko" -> contentRepository.findAllByLanguage("ko");
-            case "en" -> contentRepository.findAllByLanguage("en");
+    public Map<String, List<ContentCategoryResponseDto>> getAll(String language) {
+        List<ContentCategory> contentCategories = switch (language) {
+            case "ko" -> contentCategoryRepository.findAllByLanguage("ko");
+            case "en" -> contentCategoryRepository.findAllByLanguage("en");
             default -> new ArrayList<>();
         };
 
         final Long memberId = SecurityUtil.getMemberId();
 
-        List<ContentListResponseDto> contentListResponseDtoList = allContents.stream()
-                .collect(Collectors.groupingBy(Content::getContentName))
-                .values().stream()
-                .map(contentsForContentName -> ContentViewResponseDto.contentViewListResponse(contentsForContentName, memberId, memberContentRepository))
-                .map(ContentListResponseDto::contentListResponse)
-                .toList();
+        List<ContentCategoryResponseDto> contentCategoryResponseDtoList = new ArrayList<>();
+        for (ContentCategory contentCategory : contentCategories) {
+            List<Content> contents = contentRepository.findAllByContentCategory(contentCategory);
 
-        return Collections.singletonMap("category", contentListResponseDtoList);
+            List<ContentViewResponseDto> contentViewResponseDtoList = contents.stream()
+                    .map(content -> ContentViewResponseDto.contentViewResponse(contentCategory, content, memberId, memberContentRepository))
+                    .toList();
+
+            contentCategoryResponseDtoList.add(ContentCategoryResponseDto.contentCategoryResponse(contentCategory, contentViewResponseDtoList));
+        }
+
+        return Collections.singletonMap("categories", contentCategoryResponseDtoList);
     }
 
     @Transactional(readOnly = true)
-    public ContentViewResponseDto getTodayContent(String language) {
+    public Map<String, List<ContentViewResponseDto>> getContent(String language, Long contentCategoryId) {
+        ContentCategory contentCategory = contentCategoryRepository.findById(contentCategoryId).orElseThrow(
+                () -> new GeneralException(Code.CONTENT_CATEGORY_NOT_FOUND, "존재하지 않는 컨텐츠 카테고리입니다.")
+        );
 
-        List<Content> contents = switch (language) {
-            case "ko" -> contentRepository.findAllByLanguage("ko");
-            case "en" -> contentRepository.findAllByLanguage("en");
-            default -> new ArrayList<>();
-        };
+        List<Content> contents = contentRepository.findAllByContentCategory(contentCategory);
 
         final Long memberId = SecurityUtil.getMemberId();
 
-        Optional<Content> todayContents = contents.stream()
-                .filter(content -> memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isEmpty())
-                .findFirst();
+        List<ContentViewResponseDto> contentViewResponseDtoList = contents.stream()
+                .map(content -> ContentViewResponseDto.contentViewResponse(contentCategory, content, memberId, memberContentRepository))
+                .toList();
 
-        return todayContents.map(content -> ContentViewResponseDto.contentViewResponse(content, memberId, memberContentRepository))
-                .orElse(null);
+        return Collections.singletonMap("contents", contentViewResponseDtoList);
     }
+
+//    @Transactional(readOnly = true)
+//    public ContentViewResponseDto getTodayContent(String language) {
+//
+//        List<Content> contents = switch (language) {
+//            case "ko" -> contentRepository.findAllByLanguage("ko");
+//            case "en" -> contentRepository.findAllByLanguage("en");
+//            default -> new ArrayList<>();
+//        };
+//
+//        final Long memberId = SecurityUtil.getMemberId();
+//
+//        Optional<Content> todayContents = contents.stream()
+//                .filter(content -> memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isEmpty())
+//                .findFirst();
+//
+//        return todayContents.map(content -> ContentViewResponseDto.contentViewResponse(content, memberId, memberContentRepository))
+//                .orElse(null);
+//    }
 
     public PracticeFeedbackResponseDto createFeedback(Long contentId, UserAnswerRequestDto userAnswerRequestDto) {
         Content content = contentRepository.findById(contentId)
                 .orElseThrow(() -> new GeneralException(Code.CONTENT_NOT_FOUND, "존재하지 않는 컨텐츠입니다.")
         );
 
-        String language = content.getLanguage();
+        String language = content.getContentCategory().getLanguage();
 
         PracticeFeedbackRequestDto practiceFeedbackRequestDto = PracticeFeedbackRequestDto.builder()
                 .userAnswer(userAnswerRequestDto.getUserAnswer())
-                .answer(content.getAnswer())
+                .answer(content.getTargetSentence())
                 .build();
 
         String fastApiUrl = String.format("https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/%s/feedback", language);

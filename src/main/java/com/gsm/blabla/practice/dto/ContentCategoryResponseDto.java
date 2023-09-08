@@ -1,5 +1,6 @@
 package com.gsm.blabla.practice.dto;
 
+import com.gsm.blabla.practice.domain.ContentCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,14 +12,15 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContentListResponseDto {
+public class ContentCategoryResponseDto {
+    private Long id;
     private String title; // 컨텐츠 제목
     private String subtitle; // 컨텐츠 소제목
     private String description; // 컨텐츠 설명
-    private Double progress; // 연습실
     private String thumbnail; // 컨텐츠 썸네일 URL
+    private Double progress; // 연습실 진행도
 
-    public static ContentListResponseDto contentListResponse(List<ContentViewResponseDto> contents) {
+    public static ContentCategoryResponseDto contentCategoryResponse(ContentCategory contentCategory, List<ContentViewResponseDto> contents) {
         int totalContents = contents.size();
         long completedCount = contents.stream()
                 .filter(ContentViewResponseDto::getIsCompleted)
@@ -28,11 +30,14 @@ public class ContentListResponseDto {
         double roundedOverallProgress = Math.min(100.0, overallProgress);
         double overallProgressPercentage = Math.round(roundedOverallProgress * 10) / 10.0;
 
-        return ContentListResponseDto.builder()
-                .title(contents.get(0).getTitle())
+        return ContentCategoryResponseDto.builder()
+                .id(contentCategory.getId())
+                .title(contentCategory.getTitle())
+                .thumbnail(contentCategory.getThumbnail())
+                .subtitle(contentCategory.getSubtitle())
+                .description(contentCategory.getDescription())
                 .progress(overallProgressPercentage)
-                .thumbnail(contents.get(0).getYoutubeId())
-                .description(contents.get(0).getDescription())
                 .build();
     }
+
 }
