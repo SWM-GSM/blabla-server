@@ -27,8 +27,11 @@ public class Content {
 
     private String contentUrl; // 컨텐츠 URL
 
+    @Column(columnDefinition = "TIME")
     private Duration startedAt; // 컨텐츠 시작 시간
+    @Column(columnDefinition = "TIME")
     private Duration stoppedAt; // 컨텐츠 중지 시간
+    @Column(columnDefinition = "TIME")
     private Duration endedAt; // 컨텐츠 종료 시간
 
     @Builder
