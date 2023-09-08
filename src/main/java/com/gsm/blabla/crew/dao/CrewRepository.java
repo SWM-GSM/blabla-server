@@ -7,11 +7,4 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CrewRepository extends JpaRepository<Crew, Long> {
 
-    @Query(
-        "select c from Crew c "
-        + "where c.korLevel <= :korLevel "
-        + "and c.engLevel <= :engLevel "
-        + "and c.id not in (select cm.crew.id from CrewMember cm where cm.member.id = :memberId)"
-    )
-    List<Crew> findCrewsThatCanBeJoined(Long memberId, int korLevel, int engLevel);
 }

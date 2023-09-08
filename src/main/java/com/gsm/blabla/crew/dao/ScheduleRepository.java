@@ -8,9 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    @Query("select s from Schedule s "
-        + "where month(s.meetingTime) = :month and day(s.meetingTime) = :day and s.crew = :crew")
-    List<Schedule> findSchedulesByMeetingTimeAndCrew(@Param("month") int month, @Param("day") int day, @Param("crew") Crew crew);
 
     @Query("select s from Schedule s "
         + "where s.crew.id = :crewId and s.meetingTime >= NOW() "
