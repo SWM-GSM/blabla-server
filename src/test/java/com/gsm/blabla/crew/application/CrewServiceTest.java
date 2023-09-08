@@ -1,34 +1,16 @@
 package com.gsm.blabla.crew.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 
-import com.gsm.blabla.common.enums.Level;
-import com.gsm.blabla.common.enums.PreferMember;
-import com.gsm.blabla.common.enums.Tag;
-import com.gsm.blabla.crew.dao.ApplyMessageRepository;
-import com.gsm.blabla.crew.dao.CrewReportAnalysisRepository;
-import com.gsm.blabla.crew.dao.CrewReportRepository;
-import com.gsm.blabla.crew.dao.VoiceFileRepository;
-import com.gsm.blabla.crew.domain.ApplyMessage;
 import com.gsm.blabla.crew.domain.Crew;
-import com.gsm.blabla.crew.domain.CrewMember;
-import com.gsm.blabla.crew.domain.CrewMemberRole;
-import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.crew.domain.CrewReport;
-import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.crew.dto.CrewReportResponseDto;
-import com.gsm.blabla.crew.dto.CrewRequestDto;
-import com.gsm.blabla.crew.dto.CrewResponseDto;
-import com.gsm.blabla.crew.dto.MessageRequestDto;
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.dto.MemberResponseDto;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -37,9 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 class CrewServiceTest extends IntegrationTestSupport {
 

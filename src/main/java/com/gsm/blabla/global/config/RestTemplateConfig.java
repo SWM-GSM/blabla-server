@@ -1,6 +1,5 @@
 package com.gsm.blabla.global.config;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import org.springframework.boot.web.client.RestTemplateBuilder;

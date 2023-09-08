@@ -2,7 +2,6 @@ package com.gsm.blabla.practice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.practice.domain.MemberContent;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 @Getter

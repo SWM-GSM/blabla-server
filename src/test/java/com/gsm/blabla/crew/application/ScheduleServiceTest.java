@@ -1,8 +1,6 @@
 package com.gsm.blabla.crew.application;
 
 import com.gsm.blabla.crew.dao.CrewRepository;
-import com.gsm.blabla.crew.domain.Crew;
-import com.gsm.blabla.crew.domain.CrewMember;
 import com.gsm.blabla.crew.domain.MemberSchedule;
 import com.gsm.blabla.crew.domain.Schedule;
 import com.gsm.blabla.global.IntegrationTestSupport;

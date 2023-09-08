@@ -3,7 +3,6 @@ package com.gsm.blabla.practice.dao;
 import com.gsm.blabla.practice.domain.Content;
 import com.gsm.blabla.practice.domain.ContentCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

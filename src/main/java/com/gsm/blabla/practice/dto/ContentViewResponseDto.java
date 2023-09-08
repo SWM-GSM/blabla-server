@@ -1,7 +1,5 @@
 package com.gsm.blabla.practice.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.practice.dao.MemberContentRepository;
 import com.gsm.blabla.practice.domain.Content;
 import com.gsm.blabla.practice.domain.ContentCategory;

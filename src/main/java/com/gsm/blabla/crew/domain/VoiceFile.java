@@ -2,7 +2,6 @@ package com.gsm.blabla.crew.domain;
 
 import com.gsm.blabla.member.domain.Member;
 import jakarta.persistence.*;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
