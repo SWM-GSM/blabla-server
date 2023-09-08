@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentListResponseDto {
+
     private String title; // 컨텐츠 제목
     private String description; // 컨텐츠 설명
     private String thumbnailUrl; // 컨텐츠 썸네일 URL

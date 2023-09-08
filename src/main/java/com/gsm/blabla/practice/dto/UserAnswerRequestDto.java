@@ -4,5 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class UserAnswerRequestDto {
+
     private String userAnswer;
 }

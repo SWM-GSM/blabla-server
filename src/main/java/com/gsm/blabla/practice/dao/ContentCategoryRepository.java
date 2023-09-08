@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ContentCategoryRepository extends JpaRepository<ContentCategory, Long> {
+
     List<ContentCategory> findAllByLanguage(String language);
 }
