@@ -28,18 +28,6 @@ public class MemberController {
         return DataResponseDto.of(memberService.updateProfile(memberProfileRequestDto));
     }
 
-    @Operation(summary = "프로필 자기소개 수정 API")
-    @PatchMapping("/profile/description")
-    public DataResponseDto<Map<String, String>> updateDescription(@RequestBody DescriptionRequestDto descriptionRequestDto) {
-        return DataResponseDto.of(memberService.updateDescription(descriptionRequestDto));
-    }
-
-    @Operation(summary = "프로필 관심사 수정 API")
-    @PatchMapping("/profile/keywords")
-    public DataResponseDto<Map<String, String>> updateKeywords(@RequestBody KeywordsRequestDto keywordsRequestDto) {
-        return DataResponseDto.of(memberService.updateKeywords(keywordsRequestDto));
-    }
-
     @Operation(summary = "설정값 조회 API")
     @GetMapping("/profile/settings")
     public DataResponseDto<Map<String, Map<String, Boolean>>> getSettings() {
@@ -62,18 +50,6 @@ public class MemberController {
     @PatchMapping("/members/push-notification")
     public DataResponseDto<Map<String, String>> updatePushNotification(@RequestBody PushNotificationRequestDto pushNotificationRequestDto) {
         return DataResponseDto.of(memberService.updatePushNotification(pushNotificationRequestDto));
-    }
-
-    @Operation(summary = "생년월일 공개 여부 설정 API")
-    @PatchMapping("/members/birth-date-disclosure")
-    public DataResponseDto<Map<String, String>> updateBirthDateDisclosure(@RequestBody BirthDateDisclosureRequestDto birthDateDisclosureRequestDto) {
-        return DataResponseDto.of(memberService.updateBirthDateDisclosure(birthDateDisclosureRequestDto));
-    }
-
-    @Operation(summary = "성별 공개 여부 설정 API")
-    @PatchMapping("/members/gender-disclosure")
-    public DataResponseDto<Map<String, String>> updateGenderDisclosure(@RequestBody genderDisclosureRequestDto genderDisclosureRequestDto) {
-        return DataResponseDto.of(memberService.updateGenderDisclosure(genderDisclosureRequestDto));
     }
 
     @Operation(summary = "나의 memberId 조회 API")
