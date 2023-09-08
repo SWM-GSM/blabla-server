@@ -7,6 +7,7 @@ import com.gsm.blabla.crew.domain.CrewReportAnalysis;
 import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.practice.dao.MemberContentRepository;
+import com.gsm.blabla.practice.domain.ContentCategory;
 import com.gsm.blabla.practice.domain.MemberContent;
 import com.gsm.blabla.report.dto.HistoryReportResponseDto;
 import com.gsm.blabla.report.dto.HistoryResponseDto;
@@ -80,7 +81,7 @@ public class ReportService {
         List<MemberContent> memberContents = memberContentRepository.findAllByMemberId(memberId);
         List<HistoryReportResponseDto> personalHistory = new ArrayList<>();
         for (MemberContent memberContent : memberContents) {
-            String subTitle = memberContent.getContent().getGenre() + " - " + memberContent.getContent().getContentName();
+            String subTitle = memberContent.getContent().getContentCategory().getSubtitle() + " - " + memberContent.getContent().getContentCategory().getTitle();
             String datetime = memberContent.getJoinedAt().format(formatter);
             personalHistory.add(
                 HistoryReportResponseDto.builder()
@@ -88,7 +89,7 @@ public class ReportService {
                     .type("personal")
                     .info(
                         Map.of(
-                            "title", memberContent.getContent().getTopic(),
+                            "title", memberContent.getContent().getTitle(),
                             "subTitle", subTitle
                         )
                     )
