@@ -2,7 +2,6 @@ package com.gsm.blabla.member.domain;
 
 import com.gsm.blabla.global.domain.BaseTimeEntity;
 import com.gsm.blabla.member.dto.MemberProfileRequestDto;
-import com.gsm.blabla.member.dto.MemberRequestDto;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -12,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 

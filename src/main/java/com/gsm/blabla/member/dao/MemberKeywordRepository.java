@@ -7,6 +7,4 @@ import java.util.List;
 
 public interface MemberKeywordRepository extends JpaRepository<MemberKeyword, Long> {
     List<MemberKeyword> findAllByMemberId(Long memberId);
-
-    void deleteAllByMemberId(Long memberId);
 }

@@ -7,7 +7,6 @@ import com.gsm.blabla.crew.domain.CrewReportAnalysis;
 import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.practice.dao.MemberContentRepository;
-import com.gsm.blabla.practice.domain.ContentCategory;
 import com.gsm.blabla.practice.domain.MemberContent;
 import com.gsm.blabla.report.dto.HistoryReportResponseDto;
 import com.gsm.blabla.report.dto.HistoryResponseDto;
