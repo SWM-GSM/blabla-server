@@ -76,7 +76,7 @@ public class PracticeService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, List<ContentViewResponseDto>> getContent(String language, Long contentCategoryId) {
+    public ContentListResponseDto getContent(String language, Long contentCategoryId) {
         ContentCategory contentCategory = contentCategoryRepository.findById(contentCategoryId).orElseThrow(
                 () -> new GeneralException(Code.CONTENT_CATEGORY_NOT_FOUND, "존재하지 않는 컨텐츠 카테고리입니다.")
         );
@@ -89,7 +89,7 @@ public class PracticeService {
                 .map(content -> ContentViewResponseDto.contentViewResponse(contentCategory, content, memberId, memberContentRepository))
                 .toList();
 
-        return Collections.singletonMap("contents", contentViewResponseDtoList);
+        return ContentListResponseDto.contentListResponse(contentCategory, contentViewResponseDtoList);
     }
 
 //    @Transactional(readOnly = true)

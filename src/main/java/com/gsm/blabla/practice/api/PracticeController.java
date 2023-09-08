@@ -26,7 +26,7 @@ public class PracticeController {
 
     @Operation(summary = "컨텐츠 조회 API")
     @GetMapping("/{language}/contents/{contentCategoryId}")
-    public DataResponseDto<Map<String, List<ContentViewResponseDto>>> getContent(@PathVariable String language, @PathVariable Long contentCategoryId) {
+    public DataResponseDto<ContentListResponseDto> getContent(@PathVariable String language, @PathVariable Long contentCategoryId) {
         return DataResponseDto.of(practiceService.getContent(language, contentCategoryId));
     }
 

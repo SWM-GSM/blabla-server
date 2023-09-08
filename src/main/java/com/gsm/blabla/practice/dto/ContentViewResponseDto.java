@@ -22,7 +22,7 @@ public class ContentViewResponseDto {
     private String title; // 컨텐츠 제목
     private String description; // 컨텐츠 설명
 
-    private String youtubeId; // 컨텐츠 썸네일 URL
+    private String thumbnailUrl; // 컨텐츠 썸네일 URL
     private Boolean isCompleted; // 컨텐츠 완료 여부
 
     public static ContentViewResponseDto contentViewResponse(ContentCategory contentCategory, Content content, Long memberId, MemberContentRepository memberContentRepository) {
@@ -30,7 +30,7 @@ public class ContentViewResponseDto {
         return ContentViewResponseDto.builder()
                 .id(content.getId())
                 .title(contentCategory.getTitle())
-                .youtubeId(content.getContentUrl().split("/watch\\?v=")[1])
+                .thumbnailUrl("https://img.youtube.com/vi/" + content.getContentUrl().split("/watch\\?v=")[1] + "/hqdefault.jpg")
                 .description(content.getDescription())
                 .isCompleted(memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isPresent())
                 .build();
@@ -42,7 +42,7 @@ public class ContentViewResponseDto {
                     return ContentViewResponseDto.builder()
                             .id(content.getId())
                             .title(content.getContentCategory().getTitle())
-                            .youtubeId(content.getContentUrl().split("/watch\\?v=")[1])
+                            .thumbnailUrl("https://img.youtube.com/vi/" + content.getContentUrl().split("/watch\\?v=")[1] + "/hqdefault.jpg")
                             .isCompleted(memberContentRepository.findByContentIdAndMemberId(content.getId(), memberId).isPresent())
                             .description(content.getDescription())
                             .build();
