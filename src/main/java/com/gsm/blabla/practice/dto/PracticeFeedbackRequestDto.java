@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PracticeFeedbackRequestDto {
+
     private String userAnswer;
     private String answer;
 

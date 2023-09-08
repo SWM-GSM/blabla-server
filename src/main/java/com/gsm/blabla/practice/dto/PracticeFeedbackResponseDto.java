@@ -12,6 +12,7 @@ import lombok.*;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PracticeFeedbackResponseDto {
+
     // TODO: 인공지능 서버 Response와 DTO 분리 고민
     private Double starScore;
     private Double contextScore;
@@ -20,7 +21,7 @@ public class PracticeFeedbackResponseDto {
     private Integer starRating;
     private Integer contextRating;
     private String userAnswer;
-    private String answer;
+    private String targetSentence;
 
     public static Integer getStarScoreCategory(double starScore) {
         if (starScore <= 0.3) {
@@ -37,7 +38,7 @@ public class PracticeFeedbackResponseDto {
                 .contextRating(getStarScoreCategory(memberContent.getContextScore()))
                 .longFeedback(memberContent.getLongFeedback())
                 .userAnswer(memberContent.getUserAnswer())
-                .answer(memberContent.getContent().getAnswer())
+                .targetSentence(memberContent.getContent().getTargetSentence())
                 .build();
     }
 }
