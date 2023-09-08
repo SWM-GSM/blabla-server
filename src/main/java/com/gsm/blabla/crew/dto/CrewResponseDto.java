@@ -1,15 +1,8 @@
 package com.gsm.blabla.crew.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gsm.blabla.common.enums.Level;
-import com.gsm.blabla.crew.dao.CrewMemberRepository;
-import com.gsm.blabla.crew.domain.Crew;
-import com.gsm.blabla.crew.domain.CrewMemberStatus;
 import com.gsm.blabla.member.dto.MemberResponseDto;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
