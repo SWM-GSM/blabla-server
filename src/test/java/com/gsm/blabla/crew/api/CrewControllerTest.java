@@ -48,41 +48,6 @@ class CrewControllerTest extends ControllerTestSupport {
             .build();
     }
 
-    @DisplayName("[POST] 크루를 생성한다.")
-    @Test
-    @WithCustomMockUser
-    void create() throws Exception {
-        // given
-        CrewRequestDto crewRequestDto = CrewRequestDto.builder()
-            .coverImage("test")
-            .name("테스트")
-            .description("테스트 크루입니다.")
-            .meetingCycle(MeetingCycle.EVERYDAY)
-            .tags(List.of(Tag.CULTURE, Tag.FILM_MUSIC))
-            .maxNum(8)
-            .korLevel(1)
-            .engLevel(1)
-            .preferMember(PreferMember.SAME_HOBBY)
-            .detail("테스트 크루입니다.")
-            .autoApproval(true)
-            .build();
-
-        given(crewService.create(any(CrewRequestDto.class)))
-            .willReturn(Collections.singletonMap("crewId", 1L));
-
-        // when // then
-        mockMvc.perform(
-            post("/crews")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(crewRequestDto))
-        )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.crewId").exists())
-            ;
-    }
-
     @DisplayName("[GET] 크루 리포트를 조회한다.")
     @Test
     @WithCustomMockUser

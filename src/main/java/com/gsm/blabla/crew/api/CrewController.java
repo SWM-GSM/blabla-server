@@ -30,50 +30,6 @@ public class CrewController {
 
     private final CrewService crewService;
 
-    @Operation(summary = "크루 생성 API")
-    @PostMapping(value = "/crews")
-    public DataResponseDto<Map<String, Long>> create(
-        @RequestBody CrewRequestDto crewRequestDto) {
-        return DataResponseDto.of(crewService.create(crewRequestDto));
-    }
-
-    @Operation(summary = "크루 단일 조회 API")
-    @GetMapping(value = "/{language}/crews/{crewId}")
-    public DataResponseDto<CrewResponseDto> get(
-        @PathVariable("language") String language,
-        @PathVariable("crewId") Long crewId) {
-        return DataResponseDto.of(crewService.get(language, crewId));
-    }
-
-    // TODO: page > lastCrewId로 수정
-    @Operation(summary = "크루 목록 조회 API")
-    @GetMapping(value = "/{language}/crews")
-    public DataResponseDto<Page<CrewResponseDto>> getAll(
-        @PathVariable("language") String language,
-        @PageableDefault(sort = "id", direction = Direction.DESC)  Pageable pageable) {
-        return DataResponseDto.of(crewService.getAll(language, pageable));
-    }
-
-    @Operation(summary = "나의 크루 조회 API")
-    @GetMapping(value = "/crews/me")
-    public DataResponseDto<Map<String, List<CrewResponseDto>>> getMyCrews() {
-        return DataResponseDto.of(crewService.getMyCrews());
-    }
-
-    @Operation(summary = "지금 참여 가능한 크루 조회 API")
-    @GetMapping(value = "/crews/can-join")
-    public DataResponseDto<Map<String, List<CrewResponseDto>>> getCanJoinCrews() {
-        return DataResponseDto.of(crewService.getCanJoinCrews());
-    }
-
-    @Operation(summary = "크루 가입 신청 API")
-    @PostMapping(value = "/crews/{crewId}/join")
-    public DataResponseDto<Map<String, String>> joinCrew(
-        @PathVariable("crewId") Long crewId,
-        @RequestBody(required = false) MessageRequestDto messageRequestDto) {
-        return DataResponseDto.of(crewService.joinCrew(crewId, messageRequestDto));
-    }
-
 
     @Operation(summary = "음성 파일 업로드 & 분석 API")
     @PostMapping(value = "/crews/reports/{reportId}/voice-file")
@@ -111,44 +67,6 @@ public class CrewController {
         @PathVariable("crewId") Long crewId,
         @RequestParam(value = "sort", defaultValue = "desc") String sort) {
         return DataResponseDto.of(crewService.getAllReports(crewId, sort));
-    }
-
-    @Operation(summary = "크루 가입 승인 대기 인원 조회 API")
-    @GetMapping(value = "/crews/{crewId}/waiting-list")
-    public DataResponseDto<Map<String, List<MemberResponseDto>>> getWaitingList(@PathVariable("crewId") Long crewId) {
-        return DataResponseDto.of(crewService.getWaitingList(crewId));
-    }
-
-    @Operation(summary = "크루 가입 승인 및 거절 API")
-    @PostMapping(value = "/crews/{crewId}/waiting-list/{memberId}")
-    public DataResponseDto<Map<String, String>> acceptOrReject(
-        @PathVariable("crewId") Long crewId,
-        @PathVariable("memberId") Long memberId,
-        @RequestBody StatusRequestDto statusRequestDto) {
-        return DataResponseDto.of(crewService.acceptOrReject(crewId, memberId, statusRequestDto));
-    }
-
-    @Operation(summary = "크루 신고하기 API")
-    @PostMapping(value = "/crews/{crewId}/accuse")
-    public DataResponseDto<Map<String, String>> accuse(
-        @PathVariable("crewId") Long crewId,
-        @RequestBody AccuseRequestDto accuseRequestDto) {
-        return DataResponseDto.of(crewService.accuse(crewId, accuseRequestDto));
-
-    }
-
-    @Operation(summary = "크루 탈퇴 API")
-    @DeleteMapping(value = "/crews/{crewId}/withdrawal")
-    public DataResponseDto<Map<String, String>> withdrawal(@PathVariable Long crewId) {
-        return DataResponseDto.of(crewService.withdrawal(crewId));
-    }
-
-    @Operation(summary = "크루 강제 탈퇴 API")
-    @PostMapping(value = "/crews/{crewId}/force-withdrawal/{memberId}")
-    public DataResponseDto<Map<String, String>> forceWithdrawal(
-        @PathVariable("crewId") Long crewId,
-        @PathVariable("memberId") Long crewMemberId) {
-        return DataResponseDto.of(crewService.forceWithdrawal(crewId, crewMemberId));
     }
 
     @Operation(summary = "멤버 프로필 조회 API")

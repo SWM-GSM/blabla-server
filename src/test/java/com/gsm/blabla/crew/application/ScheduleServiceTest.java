@@ -77,8 +77,6 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             .autoApproval(true)
             .build();
 
-        crewId = crewService.create(crewRequestDto).get("crewId");
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.of(LocalDate.now().plusDays(3), LocalTime.of(16, 0, 0));
         meetingTime = dateTime.format(formatter);
@@ -179,43 +177,6 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         assertThat(memberScheduleRepository.count()).isEqualTo(memberScheduleBefore + 1);
     }
 
-    @DisplayName("[DELETE] 크루를 탈퇴할 경우 탈퇴 일자 이후 참여 일정에서 제외된다.")
-    @Test
-    @WithCustomMockUser
-    void getScheduleAfterWithdrawal() {
-        // given
-        Long crewId = createCrew("테스트", true);
-        Crew crew = crewRepository.findById(crewId).orElseThrow(
-            () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
-
-        joinCrew(member2, crew);
-        Long scheduleId = scheduleService.create(crewId, scheduleRequestDto).get("scheduleId");
-        joinSchedule(member2, scheduleRepository.findById(scheduleId).orElseThrow(
-            () -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다.")));
-
-        List<String> beforeWithdrawal = scheduleService.getUpcomingSchedule(crewId).getProfiles();
-
-        // when
-        withdrawal(member2, crew);
-
-        // then
-        List<String> afterWithdrawal = scheduleService.getUpcomingSchedule(crewId).getProfiles();
-        assertThat(beforeWithdrawal).isEqualTo(List.of(member1.getProfileImage(), member2.getProfileImage()));
-        assertThat(afterWithdrawal).isEqualTo(List.of(member1.getProfileImage()));
-    }
-
-    @DisplayName("[DELETE] 크루를 탈퇴할 경우 탈퇴 일자 이전 참여 일정에서 유지된다.")
-    @Test
-    @WithCustomMockUser(id = "2")
-    void getScheduleBeforeWithdrawal() {
-        // given
-
-        // when
-
-        // then
-        assertThat(true).isFalse();
-    }
-
     @DisplayName("[DELETE] 크루 일정 참여를 취소한다.")
     @Test
     @WithCustomMockUser
@@ -258,20 +219,5 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             .schedule(schedule)
             .build()
         );
-    }
-
-    private void joinSchedule(Member member, Schedule schedule) {
-        memberScheduleRepository.save(
-            MemberSchedule.builder()
-                .member(member)
-                .schedule(schedule)
-                .build()
-        );
-    }
-
-    private void withdrawal(Member member, Crew crew) {
-        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(member.getId(), crew.getId())
-            .orElseThrow(() -> new GeneralException(Code.CREW_MEMBER_NOT_FOUND, "크루에서 멤버를 찾을 수 없습니다."));
-        crewMember.withdrawal();
     }
 }

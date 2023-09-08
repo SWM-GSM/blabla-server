@@ -28,7 +28,6 @@ class AgoraServiceTest extends IntegrationTestSupport {
     @BeforeEach
     void setUp() {
         member1 = createMember("cat");
-        crewId = createCrew("테스트", true);
     }
 
     @DisplayName("[POST] 보이스룸 입장을 위한 토큰을 발급 받는다.")
