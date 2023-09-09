@@ -32,11 +32,6 @@ class CrewControllerTest extends ControllerTestSupport {
             .socialLoginType("TEST")
             .nickname("테스트")
             .profileImage("cat")
-            .birthDate("2001-01-01")
-            .gender("male")
-            .countryCode("KR")
-            .korLevel(5)
-            .engLevel(5)
             .pushNotification(false)
             .build();
     }
