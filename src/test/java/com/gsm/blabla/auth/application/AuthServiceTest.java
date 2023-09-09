@@ -6,9 +6,9 @@ import static org.mockito.BDDMockito.given;
 
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.jwt.application.JwtService;
-import com.gsm.blabla.jwt.dto.AppleAccountDto;
-import com.gsm.blabla.jwt.dto.AppleTokenDto;
-import com.gsm.blabla.jwt.dto.GoogleAccountDto;
+import com.gsm.blabla.auth.dto.AppleAccountDto;
+import com.gsm.blabla.auth.dto.AppleTokenDto;
+import com.gsm.blabla.auth.dto.GoogleAccountDto;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.dto.MemberRequestDto;

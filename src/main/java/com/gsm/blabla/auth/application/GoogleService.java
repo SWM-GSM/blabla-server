@@ -3,7 +3,7 @@ package com.gsm.blabla.auth.application;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.auth.dao.GoogleAccountRepository;
-import com.gsm.blabla.jwt.dto.GoogleAccountDto;
+import com.gsm.blabla.auth.dto.GoogleAccountDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
