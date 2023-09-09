@@ -21,6 +21,8 @@ import com.gsm.blabla.crew.domain.CrewTag;
 import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
+import com.gsm.blabla.auth.dao.AppleAccountRepository;
+import com.gsm.blabla.auth.dao.GoogleAccountRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
@@ -52,6 +54,12 @@ public abstract class IntegrationTestSupport {
 
     @Autowired
     protected MemberRepository memberRepository;
+
+    @Autowired
+    protected GoogleAccountRepository googleAccountRepository;
+
+    @Autowired
+    protected AppleAccountRepository appleAccountRepository;
 
     @Autowired
     protected CrewRepository crewRepository;
