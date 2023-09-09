@@ -1,4 +1,4 @@
-package com.gsm.blabla.jwt.domain;
+package com.gsm.blabla.auth.domain;
 
 import com.gsm.blabla.global.domain.BaseTimeEntity;
 import com.gsm.blabla.member.domain.Member;
