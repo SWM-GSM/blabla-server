@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.exception.GeneralException;
-import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.jwt.TokenProvider;
 import com.gsm.blabla.jwt.application.JwtService;
 import com.gsm.blabla.jwt.dao.AppleAccountRepository;
@@ -19,10 +18,8 @@ import com.gsm.blabla.jwt.dto.AppleTokenDto;
 import com.gsm.blabla.jwt.dto.GoogleAccountDto;
 import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
-import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import io.jsonwebtoken.Claims;
@@ -75,7 +72,6 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
-    private final MemberKeywordRepository memberKeywordRepository;
     private final JwtRepository jwtRepository;
     private final GoogleAccountRepository googleAccountRepository;
     private final AppleAccountRepository appleAccountRepository;
@@ -129,20 +125,6 @@ public class AuthService {
             case "TEST" -> member = memberRepository.save(memberRequestDto.toEntity());
         }
 
-        int size = memberRequestDto.getKeywords().size();
-        if (size != 0 && (size < 3 || size > 10)) {
-            throw new GeneralException(Code.VALIDATION_ERROR, "관심사는 0개 또는 3개 이상 10개 이하로 설정해야 합니다.");
-        }
-
-        // 키워드
-        for (Keyword keyword : memberRequestDto.getKeywords()) {
-            memberKeywordRepository.save(MemberKeyword.builder()
-                    .member(member)
-                    .keyword(keyword)
-                    .build());
-        }
-
-        log.info("{} 님이 {} 타입으로 회원가입을 했습니다.", member.getNickname(), memberRequestDto.getSocialLoginType());
         return jwtService.issueJwt(member);
     }
 

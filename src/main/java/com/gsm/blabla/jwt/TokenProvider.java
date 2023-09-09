@@ -51,7 +51,6 @@ public class TokenProvider {
             .setSubject(member.getId().toString()) // 토큰 용도
             .claim("socialLoginType", member.getSocialLoginType()) // claims(payload에 들어갈 내용) 설정
             .claim("nickname", member.getNickname())
-            .claim("countryCode", member.getCountryCode())
             .claim(AUTHORITIES_KEY, member.getRole())
             .setExpiration(accessTokenExpiresIn) // 토큰 만료 시간 설정
             .signWith(key, SignatureAlgorithm.HS512)
