@@ -10,7 +10,6 @@ import com.gsm.blabla.global.application.S3UploaderService;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
-import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 
 import java.time.Duration;
@@ -19,7 +18,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 
@@ -47,7 +45,6 @@ public class CrewService {
     private final S3UploaderService s3UploaderService;
     private final RestTemplate restTemplate;
     private final CrewAccuseRepository crewAccuseRepository;
-    private final MemberKeywordRepository memberKeywordRepository;
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
     private final CrewReportKeywordRepository crewReportKeywordRepository;
 
@@ -115,33 +112,11 @@ public class CrewService {
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         );
 
-        List<MemberKeyword> memberInterest = memberKeywordRepository.findAllByMemberId(memberId);
-
         CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_JOINED, "해당 멤버는 해당 크루의 멤버가 아닙니다."));
 
-        List<Keyword> keywords = memberInterest.stream()
-                .map(MemberKeyword::getKeyword)
-                .toList();
 
-        List<Map<String, String>> interests = keywords.stream()
-                .map(keyword -> {
-                    Map<String, String> interest = new HashMap<>();
-                    if ("ko".equals(language)) {
-                        interest.put("emoji", keyword.getEmoji());
-                        interest.put("name", keyword.getKoreanName());
-                        interest.put("tag", keyword.name());
-                    } else if ("en".equals(language)) {
-                        interest.put("emoji", keyword.getEmoji());
-                        interest.put("name", keyword.getEnglishName());
-                        interest.put("tag", keyword.name());
-                    }
-                    return interest;
-                })
-                .toList();
-
-
-        return MemberProfileResponseDto.getCrewMemberProfile(member, crewMember, interests);
+        return MemberProfileResponseDto.getCrewMemberProfile(member);
     }
 
     public Map<String, String> createReportRequest(Long reportId) {

@@ -4,7 +4,6 @@ import com.gsm.blabla.global.domain.BaseTimeEntity;
 import com.gsm.blabla.member.dto.MemberProfileRequestDto;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import lombok.Builder;
