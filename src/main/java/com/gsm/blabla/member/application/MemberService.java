@@ -1,18 +1,15 @@
 package com.gsm.blabla.member.application;
 
 import com.gsm.blabla.auth.application.AuthService;
-import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.jwt.dao.JwtRepository;
-import com.gsm.blabla.member.dao.MemberKeywordRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 
 import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.domain.MemberKeyword;
 import com.gsm.blabla.member.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final MemberKeywordRepository memberKeywordRepository;
     private final JwtRepository jwtRepository;
 
     private final AuthService authService;
@@ -68,30 +64,7 @@ public class MemberService {
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         );
 
-        List<MemberKeyword> memberInterest = memberKeywordRepository.findAllByMemberId(memberId);
-
-        List<Keyword> keywords = memberInterest.stream()
-                .map(MemberKeyword::getKeyword)
-                .toList();
-
-        List<Map<String, String>> interests = keywords.stream()
-                .map(keyword -> {
-                    Map<String, String> interest = new HashMap<>();
-                    if ("ko".equals(language)) {
-                        interest.put("emoji", keyword.getEmoji());
-                        interest.put("name", keyword.getKoreanName());
-                        interest.put("tag", keyword.name());
-                    } else if ("en".equals(language)) {
-                        interest.put("emoji", keyword.getEmoji());
-                        interest.put("name", keyword.getEnglishName());
-                        interest.put("tag", keyword.name());
-                    }
-                    return interest;
-                })
-                .toList();
-
-
-        return MemberProfileResponseDto.getMemberProfile(member, interests);
+        return MemberProfileResponseDto.getMemberProfile(member);
     }
 
     public Map<String, String> updatePushNotification(PushNotificationRequestDto pushNotificationRequestDto) {
@@ -120,21 +93,11 @@ public class MemberService {
     public Map<String, Map<String, Boolean>> getSettings() {
         Long memberId = SecurityUtil.getMemberId();
 
-        boolean genderDisclosure = memberRepository.findById(memberId).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-        ).getGenderDisclosure();
-        boolean birthDateDisclosure = memberRepository.findById(memberId).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-        ).getBirthDateDisclosure();
         boolean pushNotification = memberRepository.findById(memberId).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         ).getPushNotification();
 
-        Map<String, Boolean> settings = Map.of(
-            "genderDisclosure", genderDisclosure,
-            "birthDateDisclosure", birthDateDisclosure,
-            "pushNotification", pushNotification
-        );
+        Map<String, Boolean> settings = Map.of("pushNotification", pushNotification);
 
         return Collections.singletonMap("settings", settings);
     }
@@ -151,7 +114,6 @@ public class MemberService {
             .map(member -> MemberResponseDto.builder()
                 .profileImage(member.getProfileImage())
                 .nickname(member.getNickname())
-                .countryCode(member.getCountryCode())
                 .build()
             )
             .toList();
