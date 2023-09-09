@@ -21,6 +21,9 @@ import com.gsm.blabla.jwt.dto.TokenRequestDto;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
+import com.gsm.blabla.member.domain.nickname.Adjective;
+import com.gsm.blabla.member.domain.nickname.Animal;
+import com.gsm.blabla.member.domain.nickname.Color;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -86,11 +89,26 @@ public class AuthService {
     private String applePrivateKey;
 
     // 회원가입
-    public JwtDto signup(String providerAuthorization, MemberRequestDto memberRequestDto) {
+    public JwtDto signUp(String providerAuthorization, MemberRequestDto memberRequestDto) {
         Member member = new Member();
 
-        if (memberRepository.findByNickname(memberRequestDto.getNickname()).isPresent()) {
-            throw new GeneralException(Code.DUPLICATED_NICKNAME, "중복된 닉네임입니다.");
+        // 랜덤으로 닉네임, 프로필 이미지 생성
+        String nickname = "";
+
+        Animal animal = Animal.getRandomAnimal();
+        String profileImage = animal.getEnglishName();
+
+        String learningLanguage = memberRequestDto.getLearningLanguage();
+
+        if (learningLanguage.equals("ko")) {
+            nickname = Adjective.getRandomAdjective("ko") + Color.getRandomColor("ko") + animal.getKoreanName();
+        } else if (learningLanguage.equals("en")) {
+            nickname = Adjective.getRandomAdjective("en") + Color.getRandomColor("en") + animal.getEnglishName();
+        }
+
+        if (memberRepository.findByNickname(nickname).isPresent()) {
+            long memberId = memberRepository.findLastId() + 1;
+            nickname = nickname + memberId;
         }
 
         switch (memberRequestDto.getSocialLoginType()) {
@@ -100,7 +118,7 @@ public class AuthService {
                     throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 구글 계정입니다.");
                 }
 
-                member = memberRepository.save(memberRequestDto.toEntity());
+                member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
                 googleAccountRepository.save(GoogleAccount.builder()
                     .id(googleAccountDto.getId())
                     .member(member)
@@ -114,7 +132,7 @@ public class AuthService {
                     throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 애플 계정입니다.");
                 }
 
-                member = memberRepository.save(memberRequestDto.toEntity());
+                member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
                 appleAccountRepository.save(AppleAccount.builder()
                     .id(appleAccountDto.getSub())
                     .member(member)
@@ -122,7 +140,7 @@ public class AuthService {
                     .build()
                 );
             }
-            case "TEST" -> member = memberRepository.save(memberRequestDto.toEntity());
+            case "TEST" -> member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
         }
 
         return jwtService.issueJwt(member);
