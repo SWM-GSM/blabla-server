@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gsm.blabla.admin.api.AdminController;
 import com.gsm.blabla.agora.api.AgoraController;
 import com.gsm.blabla.agora.application.AgoraService;
+import com.gsm.blabla.auth.api.AuthController;
+import com.gsm.blabla.auth.application.AuthService;
 import com.gsm.blabla.crew.api.CrewController;
 import com.gsm.blabla.crew.application.CrewService;
 import com.gsm.blabla.report.api.ReportController;
@@ -18,7 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
         CrewController.class,
         AgoraController.class,
         ReportController.class,
-        AdminController.class
+        AdminController.class,
+        AuthController.class
     },
     properties = "spring.profiles.active=local"
 )
@@ -38,4 +41,7 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected ReportService reportService;
+
+    @MockBean
+    protected AuthService authService;
 }
