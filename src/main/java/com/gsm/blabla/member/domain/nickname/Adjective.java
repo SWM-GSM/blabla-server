@@ -2,7 +2,6 @@ package com.gsm.blabla.member.domain.nickname;
 
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

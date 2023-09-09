@@ -2,7 +2,6 @@ package com.gsm.blabla.crew.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gsm.blabla.common.enums.Keyword;
 import com.gsm.blabla.crew.dao.*;
 import com.gsm.blabla.crew.domain.*;
 import com.gsm.blabla.crew.dto.*;

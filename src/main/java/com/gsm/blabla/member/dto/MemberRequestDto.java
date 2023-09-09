@@ -3,7 +3,6 @@ package com.gsm.blabla.member.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
-import com.gsm.blabla.member.domain.nickname.Animal;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
