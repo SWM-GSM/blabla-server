@@ -1,5 +1,6 @@
 package com.gsm.blabla.global;
 
+import com.gsm.blabla.auth.application.AuthService;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.crew.application.CrewService;
@@ -46,6 +47,9 @@ public abstract class IntegrationTestSupport {
 
     @Autowired
     protected CrewService crewService;
+
+    @Autowired
+    protected AuthService authService;
 
     @Autowired
     protected MemberRepository memberRepository;
