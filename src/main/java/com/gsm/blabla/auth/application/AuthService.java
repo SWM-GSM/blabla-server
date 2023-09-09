@@ -49,18 +49,9 @@ public class AuthService {
         Member member = new Member();
 
         // 랜덤으로 닉네임, 프로필 이미지 생성
-        String nickname = "";
-
         Animal animal = Animal.getRandomAnimal();
+        String nickname = getRandomNickname(animal, memberRequestDto.getLearningLanguage());
         String profileImage = animal.getEnglishName();
-
-        String learningLanguage = memberRequestDto.getLearningLanguage();
-
-        if (learningLanguage.equals("ko")) {
-            nickname = Adjective.getRandomAdjective("ko") + Color.getRandomColor("ko") + animal.getKoreanName();
-        } else if (learningLanguage.equals("en")) {
-            nickname = Adjective.getRandomAdjective("en") + Color.getRandomColor("en") + animal.getEnglishName();
-        }
 
         if (memberRepository.findByNickname(nickname).isPresent()) {
             long memberId = memberRepository.findLastId() + 1;
@@ -160,7 +151,14 @@ public class AuthService {
         return newJwtDto;
     }
 
+    String getRandomNickname(Animal animal, String learningLanguage) {
+        String nickname = "";
+        if (learningLanguage.equals("ko")) {
+            nickname = Adjective.getRandomAdjective("ko") + Color.getRandomColor("ko") + animal.getKoreanName();
+        } else if (learningLanguage.equals("en")) {
+            nickname = Adjective.getRandomAdjective("en") + Color.getRandomColor("en") + animal.getEnglishName();
         }
 
+        return nickname;
     }
 }
