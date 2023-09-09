@@ -43,7 +43,6 @@ public class WithCustomMockUserSecurityContextFactory implements WithSecurityCon
             .setSubject(annotation.id())
             .claim("socialLoginType", "TEST")
             .claim("nickname", "테스트")
-            .claim("countryCode", "KR")
             .claim("auth", Role.ROLE_USER)
             .setExpiration(accessTokenExpiresIn) // 토큰 만료 시간 설정
             .signWith(key, SignatureAlgorithm.HS512)

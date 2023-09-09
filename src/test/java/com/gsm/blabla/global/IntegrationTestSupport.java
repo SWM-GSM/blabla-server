@@ -81,11 +81,7 @@ public abstract class IntegrationTestSupport {
             .socialLoginType(SocialLoginType.TEST)
             .nickname("테스트")
             .profileImage(profileImage)
-            .birthDate(LocalDate.parse("2001-01-01"))
-            .gender("male")
-            .countryCode("KR")
-            .korLevel(3)
-            .engLevel(3)
+            .learningLanguage("ko")
             .pushNotification(false)
             .build()
         );
