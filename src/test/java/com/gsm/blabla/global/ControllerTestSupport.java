@@ -6,6 +6,8 @@ import com.gsm.blabla.agora.api.AgoraController;
 import com.gsm.blabla.agora.application.AgoraService;
 import com.gsm.blabla.crew.api.CrewController;
 import com.gsm.blabla.crew.application.CrewService;
+import com.gsm.blabla.content.api.ContentController;
+import com.gsm.blabla.content.application.ContentService;
 import com.gsm.blabla.report.api.ReportController;
 import com.gsm.blabla.report.application.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
         CrewController.class,
         AgoraController.class,
         ReportController.class,
-        AdminController.class
+        AdminController.class,
+        ContentController.class
     },
     properties = "spring.profiles.active=local"
 )
@@ -38,4 +41,7 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected ReportService reportService;
+
+    @MockBean
+    protected ContentService contentService;
 }
