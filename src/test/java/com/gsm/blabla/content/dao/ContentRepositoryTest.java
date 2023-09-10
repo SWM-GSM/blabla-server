@@ -24,7 +24,7 @@ class ContentRepositoryTest {
     @Autowired
     private ContentRepository contentRepository;
 
-    @DisplayName("언어를 통해 컨텐츠 리스트를 조회한다.")
+    @DisplayName("영어로 컨텐츠 리스트를 조회한다.")
     @Test
     void findAllByLanguage() {
         // given
