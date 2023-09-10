@@ -67,7 +67,7 @@ public class ContentController {
     public DataResponseDto<Map<String, String>> createPracticeHistory(
             @PathVariable Long contentDetailId,
             @RequestParam("files") List<MultipartFile> files) {
-        return DataResponseDto.of(contentService.savePracticeHistory(contentId, files));
+        return DataResponseDto.of(contentService.savePracticeHistory(contentDetailId, files));
     }
 }
 
