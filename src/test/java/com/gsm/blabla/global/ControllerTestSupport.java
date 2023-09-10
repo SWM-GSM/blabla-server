@@ -8,6 +8,8 @@ import com.gsm.blabla.auth.api.AuthController;
 import com.gsm.blabla.auth.application.AuthService;
 import com.gsm.blabla.crew.api.CrewController;
 import com.gsm.blabla.crew.application.CrewService;
+import com.gsm.blabla.content.api.ContentController;
+import com.gsm.blabla.content.application.ContentService;
 import com.gsm.blabla.report.api.ReportController;
 import com.gsm.blabla.report.application.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
         CrewController.class,
         AgoraController.class,
         ReportController.class,
+        AdminController.class,
+        ContentController.class,
         AdminController.class,
         AuthController.class
     },
@@ -41,6 +45,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected ReportService reportService;
+
+    @MockBean
+    protected ContentService contentService;
 
     @MockBean
     protected AuthService authService;

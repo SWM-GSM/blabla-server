@@ -1,4 +1,4 @@
-package com.gsm.blabla.practice.dto;
+package com.gsm.blabla.content.dto;
 
 import lombok.Getter;
 
@@ -6,4 +6,5 @@ import lombok.Getter;
 public class UserAnswerRequestDto {
 
     private String userAnswer;
+
 }
