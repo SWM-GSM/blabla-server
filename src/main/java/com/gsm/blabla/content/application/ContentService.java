@@ -45,11 +45,7 @@ public class ContentService {
 
     @Transactional(readOnly = true)
     public Map<String, List<ContentsResponseDto>> getContents(String language) {
-        List<Content> contentList = switch (language) {
-            case "ko" -> contentRepository.findAllByLanguage("ko");
-            case "en" -> contentRepository.findAllByLanguage("en");
-            default -> new ArrayList<>();
-        };
+        List<Content> contentList = contentRepository.findAllByLanguage(language);
 
         final Long memberId = SecurityUtil.getMemberId();
 
