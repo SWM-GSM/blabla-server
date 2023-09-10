@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +29,7 @@ public class MemberController {
 
     @Operation(summary = "프로필 수정 API")
     @PatchMapping("/profile")
-    public DataResponseDto<Map<String, String>> updateProfile(@RequestBody MemberProfileRequestDto memberProfileRequestDto) {
+    public DataResponseDto<Map<String, String>> updateProfile(@Valid @RequestBody MemberProfileRequestDto memberProfileRequestDto) {
         return DataResponseDto.of(memberService.updateProfile(memberProfileRequestDto));
     }
 
