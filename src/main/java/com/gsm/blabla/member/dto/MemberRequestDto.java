@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Builder
@@ -18,17 +17,16 @@ import org.hibernate.validator.constraints.Length;
 public class MemberRequestDto {
 
     private String socialLoginType;
-    @Length(max = 12, message = "닉네임은 12자 이내여야 합니다.")
-    private String nickname;
-    private String profileImage;
+    private String learningLanguage;
     private Boolean pushNotification;
     private List<Long> ids;
 
-    public Member toEntity() {
+    public Member toEntity(String nickname, String profileImage) {
         return Member.builder()
             .socialLoginType(SocialLoginType.valueOf(socialLoginType))
             .nickname(nickname)
             .profileImage(profileImage)
+            .learningLanguage(learningLanguage)
             .pushNotification(pushNotification)
             .build();
     }

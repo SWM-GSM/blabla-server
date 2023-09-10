@@ -1,6 +1,8 @@
 package com.gsm.blabla.member.application;
 
+import com.gsm.blabla.auth.application.AppleService;
 import com.gsm.blabla.auth.application.AuthService;
+import com.gsm.blabla.auth.application.GoogleService;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
@@ -26,6 +28,8 @@ public class MemberService {
     private final JwtRepository jwtRepository;
 
     private final AuthService authService;
+    private final GoogleService googleService;
+    private final AppleService appleService;
 
     @Transactional(readOnly = true)
     public Map<String, Boolean> isNicknameDuplicated(String nickname) {
@@ -46,10 +50,10 @@ public class MemberService {
 
         switch (member.getSocialLoginType()) {
             case GOOGLE -> {
-                authService.unlinkGoogleAccount(memberId);
+                googleService.unlinkGoogleAccount(memberId);
             }
             case APPLE -> {
-                authService.revokeAppleAccount(memberId);
+                appleService.revokeAppleAccount(memberId);
             }
         }
 

@@ -2,12 +2,12 @@ package com.gsm.blabla.auth.api;
 
 import com.gsm.blabla.auth.application.AuthService;
 import com.gsm.blabla.global.response.DataResponseDto;
+import com.gsm.blabla.jwt.dto.JwtDto;
 import com.gsm.blabla.jwt.dto.TokenRequestDto;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,10 +26,10 @@ public class AuthController {
 
     @Operation(summary = "회원가입 API")
     @PostMapping(value = "/sign-up", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public DataResponseDto<Object> signup(
+    public DataResponseDto<JwtDto> signUp(
         @RequestHeader("Authorization") String providerAccessToken,
-        @Valid @RequestBody MemberRequestDto memberRequestDto) {
-        return DataResponseDto.of(authService.signup(providerAccessToken, memberRequestDto));
+        @RequestBody MemberRequestDto memberRequestDto) {
+        return DataResponseDto.of(authService.signUp(providerAccessToken, memberRequestDto));
     }
 
     @Operation(summary = "로그인 API")
