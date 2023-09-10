@@ -29,14 +29,12 @@ class ContentDetailRepositoryTest {
         // given
         Content content1 = Content.builder()
             .title("인턴")
-            .subtitle("비즈니스 표현 배우기")
             .description("영화 인턴을 통해 비즈니스 표현을 배워봅시다.")
             .language("en")
             .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
             .build();
         Content content2 = Content.builder()
                 .title("셜록")
-                .subtitle("일상 표현 배우기")
                 .description("셜록을 통해 영국 억양과 일상 표현을 배워봅시다.")
                 .language("en")
                 .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")

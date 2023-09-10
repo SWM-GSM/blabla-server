@@ -24,28 +24,24 @@ class ContentRepositoryTest {
         // given
         Content content1 = Content.builder()
                 .title("인턴")
-                .subtitle("비즈니스 표현 배우기")
                 .description("영화 인턴을 통해 비즈니스 표현을 배워봅시다.")
                 .language("en")
                 .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
                 .build();
         Content content2 = Content.builder()
                 .title("셜록")
-                .subtitle("일상 표현 배우기")
                 .description("셜록을 통해 영국 억양과 일상 표현을 배워봅시다.")
                 .language("en")
                 .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
                 .build();
         Content content3 = Content.builder()
                 .title("오징어 게임")
-                .subtitle("한국 줄임말 배우기")
                 .description("드라마 오징어 게임을 통해 줄임말 표현을 배워봅시다.")
                 .language("ko")
                 .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
                 .build();
         Content content4 = Content.builder()
                 .title("왕좌의 게임")
-                .subtitle("전쟁 표현 배우기")
                 .description("왕좌의 게임을 통해 전쟁 표현을 배워봅시다.")
                 .language("en")
                 .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
@@ -57,11 +53,11 @@ class ContentRepositoryTest {
 
         // then
         assertThat(contents).hasSize(3)
-                .extracting("title", "subtitle", "description", "language")
+                .extracting("title", "description", "language")
                 .containsExactlyInAnyOrder(
-                        tuple("인턴", "비즈니스 표현 배우기", "영화 인턴을 통해 비즈니스 표현을 배워봅시다.", "en"),
-                        tuple("셜록", "일상 표현 배우기", "셜록을 통해 영국 억양과 일상 표현을 배워봅시다.", "en"),
-                        tuple("왕좌의 게임", "전쟁 표현 배우기", "왕좌의 게임을 통해 전쟁 표현을 배워봅시다.", "en")
+                        tuple("인턴", "영화 인턴을 통해 비즈니스 표현을 배워봅시다.", "en"),
+                        tuple("셜록", "셜록을 통해 영국 억양과 일상 표현을 배워봅시다.", "en"),
+                        tuple("왕좌의 게임", "왕좌의 게임을 통해 전쟁 표현을 배워봅시다.", "en")
                 );
     }
 
