@@ -1,4 +1,4 @@
-package com.gsm.blabla.practice.domain;
+package com.gsm.blabla.content.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -11,21 +11,23 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class PracticeHistory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_content_id")
-    private MemberContent memberContent;
+    @JoinColumn(name = "member_content_detail_id")
+    private MemberContentDetail memberContentDetail;
 
     private String practiceUrl; // 연습기록 음성파일 URL
     private LocalDateTime createdAt; // 연습기록 생성일
 
     @Builder
-    public PracticeHistory(MemberContent memberContent, String practiceUrl) {
-        this.memberContent = memberContent;
+    public PracticeHistory(MemberContentDetail memberContentDetail, String practiceUrl) {
+        this.memberContentDetail = memberContentDetail;
         this.practiceUrl = practiceUrl;
         this.createdAt = LocalDateTime.now();
     }
+
 }

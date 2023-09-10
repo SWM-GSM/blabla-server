@@ -6,8 +6,8 @@ import com.gsm.blabla.crew.domain.CrewReport;
 import com.gsm.blabla.crew.domain.CrewReportAnalysis;
 import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.global.util.SecurityUtil;
-import com.gsm.blabla.practice.dao.MemberContentRepository;
-import com.gsm.blabla.practice.domain.MemberContent;
+import com.gsm.blabla.content.dao.MemberContentDetailRepository;
+import com.gsm.blabla.content.domain.MemberContentDetail;
 import com.gsm.blabla.report.dto.HistoryReportResponseDto;
 import com.gsm.blabla.report.dto.HistoryResponseDto;
 import java.time.Duration;
@@ -33,7 +33,7 @@ public class ReportService {
 
     private final VoiceFileRepository voiceFileRepository;
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
-    private final MemberContentRepository memberContentRepository;
+    private final MemberContentDetailRepository memberContentRepository;
 
     public Map<String, List<HistoryResponseDto>> getHistory() {
         Long memberId = SecurityUtil.getMemberId();
@@ -77,19 +77,19 @@ public class ReportService {
         }
 
         // 2. 내가 이제까지 연습한 컨텐츠 정보를 가져온다. (생성 시각, 컨텐츠 아이디, 컨텐츠 주제, 컨텐츠 이름)
-        List<MemberContent> memberContents = memberContentRepository.findAllByMemberId(memberId);
+        List<MemberContentDetail> memberContentDetails = memberContentRepository.findAllByMemberId(memberId);
         List<HistoryReportResponseDto> personalHistory = new ArrayList<>();
-        for (MemberContent memberContent : memberContents) {
-            String subTitle = memberContent.getContent().getContentCategory().getSubtitle() + " - " + memberContent.getContent().getContentCategory().getTitle();
-            String datetime = memberContent.getJoinedAt().format(formatter);
+        for (MemberContentDetail memberContentDetail : memberContentDetails) {
+            String title = memberContentDetail.getContentDetail().getContent().getTitle();
+            String datetime = memberContentDetail.getJoinedAt().format(formatter);
             personalHistory.add(
                 HistoryReportResponseDto.builder()
-                    .id(memberContent.getContent().getId())
+                    .id(memberContentDetail.getContentDetail().getId())
                     .type("personal")
                     .info(
                         Map.of(
-                            "title", memberContent.getContent().getTitle(),
-                            "subTitle", subTitle
+                            "title", memberContentDetail.getContentDetail().getTitle(),
+                            "subTitle", title
                         )
                     )
                     .dateTime(datetime)

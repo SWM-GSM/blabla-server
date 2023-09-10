@@ -1,7 +1,7 @@
-package com.gsm.blabla.practice.dto;
+package com.gsm.blabla.content.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gsm.blabla.practice.domain.MemberContent;
+import com.gsm.blabla.content.domain.MemberContentDetail;
 import lombok.*;
 
 @Getter
@@ -31,13 +31,13 @@ public class PracticeFeedbackResponseDto {
             return 2;
         }
     }
-    public static PracticeFeedbackResponseDto of(MemberContent memberContent) {
+    public static PracticeFeedbackResponseDto of(MemberContentDetail memberContentDetail) {
         return PracticeFeedbackResponseDto.builder()
-                .starRating(getStarScoreCategory(memberContent.getStarScore()))
-                .contextRating(getStarScoreCategory(memberContent.getContextScore()))
-                .longFeedback(memberContent.getLongFeedback())
-                .userAnswer(memberContent.getUserAnswer())
-                .targetSentence(memberContent.getContent().getTargetSentence())
+                .starRating(getStarScoreCategory(memberContentDetail.getStarScore()))
+                .contextRating(getStarScoreCategory(memberContentDetail.getContextScore()))
+                .longFeedback(memberContentDetail.getLongFeedback())
+                .userAnswer(memberContentDetail.getUserAnswer())
+                .targetSentence(memberContentDetail.getContentDetail().getTargetSentence())
                 .build();
     }
 }
