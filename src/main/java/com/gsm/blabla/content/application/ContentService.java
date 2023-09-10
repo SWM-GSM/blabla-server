@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -155,8 +156,10 @@ public class ContentService {
                 .orElseThrow(() -> new GeneralException(Code.MEMBER_CONTENT_NOT_FOUND, "존재하지 않는 유저 컨텐츠입니다.")
         );
 
-        for (MultipartFile file : files) {
-            String fileName = String.format("members/%s/contents/%s/%s.wav", String.valueOf(memberId), String.valueOf(contentDetailId), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm")));
+        IntStream.range(0, files.size()).forEach(index -> {
+            MultipartFile file = files.get(index);
+
+            String fileName = String.format("members/%s/contents/%s/%s.wav", String.valueOf(memberId), String.valueOf(contentDetailId), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm'I'")).concat(String.valueOf(index + 1)));
             String fileUrl = s3UploaderService.uploadFile(fileName, file);
 
             practiceHistoryRepository.save(PracticeHistory.builder()
@@ -164,7 +167,7 @@ public class ContentService {
                     .practiceUrl(fileUrl)
                     .build()
             );
-        }
+        });
 
         return Collections.singletonMap("message", "연습 기록 음성 파일이 저장 완료되었습니다.");
     }
