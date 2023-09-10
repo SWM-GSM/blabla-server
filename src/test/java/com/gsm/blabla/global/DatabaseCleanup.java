@@ -34,8 +34,7 @@ public class DatabaseCleanup implements InitializingBean {
         for (String tableName : tableNames) {
             entityManager.createNativeQuery("TRUNCATE TABLE \"" + tableName + "\"").executeUpdate();
             // TODO: entity PK id 통일하고 코드 수정하기
-            if (tableName.equals("VOICE_FILE") || tableName.equals("CONTENT") ||
-                tableName.equals("CREW_REPORT") || tableName.equals("MEMBER")) {
+            if (tableName.equals("VOICE_FILE") || tableName.equals("CREW_REPORT")) {
                 entityManager.createNativeQuery("ALTER TABLE \"" + tableName + "\" ALTER COLUMN \"" + tableName + "_ID\" RESTART WITH 1").executeUpdate();
             }
             else if (tableName.equals("GOOGLE_ACCOUNT") || tableName.equals("APPLE_ACCOUNT")) {

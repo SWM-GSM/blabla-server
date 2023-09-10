@@ -30,8 +30,6 @@ class CrewControllerTest extends ControllerTestSupport {
     void setUp() {
         memberRequestDto = MemberRequestDto.builder()
             .socialLoginType("TEST")
-            .nickname("테스트")
-            .profileImage("cat")
             .pushNotification(false)
             .build();
     }

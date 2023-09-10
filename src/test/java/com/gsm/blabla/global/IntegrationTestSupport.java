@@ -1,5 +1,6 @@
 package com.gsm.blabla.global;
 
+import com.gsm.blabla.auth.application.AuthService;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.crew.application.CrewService;
@@ -20,11 +21,12 @@ import com.gsm.blabla.crew.domain.CrewTag;
 import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.crew.dto.CrewRequestDto;
+import com.gsm.blabla.auth.dao.AppleAccountRepository;
+import com.gsm.blabla.auth.dao.GoogleAccountRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -48,7 +50,16 @@ public abstract class IntegrationTestSupport {
     protected CrewService crewService;
 
     @Autowired
+    protected AuthService authService;
+
+    @Autowired
     protected MemberRepository memberRepository;
+
+    @Autowired
+    protected GoogleAccountRepository googleAccountRepository;
+
+    @Autowired
+    protected AppleAccountRepository appleAccountRepository;
 
     @Autowired
     protected CrewRepository crewRepository;
