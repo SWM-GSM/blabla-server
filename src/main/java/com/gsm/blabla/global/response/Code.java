@@ -69,7 +69,7 @@ public enum Code {
      * Content 관련 오류
      * HEAD NAME - CT (ConTent)
      * */
-    CONTENT_CATEGORY_NOT_FOUND("CT001", HttpStatus.NOT_FOUND, "Content not found"),
+    CONTENT_NOT_FOUND("CT001", HttpStatus.NOT_FOUND, "Content not found"),
 
     /*
      * Content Detail 관련 오류
