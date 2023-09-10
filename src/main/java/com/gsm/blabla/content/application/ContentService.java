@@ -70,7 +70,7 @@ public class ContentService {
     @Transactional(readOnly = true)
     public ContentDetailsResponseDto getContentDetails(Long contentId) {
         Content content = contentRepository.findById(contentId).orElseThrow(
-                () -> new GeneralException(Code.CONTENT_CATEGORY_NOT_FOUND, "존재하지 않는 컨텐츠 카테고리입니다.")
+                () -> new GeneralException(Code.CONTENT_NOT_FOUND, "존재하지 않는 컨텐츠 카테고리입니다.")
         );
 
         List<ContentDetail> contentDetailList = contentDetailRepository.findAllByContent(content);
