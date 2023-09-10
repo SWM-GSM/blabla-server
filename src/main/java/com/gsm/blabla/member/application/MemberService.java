@@ -67,7 +67,6 @@ public class MemberService {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         );
-
         return MemberProfileResponseDto.getMemberProfile(member);
     }
 
