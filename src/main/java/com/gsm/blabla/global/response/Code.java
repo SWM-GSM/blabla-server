@@ -69,13 +69,14 @@ public enum Code {
      * Content 관련 오류
      * HEAD NAME - CT (ConTent)
      * */
-    CONTENT_NOT_FOUND("CT001", HttpStatus.NOT_FOUND, "Content not found"),
+    CONTENT_CATEGORY_NOT_FOUND("CT001", HttpStatus.NOT_FOUND, "Content not found"),
 
     /*
-     * Content Category 관련 오류
-     * HEAD NAME - CTC (ConTent Category)
+     * Content Detail 관련 오류
+     * HEAD NAME - CTD (Content Detail)
      * */
-    CONTENT_CATEGORY_NOT_FOUND("CTC001", HttpStatus.NOT_FOUND, "Content Category not found"),
+    CONTENT_DETAIL_NOT_FOUND("CTD001", HttpStatus.NOT_FOUND, "Content Detail not found"),
+
 
     /*
      * MemberContent 관련 오류
