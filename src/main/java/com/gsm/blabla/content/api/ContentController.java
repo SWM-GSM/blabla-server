@@ -62,11 +62,11 @@ public class ContentController {
     }
 
     @Operation(summary = "연습 기록 음성 파일 저장 API")
-    @PostMapping("/contents/{contentId}/practice")
+    @PostMapping("/contents/detail/{contentDetailId}/practice")
     public DataResponseDto<Map<String, String>> createPracticeHistory(
-            @PathVariable Long contentId,
+            @PathVariable Long contentDetailId,
             @RequestParam("files") List<MultipartFile> files) {
-        return DataResponseDto.of(practiceService.savePracticeHistory(contentId, files));
+        return DataResponseDto.of(practiceService.savePracticeHistory(contentDetailId, files));
     }
 }
 
