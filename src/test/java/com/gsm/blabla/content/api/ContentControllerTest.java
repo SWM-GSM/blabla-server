@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -25,7 +26,7 @@ class ContentControllerTest extends ControllerTestSupport {
     void getContents() throws Exception {
         // given
         Map<String, List<ContentsResponseDto>> result = Map.of("contents", List.of(new ContentsResponseDto()));
-        when(contentService.getContents("ko")).thenReturn(result);
+        given(contentService.getContents("ko")).willReturn(result);
 
         // when // then
         mockMvc.perform(
@@ -42,7 +43,7 @@ class ContentControllerTest extends ControllerTestSupport {
     @WithCustomMockUser
     void getContentDetails() throws Exception {
         // given
-        when(contentService.getContentDetails(1L)).thenReturn(new ContentDetailsResponseDto());
+        given(contentService.getContentDetails(1L)).willReturn(new ContentDetailsResponseDto());
 
         // when // then
         mockMvc.perform(
@@ -61,7 +62,7 @@ class ContentControllerTest extends ControllerTestSupport {
     @WithCustomMockUser
     void getContentDetail() throws Exception {
         // given
-        when(contentService.getContentDetail(1L)).thenReturn(new ContentDetailResponseDto());
+        given(contentService.getContentDetail(1L)).willReturn(new ContentDetailResponseDto());
 
         // when // then
         mockMvc.perform(
