@@ -1,6 +1,7 @@
 package com.gsm.blabla.content.dao;
 
 import com.gsm.blabla.content.domain.Content;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ContentRepositoryTest {
+
+    @AfterEach
+    void afterEach() {
+        contentRepository.deleteAll();
+    }
 
     @Autowired
     private ContentRepository contentRepository;
