@@ -46,11 +46,7 @@ public class ContentService {
 
     @Transactional(readOnly = true)
     public Map<String, List<ContentsResponseDto>> getContents(String language) {
-        List<Content> contentList = switch (language) {
-            case "ko" -> contentRepository.findAllByLanguage("ko");
-            case "en" -> contentRepository.findAllByLanguage("en");
-            default -> new ArrayList<>();
-        };
+        List<Content> contentList = contentRepository.findAllByLanguage(language);
 
         final Long memberId = SecurityUtil.getMemberId();
 
@@ -71,7 +67,7 @@ public class ContentService {
     @Transactional(readOnly = true)
     public ContentDetailsResponseDto getContentDetails(Long contentId) {
         Content content = contentRepository.findById(contentId).orElseThrow(
-                () -> new GeneralException(Code.CONTENT_CATEGORY_NOT_FOUND, "존재하지 않는 컨텐츠 카테고리입니다.")
+                () -> new GeneralException(Code.CONTENT_NOT_FOUND, "존재하지 않는 컨텐츠 카테고리입니다.")
         );
 
         List<ContentDetail> contentDetailList = contentDetailRepository.findAllByContent(content);
