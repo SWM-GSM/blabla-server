@@ -1,4 +1,4 @@
-package com.gsm.blabla.practice.dto;
+package com.gsm.blabla.content.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
