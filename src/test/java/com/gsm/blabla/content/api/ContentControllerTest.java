@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class PracticeControllerTest extends ControllerTestSupport {
+class ContentControllerTest extends ControllerTestSupport {
 
     @DisplayName("컨텐츠 리스트를 조회한다.")
     @Test
