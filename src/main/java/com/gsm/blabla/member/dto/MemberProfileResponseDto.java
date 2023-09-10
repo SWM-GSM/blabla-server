@@ -11,8 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberProfileResponseDto {
+
     private String nickname;
     private String profileImage;
+    private String learningLanguage;
 
     public static MemberProfileResponseDto getCrewMemberProfile(Member member) {
         return MemberProfileResponseDto.builder()
@@ -24,6 +26,7 @@ public class MemberProfileResponseDto {
         return MemberProfileResponseDto.builder()
                 .nickname(member.getNickname())
                 .profileImage(member.getProfileImage())
+                .learningLanguage(member.getLearningLanguage())
                 .build();
     }
 }

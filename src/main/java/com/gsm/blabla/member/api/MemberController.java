@@ -7,9 +7,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Map;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @Tag(name = "멤버 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +29,7 @@ public class MemberController {
 
     @Operation(summary = "프로필 수정 API")
     @PatchMapping("/profile")
-    public DataResponseDto<Map<String, String>> updateProfile(@RequestBody MemberProfileRequestDto memberProfileRequestDto) {
+    public DataResponseDto<Map<String, String>> updateProfile(@Valid @RequestBody MemberProfileRequestDto memberProfileRequestDto) {
         return DataResponseDto.of(memberService.updateProfile(memberProfileRequestDto));
     }
 
@@ -41,8 +46,10 @@ public class MemberController {
     }
 
     @Operation(summary = "멤버 프로필 조회 API")
-    @GetMapping("/{language}/profile")
-    public DataResponseDto<MemberProfileResponseDto> getProfile(@PathVariable String language) {
+    @GetMapping("/profile")
+    public DataResponseDto<MemberProfileResponseDto> getProfile(
+            @Pattern(regexp = "^(ko|en)$", message = "언어는 ko 또는 en 중 하나여야 합니다.")
+            @RequestHeader(name="Content-Language") String language) {
         return DataResponseDto.of(memberService.getProfile(language));
     }
 
