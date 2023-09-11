@@ -26,6 +26,8 @@ import org.springframework.http.MediaType;
 
 class ScheduleControllerTest extends ControllerTestSupport {
 
+    String meetingTime = LocalDateTime.now().plusDays(3).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
     @DisplayName("[POST] 유저가 크루 스페이스 일정을 성공적으로 생성한다.")
     @Test
     @WithCustomMockUser
@@ -43,8 +45,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
                 .content(objectMapper.writeValueAsString(
                     ScheduleRequestDto.builder()
                         .title("test")
-                        .meetingTime(LocalDateTime.now().plusDays(3)
-                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .meetingTime(meetingTime)
                         .build()
                 ))
         )
