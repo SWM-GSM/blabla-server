@@ -105,17 +105,24 @@ class ScheduleServiceTest extends IntegrationTestSupport {
 
     @DisplayName("[POST] 크루 일정에 참여한다.")
     @Test
-    @WithCustomMockUser
+    @WithCustomMockUser(id = "2")
     void joinSchedule() {
         // given
-        Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
+        ScheduleRequestDto scheduleRequestDtoWithId = ScheduleRequestDto.builder()
+            .scheduleId(1L)
+            .build();
+        Long scheduleId = createPreparedSchedule(meetingTimeInString);
+        Long memberInScheduleBefore = memberScheduleRepository.countBySchedule(scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다.")));
 
         // when
-        String response = scheduleService.joinSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build())
-            .get("message");
+        String response = scheduleService.joinSchedule(scheduleRequestDtoWithId).get("message");
+        Long memberInScheduleAfter = memberScheduleRepository.countBySchedule(scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다.")));
 
         // then
         assertThat(response).isEqualTo("일정 참여가 완료되었습니다.");
+        assertThat(memberInScheduleAfter).isEqualTo(memberInScheduleBefore + 1);
     }
 
     @DisplayName("[GET] 모든 크루 스페이스 일정을 조회한다.")
@@ -183,7 +190,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
 
         // when
-        String response = scheduleService.cancelSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build()).get("message");
+        String response = scheduleService.cancelSchedule(crewId, ScheduleRequestDto.builder().scheduleId(scheduleId).build()).get("message");
 
         // then
         assertThat(response).isEqualTo("일정 참여가 취소되었습니다.");
