@@ -66,8 +66,6 @@ class ScheduleControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(
             get("/crews/schedules")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "test")
         )
             .andDo(print())
