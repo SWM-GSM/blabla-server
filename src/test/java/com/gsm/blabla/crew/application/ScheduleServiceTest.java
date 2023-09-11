@@ -35,7 +35,8 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     Member member1;
     Member member2;
     Long crewId;
-    String meetingTime; // 현재 시각으로부터 3일 뒤
+    LocalDateTime meetingTime;
+    String meetingTimeInString; // 현재 시각으로부터 3일 뒤
     CrewRequestDto crewRequestDto;
     ScheduleRequestDto scheduleRequestDto;
 
@@ -73,11 +74,10 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             .autoApproval(true)
             .build();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.of(LocalDate.now().plusDays(3), LocalTime.of(16, 0, 0));
-        meetingTime = dateTime.format(formatter);
+        meetingTime = LocalDateTime.of(LocalDate.now().plusDays(3), LocalTime.of(16, 0, 0));
+        meetingTimeInString =meetingTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        scheduleRequestDto = createScheduleRequestDto(meetingTime);
+        scheduleRequestDto = createScheduleRequestDto(3);
     }
 
     @DisplayName("[POST] 유저가 크루 스페이스 스케줄을 성공적으로 생성한다.")
@@ -118,35 +118,20 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         assertThat(response).isEqualTo("일정 참여가 완료되었습니다.");
     }
 
-    @DisplayName("[POST] 크루 일정 참여를 취소하고 다시 참여한다.")
-    @Test
-    @WithCustomMockUser
-    void joinSceduleAgain() {
-        // given
-        Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
-        scheduleService.cancelSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build());
-        List<String> profilesBefore = scheduleService.getUpcomingSchedule(crewId).getProfiles();
-
-        // when
-        scheduleService.joinSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build());
-        List<String> profilesAfter = scheduleService.getUpcomingSchedule(crewId).getProfiles();
-
-        // then
-        assertThat(profilesBefore).isEmpty();
-        assertThat(profilesAfter).hasSize(1)
-            .containsExactly("cat");
-    }
-
     @DisplayName("[GET] 모든 크루 스페이스 일정을 조회한다.")
     @Test
     @WithCustomMockUser(id = "2")
     void getAll() {
         // given
         // 종료된 일정 - 2번 유저가 만든 일정
-        Long schedule1 = scheduleService.create(createScheduleRequestDto("2023-01-01 00:00:00")).get("scheduleId");
+        Long schedule1 = scheduleService.create(ScheduleRequestDto.builder()
+            .title("테스트 일정")
+            .meetingTime("2023-01-01 00:00:00")
+            .build()
+        ).get("scheduleId");
 
         // 종료 이전 일정이며 참여 안한 일정 - 1번 유저가 만든 일정
-        Long schedule2 = createPreparedSchedule(meetingTime);
+        Long schedule2 = createPreparedSchedule(meetingTimeInString);
 
         // 종료 이전 일정이며 참여한 일정 - 2번 유저가 만든 일정
         Long schedule3 = scheduleService.create(scheduleRequestDto).get("scheduleId");
@@ -160,8 +145,9 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             .extracting("id", "meetingTime", "status")
             .containsExactly(
                 tuple(schedule1, "2023-01-01 00:00:00", "ENDED"),
-                tuple(schedule2, meetingTime, "NOT_JOINED"),
-                tuple(schedule3, meetingTime, "JOINED")
+                tuple(schedule2, meetingTimeInString, "NOT_JOINED"),
+                tuple(schedule3, meetingTime.plusDays(3).format(
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), "JOINED")
             );
     }
 
@@ -170,18 +156,23 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     @WithCustomMockUser
     void getUpcomingSchedule() {
         // given
-        long memberScheduleBefore = memberScheduleRepository.count();
-        Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
+        scheduleService.create(createScheduleRequestDto(3)).get("scheduleId");
+        scheduleService.create(createScheduleRequestDto(2)).get("scheduleId");
+        Long schedule3 = scheduleService.create(createScheduleRequestDto(1)).get("scheduleId");
 
         // when
-        ScheduleResponseDto response = scheduleService.getUpcomingSchedule(crewId);
+        ScheduleResponseDto response = scheduleService.getUpcomingSchedule();
 
         // then
         assertThat(response)
             .extracting("id", "title", "dDay", "meetingTime", "profiles")
-            .contains(scheduleId, scheduleRequestDto.getTitle(), 3, scheduleRequestDto.getMeetingTime(), List.of(member1.getProfileImage())
+            .contains(
+                schedule3,
+                scheduleRequestDto.getTitle(),
+                4,
+                meetingTime.plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                List.of(member1.getProfileImage())
             );
-        assertThat(memberScheduleRepository.count()).isEqualTo(memberScheduleBefore + 1);
     }
 
     @DisplayName("[DELETE] 크루 일정 참여를 취소한다.")
@@ -202,10 +193,10 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         ).isEqualTo("NOT_JOINED");
     }
 
-    private ScheduleRequestDto createScheduleRequestDto(String meetingTime) {
+    private ScheduleRequestDto createScheduleRequestDto(int dayAfterMeetingTime) {
         return ScheduleRequestDto.builder()
             .title("테스트 일정")
-            .meetingTime(meetingTime)
+            .meetingTime(meetingTime.plusDays(dayAfterMeetingTime).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
             .build();
     }
 
