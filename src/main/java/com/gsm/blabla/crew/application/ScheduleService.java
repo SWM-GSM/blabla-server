@@ -105,12 +105,10 @@ public class ScheduleService {
         return Collections.singletonMap("message", "일정 참여가 완료되었습니다.");
     }
 
-    public Map<String, String> cancelSchedule(Long crewId, ScheduleRequestDto scheduleRequestDto) {
+    public Map<String, String> cancelSchedule(ScheduleRequestDto scheduleRequestDto) {
         Long memberId = SecurityUtil.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));
-        Crew crew = crewRepository.findById(crewId).orElseThrow(
-                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
         Schedule schedule = scheduleRepository.findById(scheduleRequestDto.getScheduleId()).orElseThrow(
                 () -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다."));
 

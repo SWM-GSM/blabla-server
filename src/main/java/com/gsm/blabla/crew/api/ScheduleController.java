@@ -55,9 +55,8 @@ public class ScheduleController {
     @Operation(summary = "크루 일정 참여 취소 API")
     @DeleteMapping(value = "")
     public DataResponseDto<Map<String, String>> cancelSchedule(
-        @PathVariable Long crewId,
         @RequestBody ScheduleRequestDto scheduleRequestDto
         ) {
-        return DataResponseDto.of(scheduleService.cancelSchedule(crewId, scheduleRequestDto));
+        return DataResponseDto.of(scheduleService.cancelSchedule(scheduleRequestDto));
     }
 }
