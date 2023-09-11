@@ -21,11 +21,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.*;
@@ -182,22 +185,37 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             );
     }
 
-    @DisplayName("[DELETE] 크루 일정 참여를 취소한다.")
-    @Test
+    @DisplayName("일정 참여 취소 시나리오")
+    @TestFactory
     @WithCustomMockUser
-    void cacelSchedule() {
+    Collection<DynamicTest> cancelSchedule() {
         // given
         Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
 
         // when
-        String response = scheduleService.cancelSchedule(crewId, ScheduleRequestDto.builder().scheduleId(scheduleId).build()).get("message");
+        String cancelResult = scheduleService.cancelSchedule(ScheduleRequestDto.builder().scheduleId(scheduleId).build()).get("message");
 
-        // then
-        assertThat(response).isEqualTo("일정 참여가 취소되었습니다.");
-        assertThat(memberScheduleRepository.findByMemberAndSchedule(member1, scheduleRepository.findById(scheduleId)
-            .orElseThrow(() -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다."))
-        ).get().getStatus()
-        ).isEqualTo("NOT_JOINED");
+        return List.of(
+            DynamicTest.dynamicTest("[DELETE] 일정 참여를 취소한다.", () -> {
+                // then
+                assertThat(cancelResult).isEqualTo("일정 참여가 취소되었습니다.");
+                assertThat(memberScheduleRepository.findByMemberAndSchedule(member1, scheduleRepository.findById(scheduleId)
+                        .orElseThrow(() -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다."))
+                    ).get().getStatus()
+                ).isEqualTo("NOT_JOINED");
+            }),
+            DynamicTest.dynamicTest("[DELETE] 취소를 한 뒤, 다시 참여한다.", () -> {
+                // when
+                scheduleService.joinSchedule(ScheduleRequestDto.builder().scheduleId(scheduleId).build());
+
+                // then
+                assertThat(memberScheduleRepository.findByMemberAndSchedule(member1, scheduleRepository.findById(scheduleId)
+                        .orElseThrow(() -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다."))
+                    ).get().getStatus()
+                ).isEqualTo("JOINED");
+            }
+            )
+        );
     }
 
     private ScheduleRequestDto createScheduleRequestDto(int dayAfterMeetingTime) {
