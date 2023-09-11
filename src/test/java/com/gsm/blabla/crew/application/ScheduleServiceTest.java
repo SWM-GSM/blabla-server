@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,9 +41,6 @@ class ScheduleServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private ScheduleService scheduleService;
-
-    @Autowired
-    private CrewService crewService;
 
     @Autowired
     MemberRepository memberRepository;
@@ -82,20 +80,27 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         scheduleRequestDto = createScheduleRequestDto(meetingTime);
     }
 
-    @DisplayName("[POST] 크루 일정을 등록한다.")
+    @DisplayName("[POST] 유저가 크루 스페이스 스케줄을 성공적으로 생성한다.")
     @Test
     @WithCustomMockUser
     void create() {
         // given
-        long scheduleBefore = scheduleRepository.count();
-        long memberScheduleBefore = memberScheduleRepository.count();
+        long scheduleIdBefore = scheduleRepository.count();
+        long memberScheduleIdBefore = memberScheduleRepository.count();
 
         // when
-        Long response = scheduleService.create(crewId, scheduleRequestDto).get("scheduleId");
+        Long responseId = scheduleService.create(scheduleRequestDto).get("scheduleId");
+        Optional<Schedule> schedule = scheduleRepository.findById(responseId);
 
         // then
-        assertThat(response).isEqualTo(scheduleBefore + 1);
-        assertThat(memberScheduleRepository.count()).isEqualTo(memberScheduleBefore + 1);
+        assertThat(responseId).isEqualTo(scheduleIdBefore + 1);
+        assertThat(memberScheduleRepository.count()).isEqualTo(memberScheduleIdBefore + 1);
+        assertThat(schedule).isPresent();
+        assertThat(schedule.get().getId()).isEqualTo(responseId);
+        assertThat(schedule.get().getTitle()).isEqualTo(scheduleRequestDto.getTitle());
+        assertThat(schedule.get().getMeetingTime()).isEqualTo(
+            LocalDateTime.parse(scheduleRequestDto.getMeetingTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
     }
 
     @DisplayName("[POST] 크루 일정에 참여한다.")
@@ -103,7 +108,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     @WithCustomMockUser
     void joinSchedule() {
         // given
-        Long scheduleId = scheduleService.create(crewId, scheduleRequestDto).get("scheduleId");
+        Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
 
         // when
         String response = scheduleService.joinSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build())
@@ -118,7 +123,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     @WithCustomMockUser
     void joinSceduleAgain() {
         // given
-        Long scheduleId = scheduleService.create(crewId, scheduleRequestDto).get("scheduleId");
+        Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
         scheduleService.cancelSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build());
         List<String> profilesBefore = scheduleService.getUpcomingSchedule(crewId).getProfiles();
 
@@ -138,13 +143,13 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     void getAll() {
         // given
         // 종료된 일정 - 2번 유저가 만든 일정
-        scheduleService.create(crewId, createScheduleRequestDto("2023-01-01 00:00:00")).get("scheduleId");
+        scheduleService.create(createScheduleRequestDto("2023-01-01 00:00:00")).get("scheduleId");
 
         // 종료 이전 일정이며 참여 안한 일정 - 1번 유저가 만든 일정
         createPreparedSchedule(meetingTime);
 
         // 종료 이전 일정이며 참여한 일정 - 2번 유저가 만든 일정
-        scheduleService.create(crewId, scheduleRequestDto).get("scheduleId");
+        scheduleService.create(scheduleRequestDto).get("scheduleId");
 
         // when
         List<ScheduleResponseDto> response = scheduleService.getAll(crewId).get("schedules");
@@ -162,7 +167,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     void getUpcomingSchedule() {
         // given
         long memberScheduleBefore = memberScheduleRepository.count();
-        Long scheduleId = scheduleService.create(crewId, scheduleRequestDto).get("scheduleId");
+        Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
 
         // when
         ScheduleResponseDto response = scheduleService.getUpcomingSchedule(crewId);
@@ -180,7 +185,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     @WithCustomMockUser
     void cacelSchedule() {
         // given
-        Long scheduleId = scheduleService.create(crewId, scheduleRequestDto).get("scheduleId");
+        Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
 
         // when
         String response = scheduleService.cancelSchedule(crewId, ScheduleRequestDto.builder().id(scheduleId).build()).get("message");
