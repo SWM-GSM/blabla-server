@@ -2,12 +2,15 @@ package com.gsm.blabla.crew.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gsm.blabla.crew.dao.MemberScheduleRepository;
+import com.gsm.blabla.crew.domain.MemberSchedule;
 import com.gsm.blabla.crew.domain.Schedule;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -79,9 +82,10 @@ public class ScheduleResponseDto {
         if (schedule.getMeetingTime().isBefore(LocalDateTime.now())) {
             status = "ENDED";
         } else {
-            boolean isJoined = memberScheduleRepository.findByMemberAndSchedule(member, schedule).isPresent();
+            Optional<MemberSchedule> memberSchedule = memberScheduleRepository.findByMemberAndSchedule(member, schedule);
+            boolean isJoined = memberSchedule.isPresent();
 
-            status = isJoined ? "JOINED" : "NOT_JOINED";
+            status = (isJoined && Objects.equals(memberSchedule.get().getStatus(), "JOINED")) ? "JOINED" : "NOT_JOINED";
         }
 
         return status;
