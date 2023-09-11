@@ -28,8 +28,8 @@ public class ScheduleResponseDto {
     private List<MemberResponseDto> members;
     private String status; // ENDED, NOT_JOINED, JOINED
 
-    public static ScheduleResponseDto scheduleResponse(Schedule schedule, CrewMemberRepository crewMemberRepository) {
-        List<String> profiles = getProfiles(schedule, crewMemberRepository);
+    public static ScheduleResponseDto scheduleResponse(Schedule schedule) {
+        List<String> profiles = getProfiles(schedule);
 
         return ScheduleResponseDto.builder()
             .id(schedule.getId())
@@ -58,7 +58,7 @@ public class ScheduleResponseDto {
             .build();
     }
 
-    private static List<String> getProfiles(Schedule schedule, CrewMemberRepository crewMemberRepository) {
+    private static List<String> getProfiles(Schedule schedule) {
         return schedule.getMemberSchedules().stream()
             .filter(memberSchedule -> memberSchedule.getStatus().equals("JOINED"))
             .map(

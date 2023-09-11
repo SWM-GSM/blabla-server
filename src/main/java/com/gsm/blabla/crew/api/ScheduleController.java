@@ -39,10 +39,10 @@ public class ScheduleController {
         return DataResponseDto.of(scheduleService.getAll());
     }
 
-    @Operation(summary = "다가오는 크루 일정 API")
+    @Operation(summary = "다가오는 크루 일정 조회 API")
     @GetMapping(value = "/upcoming")
-    public DataResponseDto<ScheduleResponseDto> getUpcomingSchedule(@PathVariable Long crewId) {
-        return DataResponseDto.of(scheduleService.getUpcomingSchedule(crewId));
+    public DataResponseDto<ScheduleResponseDto> getUpcomingSchedule() {
+        return DataResponseDto.of(scheduleService.getUpcomingSchedule());
     }
 
     @Operation(summary = "크루 일정 참여하기 API")
