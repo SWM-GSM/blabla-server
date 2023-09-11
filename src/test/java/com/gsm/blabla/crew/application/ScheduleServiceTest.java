@@ -35,7 +35,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     Member member1;
     Member member2;
     Long crewId;
-    String meetingTime;
+    String meetingTime; // 현재 시각으로부터 3일 뒤
     CrewRequestDto crewRequestDto;
     ScheduleRequestDto scheduleRequestDto;
 
@@ -137,28 +137,32 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             .containsExactly("cat");
     }
 
-    @DisplayName("[GET] 모든 크루 일정을 조회한다")
+    @DisplayName("[GET] 모든 크루 스페이스 일정을 조회한다.")
     @Test
     @WithCustomMockUser(id = "2")
     void getAll() {
         // given
         // 종료된 일정 - 2번 유저가 만든 일정
-        scheduleService.create(createScheduleRequestDto("2023-01-01 00:00:00")).get("scheduleId");
+        Long schedule1 = scheduleService.create(createScheduleRequestDto("2023-01-01 00:00:00")).get("scheduleId");
 
         // 종료 이전 일정이며 참여 안한 일정 - 1번 유저가 만든 일정
-        createPreparedSchedule(meetingTime);
+        Long schedule2 = createPreparedSchedule(meetingTime);
 
         // 종료 이전 일정이며 참여한 일정 - 2번 유저가 만든 일정
-        scheduleService.create(scheduleRequestDto).get("scheduleId");
+        Long schedule3 = scheduleService.create(scheduleRequestDto).get("scheduleId");
 
         // when
-        List<ScheduleResponseDto> response = scheduleService.getAll(crewId).get("schedules");
+        List<ScheduleResponseDto> response = scheduleService.getAll().get("schedules");
 
         // then
         assertThat(response)
             .hasSize(3)
-            .extracting("status")
-            .containsExactly("ENDED", "NOT_JOINED", "JOINED");
+            .extracting("id", "meetingTime", "status")
+            .containsExactly(
+                tuple(schedule1, "2023-01-01 00:00:00", "ENDED"),
+                tuple(schedule2, meetingTime, "NOT_JOINED"),
+                tuple(schedule3, meetingTime, "JOINED")
+            );
     }
 
     @DisplayName("[GET] 다가오는 크루 일정을 조회한다.")
@@ -205,15 +209,13 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             .build();
     }
 
-    private void createPreparedSchedule(String meetingTimeInString) {
+    private Long createPreparedSchedule(String meetingTimeInString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString, formatter);
 
         Schedule schedule = scheduleRepository.save(Schedule.builder()
             .title(scheduleRequestDto.getTitle())
             .meetingTime(meetingTime)
-            .crew(crewRepository.findById(crewId).orElseThrow(
-                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")))
             .build()
         );
 
@@ -222,5 +224,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             .schedule(schedule)
             .build()
         );
+
+        return schedule.getId();
     }
 }
