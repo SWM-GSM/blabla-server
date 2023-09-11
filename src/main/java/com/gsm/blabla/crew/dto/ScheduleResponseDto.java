@@ -1,7 +1,6 @@
 package com.gsm.blabla.crew.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.dao.MemberScheduleRepository;
 import com.gsm.blabla.crew.domain.Schedule;
 import com.gsm.blabla.member.domain.Member;

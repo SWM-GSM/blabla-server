@@ -37,7 +37,6 @@ class ScheduleServiceTest extends IntegrationTestSupport {
 
     Member member1;
     Member member2;
-    Long crewId;
     LocalDateTime meetingTime;
     String meetingTimeInString; // 현재 시각으로부터 3일 뒤
     CrewRequestDto crewRequestDto;

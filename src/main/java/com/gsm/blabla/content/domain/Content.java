@@ -1,7 +1,6 @@
 package com.gsm.blabla.content.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
