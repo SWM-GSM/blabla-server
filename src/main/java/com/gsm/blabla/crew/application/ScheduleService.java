@@ -72,14 +72,14 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public ScheduleResponseDto getUpcomingSchedule(Long crewId) {
-        Schedule schedule = scheduleRepository.findNearestSchedule(crewId);
+    public ScheduleResponseDto getUpcomingSchedule() {
+        Schedule schedule = scheduleRepository.findNearestSchedule();
 
         if (schedule == null) {
             return new ScheduleResponseDto();
         }
 
-        return ScheduleResponseDto.scheduleResponse(schedule, crewMemberRepository);
+        return ScheduleResponseDto.scheduleResponse(schedule);
     }
 
     public Map<String, String> joinSchedule(Long crewId, ScheduleRequestDto scheduleRequestDto) {
