@@ -35,8 +35,8 @@ public class ScheduleController {
 
     @Operation(summary = "크루 일정 전체 조회 API")
     @GetMapping(value = "")
-    public DataResponseDto<Map<String, List<ScheduleResponseDto>>> getAll(@PathVariable Long crewId) {
-        return DataResponseDto.of(scheduleService.getAll(crewId));
+    public DataResponseDto<Map<String, List<ScheduleResponseDto>>> getAll() {
+        return DataResponseDto.of(scheduleService.getAll());
     }
 
     @Operation(summary = "다가오는 크루 일정 API")
