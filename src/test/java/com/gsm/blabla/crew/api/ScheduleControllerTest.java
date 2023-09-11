@@ -75,6 +75,34 @@ class ScheduleControllerTest extends ControllerTestSupport {
         ;
     }
 
+    @DisplayName("[GET] 다가오는 크루 스페이스 일정을 조회한다.")
+    @Test
+    @WithCustomMockUser
+    void getUpcomingSchedule() throws Exception {
+        // given
+        given(scheduleService.getUpcomingSchedule()).willReturn(
+            ScheduleResponseDto.builder()
+                .id(1L)
+                .title("테스트")
+                .meetingTime(meetingTime)
+                .profiles(List.of("dog", "lion"))
+                .dDay(3)
+                .build()
+        );
+
+        // when // then
+        mockMvc.perform(
+            get("/crews/schedules/upcoming")
+        )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.id").value(1L))
+            .andExpect(jsonPath("$.data.title").value("테스트"))
+            .andExpect(jsonPath("$.data.dday").value(3))
+            .andExpect(jsonPath("$.data.meetingTime").value(meetingTime))
+            .andExpect(jsonPath("$.data.profiles", hasSize(2)));
+    }
+
     ScheduleResponseDto createScheduleResponseDto(Long id, String title, String meetingTime, Integer dday, String status) {
         return ScheduleResponseDto.builder()
             .id(id)
