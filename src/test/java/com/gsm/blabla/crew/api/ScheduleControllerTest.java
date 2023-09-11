@@ -28,7 +28,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
     String meetingTime = LocalDateTime.now().plusDays(3).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-    @DisplayName("[POST] 유저가 크루 스페이스 일정을 성공적으로 생성한다.")
+    @DisplayName("[POST] 크루 스페이스 일정을 성공적으로 생성한다.")
     @Test
     @WithCustomMockUser
     void create() throws Exception {
@@ -101,6 +101,31 @@ class ScheduleControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.data.dday").value(3))
             .andExpect(jsonPath("$.data.meetingTime").value(meetingTime))
             .andExpect(jsonPath("$.data.profiles", hasSize(2)));
+    }
+
+    @DisplayName("[POST] 크루 스페이스 일정에 참여한다.")
+    @Test
+    @WithCustomMockUser
+    void joinSchedule() throws Exception {
+        // given
+        given(scheduleService.joinSchedule(any(ScheduleRequestDto.class)))
+            .willReturn(Collections.singletonMap("message", "일정 참여가 완료되었습니다."));
+
+        // when // then
+        mockMvc.perform(
+            post("/crews/schedules/join")
+                .with(csrf())
+                .header("Authorization", "test")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(
+                    ScheduleRequestDto.builder()
+                        .scheduleId(any(Long.class))
+                        .build()
+                ))
+        )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.message").value("일정 참여가 완료되었습니다."));
     }
 
     ScheduleResponseDto createScheduleResponseDto(Long id, String title, String meetingTime, Integer dday, String status) {
