@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -126,6 +127,31 @@ class ScheduleControllerTest extends ControllerTestSupport {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.message").value("일정 참여가 완료되었습니다."));
+    }
+
+    @DisplayName("[DELETE] 크루 스페이스 일정 참여를 취소한다.")
+    @Test
+    @WithCustomMockUser
+    void cancelSchedule() throws Exception {
+        // given
+        given(scheduleService.cancelSchedule(any(ScheduleRequestDto.class)))
+            .willReturn(Collections.singletonMap("message", "일정 참여가 취소되었습니다."));
+
+        // when // then
+        mockMvc.perform(
+            delete("/crews/schedules")
+                .with(csrf())
+                .header("Authorization", "test")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(
+                    ScheduleRequestDto.builder()
+                        .scheduleId(any(Long.class))
+                        .build()
+                ))
+        )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.message").value("일정 참여가 취소되었습니다."));
     }
 
     ScheduleResponseDto createScheduleResponseDto(Long id, String title, String meetingTime, Integer dday, String status) {
