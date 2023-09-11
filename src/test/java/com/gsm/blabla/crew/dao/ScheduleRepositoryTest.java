@@ -39,6 +39,23 @@ class ScheduleRepositoryTest {
             );
     }
 
+    @DisplayName("가장 가까운 일정을 조회한다.")
+    @Test
+    void findNearsestScedule() {
+        // given
+        Schedule schedule1 = createSchedule(LocalDateTime.of(2023, 1, 1, 0, 0), "test1");
+        Schedule schedule2 = createSchedule(LocalDateTime.now().plusDays(5), "test2");
+        Schedule schedule3 = createSchedule(LocalDateTime.now().plusDays(1), "test3");
+        Schedule schedule4 = createSchedule(LocalDateTime.now().plusDays(3), "test4");
+        scheduleRepository.saveAll(List.of(schedule1, schedule2, schedule3, schedule4));
+
+        // when
+        Schedule result = scheduleRepository.findNearestSchedule();
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("test3");
+    }
+
     private Schedule createSchedule(LocalDateTime meetingTime, String title) {
         return Schedule.builder()
             .meetingTime(meetingTime)
