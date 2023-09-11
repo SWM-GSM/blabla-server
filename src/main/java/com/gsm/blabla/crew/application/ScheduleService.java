@@ -35,7 +35,7 @@ public class ScheduleService {
     private final MemberRepository memberRepository;
     private final CrewMemberRepository crewMemberRepository;
 
-    public Map<String, Long> create(Long crewId, ScheduleRequestDto scheduleRequestDto) {
+    public Map<String, Long> create(ScheduleRequestDto scheduleRequestDto) {
         String meetingTimeInString = scheduleRequestDto.getMeetingTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString, formatter);
@@ -43,17 +43,11 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.save(Schedule.builder()
             .title(scheduleRequestDto.getTitle())
             .meetingTime(meetingTime)
-            .crew(crewRepository.findById(crewId).orElseThrow(
-                    () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")))
             .build()
         );
 
         Member member = memberRepository.findById(SecurityUtil.getMemberId()).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));
-
-        if (crewMemberRepository.findByCrewIdAndMemberId(crewId, member.getId()).isEmpty()) {
-            throw new GeneralException(Code.MEMBER_WITHOUT_PRIVILEGE, "크루에 가입되어 있지 않은 유저입니다.");
-        }
 
         memberScheduleRepository.save(MemberSchedule.builder()
                 .member(member)

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "크루 스페이스 일정 관련 API")
 @RestController
-@RequestMapping("/crews/{crewId}/schedules")
+@RequestMapping("/crews/schedules")
 @RequiredArgsConstructor
 public class ScheduleController {
 
@@ -28,10 +28,9 @@ public class ScheduleController {
     @Operation(summary = "크루 일정 생성 API")
     @PostMapping(value = "")
     public DataResponseDto<Map<String, Long>> create(
-        @PathVariable Long crewId,
         @RequestBody ScheduleRequestDto scheduleRequestDto
         ) {
-        return DataResponseDto.of(scheduleService.create(crewId, scheduleRequestDto));
+        return DataResponseDto.of(scheduleService.create(scheduleRequestDto));
     }
 
     @Operation(summary = "크루 일정 전체 조회 API")
