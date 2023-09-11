@@ -30,7 +30,7 @@ public class ScheduleService {
     private final MemberScheduleRepository memberScheduleRepository;
     private final MemberRepository memberRepository;
 
-    public Map<String, Long> create(ScheduleRequestDto scheduleRequestDto) {
+    public Map<String, Long> createSchedule(ScheduleRequestDto scheduleRequestDto) {
         String meetingTimeInString = scheduleRequestDto.getMeetingTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString, formatter);
@@ -53,7 +53,7 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, List<ScheduleResponseDto>> getAll() {
+    public Map<String, List<ScheduleResponseDto>> getAllSchedule() {
         Long memberId = SecurityUtil.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));

@@ -33,7 +33,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     @WithCustomMockUser
     void create() throws Exception {
         // given
-        given(scheduleService.create(any(ScheduleRequestDto.class)))
+        given(scheduleService.createSchedule(any(ScheduleRequestDto.class)))
             .willReturn(Collections.singletonMap("scheduleId", 1L));
 
         // when // then
@@ -62,7 +62,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
         ScheduleResponseDto schedule1 = createScheduleResponseDto(1L, "테스트1", "2023-01-01 00:00:00", 0, "ENDED");
         ScheduleResponseDto schedule2 = createScheduleResponseDto(2L, "테스트2", "2023-01-02 00:00:00", 0, "ENDED");
         ScheduleResponseDto schedule3 = createScheduleResponseDto(3L, "테스트3", "2023-01-03 00:00:00", 0, "ENDED");
-        given(scheduleService.getAll()).willReturn(Collections.singletonMap("schedules", List.of(schedule1, schedule2, schedule3)));
+        given(scheduleService.getAllSchedule()).willReturn(Collections.singletonMap("schedules", List.of(schedule1, schedule2, schedule3)));
 
         // when // then
         mockMvc.perform(

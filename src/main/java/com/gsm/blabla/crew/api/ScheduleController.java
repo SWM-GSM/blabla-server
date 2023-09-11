@@ -26,16 +26,16 @@ public class ScheduleController {
 
     @Operation(summary = "크루 일정 생성 API")
     @PostMapping(value = "")
-    public DataResponseDto<Map<String, Long>> create(
+    public DataResponseDto<Map<String, Long>> createSchedule(
         @RequestBody ScheduleRequestDto scheduleRequestDto
         ) {
-        return DataResponseDto.of(scheduleService.create(scheduleRequestDto));
+        return DataResponseDto.of(scheduleService.createSchedule(scheduleRequestDto));
     }
 
     @Operation(summary = "크루 일정 전체 조회 API")
     @GetMapping(value = "")
-    public DataResponseDto<Map<String, List<ScheduleResponseDto>>> getAll() {
-        return DataResponseDto.of(scheduleService.getAll());
+    public DataResponseDto<Map<String, List<ScheduleResponseDto>>> getAllSchedule() {
+        return DataResponseDto.of(scheduleService.getAllSchedule());
     }
 
     @Operation(summary = "다가오는 크루 일정 조회 API")
