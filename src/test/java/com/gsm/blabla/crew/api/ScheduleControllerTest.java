@@ -1,6 +1,5 @@
 package com.gsm.blabla.crew.api;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -73,7 +72,6 @@ class ScheduleControllerTest extends ControllerTestSupport {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.schedules", hasSize(3)));
-        ;
     }
 
     @DisplayName("[GET] 다가오는 크루 스페이스 일정을 조회한다.")
