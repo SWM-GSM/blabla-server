@@ -91,7 +91,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         long memberScheduleIdBefore = memberScheduleRepository.count();
 
         // when
-        Long responseId = scheduleService.create(scheduleRequestDto).get("scheduleId");
+        Long responseId = scheduleService.createSchedule(scheduleRequestDto).get("scheduleId");
         Optional<Schedule> schedule = scheduleRepository.findById(responseId);
 
         // then
@@ -133,7 +133,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     void getAll() {
         // given
         // 종료된 일정 - 2번 유저가 만든 일정
-        Long schedule1 = scheduleService.create(ScheduleRequestDto.builder()
+        Long schedule1 = scheduleService.createSchedule(ScheduleRequestDto.builder()
             .title("테스트 일정")
             .meetingTime("2023-01-01 00:00:00")
             .build()
@@ -143,10 +143,10 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         Long schedule2 = createPreparedSchedule(meetingTimeInString);
 
         // 종료 이전 일정이며 참여한 일정 - 2번 유저가 만든 일정
-        Long schedule3 = scheduleService.create(scheduleRequestDto).get("scheduleId");
+        Long schedule3 = scheduleService.createSchedule(scheduleRequestDto).get("scheduleId");
 
         // when
-        List<ScheduleResponseDto> response = scheduleService.getAll().get("schedules");
+        List<ScheduleResponseDto> response = scheduleService.getAllSchedule().get("schedules");
 
         // then
         assertThat(response)
@@ -165,9 +165,9 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     @WithCustomMockUser
     void getUpcomingSchedule() {
         // given
-        scheduleService.create(createScheduleRequestDto(3)).get("scheduleId");
-        scheduleService.create(createScheduleRequestDto(2)).get("scheduleId");
-        Long schedule3 = scheduleService.create(createScheduleRequestDto(1)).get("scheduleId");
+        scheduleService.createSchedule(createScheduleRequestDto(3)).get("scheduleId");
+        scheduleService.createSchedule(createScheduleRequestDto(2)).get("scheduleId");
+        Long schedule3 = scheduleService.createSchedule(createScheduleRequestDto(1)).get("scheduleId");
 
         // when
         ScheduleResponseDto response = scheduleService.getUpcomingSchedule();
@@ -189,7 +189,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     @WithCustomMockUser
     Collection<DynamicTest> cancelSchedule() {
         // given
-        Long scheduleId = scheduleService.create(scheduleRequestDto).get("scheduleId");
+        Long scheduleId = scheduleService.createSchedule(scheduleRequestDto).get("scheduleId");
 
         // when
         String cancelResult = scheduleService.cancelSchedule(ScheduleRequestDto.builder().scheduleId(scheduleId).build()).get("message");
