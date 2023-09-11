@@ -48,10 +48,8 @@ public class ScheduleController {
     @Operation(summary = "크루 일정 참여하기 API")
     @PostMapping(value = "/join")
     public DataResponseDto<Map<String, String>> joinSchedule(
-        @PathVariable Long crewId,
-        @RequestBody ScheduleRequestDto scheduleRequestDto
-        ) {
-        return DataResponseDto.of(scheduleService.joinSchedule(crewId, scheduleRequestDto));
+        @RequestBody ScheduleRequestDto scheduleRequestDto) {
+        return DataResponseDto.of(scheduleService.joinSchedule(scheduleRequestDto));
     }
 
     @Operation(summary = "크루 일정 참여 취소 API")

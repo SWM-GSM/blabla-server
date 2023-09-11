@@ -1,8 +1,9 @@
 package com.gsm.blabla.crew.dao;
 
-import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.Schedule;
 import java.util.List;
+import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,5 +16,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Schedule findNearestSchedule();
 
     List<Schedule> findAllByOrderByMeetingTime();
-    Schedule findByIdAndCrew(Long id, Crew crew);
+
+    @NotNull
+    Optional<Schedule> findById(@NotNull Long id);
 }
