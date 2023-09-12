@@ -19,16 +19,17 @@ public enum Adjective {
     EXCITING("신나는", "Exciting"),
     STRONG("힘쎈", "Strong"),
     WISE("슬기로운", "Wise"),
-    SPARKLING("반짝이는", "Sparkling"),
     BOLD("대담한", "Bold"),
-    PASSIONATE("열정적인", "Passionate"),
-    MYSTERIOUS("신비로운", "Mysterious"),
-    BRIGTH("밝은", "Bright"),
+    BRIGHT("밝은", "Bright"),
     PEACEFUL("평화로운", "Peaceful"),
     FRESH("신선한", "Fresh"),
     ORDINARY("평범한", "Ordinary"),
-    NERDY("똑똑한", "Nerdy"),
-    SIMPLE("단순한", "Simple");
+    SMART("똑똑한", "Smart"),
+    SIMPLE("단순한", "Simple"),
+    HEALTHY("건강한", "Healthy"),
+    CREATIVE("창의적인", "Creative"),
+    AMAZING("놀라운", "Amazing")
+    ;
 
     private final String koreanName;
     private final String englishName;
