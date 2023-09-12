@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScheduleRequestDto {
-    private Long id;
+    private Long scheduleId;
     private String title;
     private String meetingTime;
 }

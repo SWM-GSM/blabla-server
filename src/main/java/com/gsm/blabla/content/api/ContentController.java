@@ -3,7 +3,6 @@ package com.gsm.blabla.content.api;
 import com.gsm.blabla.content.application.ContentService;
 import com.gsm.blabla.content.dto.*;
 import com.gsm.blabla.global.response.DataResponseDto;
-import com.gsm.blabla.content.dto.PracticeFeedbackResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
