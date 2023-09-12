@@ -154,9 +154,9 @@ public class AuthService {
     String getRandomNickname(Animal animal, String learningLanguage) {
         String nickname = "";
         if (learningLanguage.equals("ko")) {
-            nickname = Adjective.getRandomAdjective("ko") + Color.getRandomColor("ko") + animal.getKoreanName();
-        } else if (learningLanguage.equals("en")) {
             nickname = Adjective.getRandomAdjective("en") + Color.getRandomColor("en") + animal.getEnglishName();
+        } else if (learningLanguage.equals("en")) {
+            nickname = Adjective.getRandomAdjective("ko") + Color.getRandomColor("ko") + animal.getKoreanName();
         }
 
         return nickname;
