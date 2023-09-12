@@ -17,7 +17,7 @@ public enum Color {
     PURPLE("보라색", "Purple"),
     PINK("분홍색", "Pink"),
     SKYBLUE("하늘색", "Skyblue"),
-    LIGHTGREEN("연두색", "Lightgreen"),
+    BROWN("갈색", "Brown"),
     ;
 
     private final String koreanName;
