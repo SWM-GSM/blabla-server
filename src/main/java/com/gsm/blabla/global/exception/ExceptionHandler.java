@@ -2,7 +2,6 @@ package com.gsm.blabla.global.exception;
 
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.response.ErrorResponseDto;
-import com.gsm.blabla.global.webhook.service.WebhookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
@@ -59,7 +58,6 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleExceptionInternal(Exception e, Code errorCode,
         HttpHeaders headers, HttpStatus status, WebRequest request) {
-        WebhookService.sendErrorLog(e.getMessage(), e.toString());
         log.error(e.getMessage(), e);
 
         return super.handleExceptionInternal(
