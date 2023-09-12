@@ -1,6 +1,7 @@
 package com.gsm.blabla.auth.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -34,7 +35,7 @@ class AuthServiceTest extends IntegrationTestSupport {
     @MockBean
     private AppleService appleService;
 
-    @DisplayName("[POST] 회원가입을 할 때,")
+    @DisplayName("[POST] 한국어를 배우고 싶은 유저가 회원가입을 할 때,")
     @TestFactory
     Collection<DynamicTest> signUp() {
         String providerAuthorization = "test";
@@ -59,7 +60,9 @@ class AuthServiceTest extends IntegrationTestSupport {
                 JwtDto response = authService.signUp(providerAuthorization, memberRequestDto);
 
                 // then
-                assertThat(memberRepository.count()).isEqualTo(memberBeforeSignUp + 1);
+                Long memberAfterSignUp = memberRepository.count();
+                assertThat(memberAfterSignUp).isEqualTo(memberBeforeSignUp + 1);
+                assertTrue(memberRepository.findById(memberAfterSignUp).get().getNickname().matches("^[a-zA-Z]*$"));
                 assertThat(response.getGrantType()).isEqualTo("Bearer");
                 assertThat(response.getAccessToken()).isEqualTo("test");
                 assertThat(response.getAccessToken()).isEqualTo("test");

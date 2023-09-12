@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 public enum Animal {
 
     BEAR("곰", "Bear"),
-    CAT("고양이", "Cat"),
     CHICK("병아리", "Chick"),
     COW("소", "Cow"),
     DOG("강아지", "Dog"),
@@ -30,7 +29,8 @@ public enum Animal {
     RABBIT("토끼", "Rabbit"),
     TIGER("호랑이", "Tiger"),
     WHITEBEAR("백곰", "Whitebear"),
-    WOLF("늑대", "Wolf");
+    WOLF("늑대", "Wolf")
+    ;
 
     private final String koreanName;
     private final String englishName;
