@@ -20,7 +20,6 @@ import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import com.gsm.blabla.member.domain.nickname.Adjective;
 import com.gsm.blabla.member.domain.nickname.Animal;
-import com.gsm.blabla.member.domain.nickname.Color;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -154,9 +153,9 @@ public class AuthService {
     String getRandomNickname(Animal animal, String learningLanguage) {
         String nickname = "";
         if (learningLanguage.equals("ko")) {
-            nickname = Adjective.getRandomAdjective("en") + Color.getRandomColor("en") + animal.getEnglishName();
+            nickname = Adjective.getRandomAdjective("en") + animal.getEnglishName();
         } else if (learningLanguage.equals("en")) {
-            nickname = Adjective.getRandomAdjective("ko") + Color.getRandomColor("ko") + animal.getKoreanName();
+            nickname = Adjective.getRandomAdjective("ko") + animal.getKoreanName();
         }
 
         return nickname;
