@@ -1,10 +1,7 @@
 package com.gsm.blabla.crew.application;
 
-import com.gsm.blabla.crew.dao.CrewMemberRepository;
-import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.dao.MemberScheduleRepository;
 import com.gsm.blabla.crew.dao.ScheduleRepository;
-import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.MemberSchedule;
 import com.gsm.blabla.crew.domain.Schedule;
 import com.gsm.blabla.crew.dto.ScheduleRequestDto;
@@ -30,12 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final CrewRepository crewRepository;
     private final MemberScheduleRepository memberScheduleRepository;
     private final MemberRepository memberRepository;
-    private final CrewMemberRepository crewMemberRepository;
 
-    public Map<String, Long> create(Long crewId, ScheduleRequestDto scheduleRequestDto) {
+    public Map<String, Long> createSchedule(ScheduleRequestDto scheduleRequestDto) {
         String meetingTimeInString = scheduleRequestDto.getMeetingTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime meetingTime = LocalDateTime.parse(meetingTimeInString, formatter);
@@ -43,17 +38,11 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.save(Schedule.builder()
             .title(scheduleRequestDto.getTitle())
             .meetingTime(meetingTime)
-            .crew(crewRepository.findById(crewId).orElseThrow(
-                    () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")))
             .build()
         );
 
         Member member = memberRepository.findById(SecurityUtil.getMemberId()).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));
-
-        if (crewMemberRepository.findByCrewIdAndMemberId(crewId, member.getId()).isEmpty()) {
-            throw new GeneralException(Code.MEMBER_WITHOUT_PRIVILEGE, "크루에 가입되어 있지 않은 유저입니다.");
-        }
 
         memberScheduleRepository.save(MemberSchedule.builder()
                 .member(member)
@@ -64,38 +53,37 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, List<ScheduleResponseDto>> getAll(Long crewId) {
+    public Map<String, List<ScheduleResponseDto>> getAllSchedule() {
         Long memberId = SecurityUtil.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));
-        Crew crew = crewRepository.findById(crewId).orElseThrow(
-                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
-        List<Schedule> schedules = scheduleRepository.findAllByCrewOrderByMeetingTime(crew);
 
-        return Collections.singletonMap("schedules", schedules.stream()
-            .map(schedule -> ScheduleResponseDto.scheduleListResponse(member, schedule,
-                crewMemberRepository, memberScheduleRepository))
-            .toList());
+        List<ScheduleResponseDto> schedules = scheduleRepository.findAllByOrderByMeetingTime()
+            .stream()
+            .map(schedule -> ScheduleResponseDto.scheduleListResponse(member, schedule, memberScheduleRepository))
+            .toList();
+
+        return Collections.singletonMap("schedules", schedules);
     }
 
     @Transactional(readOnly = true)
-    public ScheduleResponseDto getUpcomingSchedule(Long crewId) {
-        Schedule schedule = scheduleRepository.findNearestSchedule(crewId);
+    public ScheduleResponseDto getUpcomingSchedule() {
+        Schedule schedule = scheduleRepository.findNearestSchedule();
 
         if (schedule == null) {
             return new ScheduleResponseDto();
         }
 
-        return ScheduleResponseDto.scheduleResponse(schedule, crewMemberRepository);
+        return ScheduleResponseDto.scheduleResponse(schedule);
     }
 
-    public Map<String, String> joinSchedule(Long crewId, ScheduleRequestDto scheduleRequestDto) {
+    public Map<String, String> joinSchedule(ScheduleRequestDto scheduleRequestDto) {
         Long memberId = SecurityUtil.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));
-        Crew crew = crewRepository.findById(crewId).orElseThrow(
-                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
-        Schedule schedule = scheduleRepository.findByIdAndCrew(scheduleRequestDto.getId(), crew);
+        Schedule schedule = scheduleRepository.findById(scheduleRequestDto.getScheduleId()).orElseThrow(
+                () -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다.")
+        );
 
         Optional<MemberSchedule> memberSchedule = memberScheduleRepository.findByMemberAndSchedule(member, schedule);
 
@@ -112,13 +100,12 @@ public class ScheduleService {
         return Collections.singletonMap("message", "일정 참여가 완료되었습니다.");
     }
 
-    public Map<String, String> cancelSchedule(Long crewId, ScheduleRequestDto scheduleRequestDto) {
+    public Map<String, String> cancelSchedule(ScheduleRequestDto scheduleRequestDto) {
         Long memberId = SecurityUtil.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다."));
-        Crew crew = crewRepository.findById(crewId).orElseThrow(
-                () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
-        Schedule schedule = scheduleRepository.findByIdAndCrew(scheduleRequestDto.getId(), crew);
+        Schedule schedule = scheduleRepository.findById(scheduleRequestDto.getScheduleId()).orElseThrow(
+                () -> new GeneralException(Code.SCHEDULE_NOT_FOUND, "존재하지 않는 일정입니다."));
 
         Optional<MemberSchedule> memberSchedule = memberScheduleRepository.findByMemberAndSchedule(member, schedule);
 
