@@ -61,11 +61,11 @@ public class ReportService {
                     String datetime = analysis.getCreatedAt().format(formatter);
                     crewHistory.add(
                         HistoryReportResponseDto.builder()
-                            .id(crewReport.getCrew().getId())
+                            .id(crewReport.getId())
                             .type("crew")
                             .info(
                                 Map.of(
-                                    "title", crewReport.getCrew().getName(),
+                                    "title", "API 수정을 위한 임시 title",
                                     "subTitle", durationTime
                                 )
                             )

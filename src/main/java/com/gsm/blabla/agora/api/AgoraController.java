@@ -19,11 +19,10 @@ public class AgoraController {
     private final AgoraService agoraService;
 
     @Operation(summary = "보이스룸 입장 API")
-    @PostMapping(value = "/crews/{crewId}/voice-room")
+    @PostMapping(value = "/crews/voice-room")
     public DataResponseDto<RtcTokenDto> create(
-        @PathVariable Long crewId,
         @RequestBody VoiceRoomRequestDto voiceRoomRequestDto) {
-        return DataResponseDto.of(agoraService.create(crewId, voiceRoomRequestDto));
+        return DataResponseDto.of(agoraService.create(voiceRoomRequestDto));
     }
 
 }
