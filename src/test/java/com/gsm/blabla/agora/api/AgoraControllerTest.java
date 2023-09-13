@@ -26,13 +26,11 @@ class AgoraControllerTest extends ControllerTestSupport {
     void create() throws Exception {
         // given
         long now = (new Date()).getTime();
-        given(agoraService.create(anyLong(),
-            any(VoiceRoomRequestDto.class)
+        given(agoraService.create(any(VoiceRoomRequestDto.class)
             )
         )
             .willReturn(
                 RtcTokenDto.builder()
-                    .channelName("test")
                     .token("test")
                     .expiresIn(new Date(now + 3600).getTime())
                     .build()
@@ -40,7 +38,7 @@ class AgoraControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/crews/1/voice-room")
+            post("/crews/voice-room")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
@@ -49,7 +47,6 @@ class AgoraControllerTest extends ControllerTestSupport {
             )
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.channelName").value("test"))
             .andExpect(jsonPath("$.data.token").value("test"))
             .andExpect(jsonPath("$.data.expiresIn").isNumber())
             ;
