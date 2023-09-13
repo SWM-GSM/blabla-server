@@ -146,7 +146,6 @@ public abstract class IntegrationTestSupport {
     protected CrewReport startVoiceRoom(Crew crew, LocalDateTime startedAt) {
         return crewReportRepository.save(
             CrewReport.builder()
-                .crew(crew)
                 .startedAt(startedAt)
                 .endAt(startedAt.plusMinutes(26).plusSeconds(30))
                 .build()
