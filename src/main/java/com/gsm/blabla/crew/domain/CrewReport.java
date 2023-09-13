@@ -16,9 +16,6 @@ public class CrewReport {
     @Column(name="crew_report_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "crew_id")
-    private Crew crew;
     private LocalDateTime startedAt;
     private LocalDateTime endAt = LocalDateTime.of(2000, 1, 1, 0, 0, 0);
 
@@ -29,8 +26,7 @@ public class CrewReport {
     private List<CrewReportKeyword> keywords;
 
     @Builder
-    public CrewReport(Crew crew, LocalDateTime startedAt, LocalDateTime endAt) {
-        this.crew = crew;
+    public CrewReport(LocalDateTime startedAt, LocalDateTime endAt) {
         this.startedAt = startedAt;
         this.endAt = endAt;
     }

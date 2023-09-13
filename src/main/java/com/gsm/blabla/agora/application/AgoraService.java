@@ -24,16 +24,14 @@ public class AgoraService {
     @Value("${agora.app-certificate}")
     private String appCertificate;
 
-    private final CrewRepository crewRepository;
     private final CrewReportRepository crewReportRepository;
 
-    // TODO: 유효 기간 변경하기
     static final int TOKEN_EXPIRATION_TIME = 1000 * 60 * 30;
     static final int PRIVILEGE_EXPIRATION_TIME = 1000 * 60 * 30;
 
-    public RtcTokenDto create(Long crewId,  VoiceRoomRequestDto voiceRoomRequestDto) {
+    public RtcTokenDto create(VoiceRoomRequestDto voiceRoomRequestDto) {
         Long memberId = SecurityUtil.getMemberId();
-        String channelName = "crew-" + crewId;
+        String channelName = "blablah";
         RtcTokenBuilder2 token = new RtcTokenBuilder2();
         long now = (new Date()).getTime();
 
@@ -41,9 +39,6 @@ public class AgoraService {
         if (!isActivated) {
              crewReportRepository.save(
                 CrewReport.builder()
-                    .crew(crewRepository.findById(crewId).orElseThrow(
-                        () -> new IllegalArgumentException("존재하지 않는 크루입니다.")
-                    ))
                     .startedAt(LocalDateTime.now())
                     .build()
              );
@@ -54,7 +49,7 @@ public class AgoraService {
             .token(token.buildTokenWithUid(appId, appCertificate, channelName, memberId,
                 Role.ROLE_PUBLISHER, TOKEN_EXPIRATION_TIME, PRIVILEGE_EXPIRATION_TIME))
             .expiresIn(new Date(now + TOKEN_EXPIRATION_TIME).getTime())
-            .reportId(crewReportRepository.findCurrentId(crewId))
+            .reportId(crewReportRepository.findCurrentId())
             .build();
     }
 }

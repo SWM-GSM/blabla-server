@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CrewReportRepository extends JpaRepository<CrewReport, Long> {
 
-    List<CrewReport> findAllByCrew(Crew crew);
-
-    @Query("SELECT max(cr.id) FROM CrewReport cr where cr.crew.id = :crewId")
-    Long findCurrentId(Long crewId);
+    @Query("SELECT max(cr.id) FROM CrewReport cr")
+    Long findCurrentId();
 }
