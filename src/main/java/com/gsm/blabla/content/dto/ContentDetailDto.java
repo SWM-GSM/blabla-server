@@ -24,7 +24,7 @@ public class ContentDetailDto {
         return ContentDetailDto.builder()
                 .id(contentDetail.getId())
                 .title(content.getTitle())
-                .thumbnailUrl("https://img.youtube.com/vi/" + contentDetail.getContentUrl().split("/watch\\?v=")[1] + "/hqdefault.jpg")
+                .thumbnailUrl("https://img.youtube.com/vi/" + contentDetail.getContentUrl().split("youtu.be/")[1] + "/hqdefault.jpg")
                 .description(contentDetail.getDescription())
                 .isCompleted(memberContentRepository.findByContentDetailIdAndMemberId(contentDetail.getId(), memberId).isPresent())
                 .build();
