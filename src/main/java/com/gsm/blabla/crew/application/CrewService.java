@@ -269,7 +269,7 @@ public class CrewService {
         Crew crew = crewRepository.findById(crewId).orElseThrow(
             () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
         );
-        List<CrewReport> crewReports = crewReportRepository.findAllByCrew(crew);
+        List<CrewReport> crewReports = crewReportRepository.findAll();
 
         List<CrewReportResponseDto> reports = new ArrayList<>(
             crewReports.stream()
