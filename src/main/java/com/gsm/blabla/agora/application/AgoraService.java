@@ -45,7 +45,6 @@ public class AgoraService {
         }
 
         return RtcTokenDto.builder()
-            .channelName(channelName)
             .token(token.buildTokenWithUid(appId, appCertificate, channelName, memberId,
                 Role.ROLE_PUBLISHER, TOKEN_EXPIRATION_TIME, PRIVILEGE_EXPIRATION_TIME))
             .expiresIn(new Date(now + TOKEN_EXPIRATION_TIME).getTime())
