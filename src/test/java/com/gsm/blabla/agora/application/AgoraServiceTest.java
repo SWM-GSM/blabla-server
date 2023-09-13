@@ -41,10 +41,9 @@ class AgoraServiceTest extends IntegrationTestSupport {
             .build();
 
         // when
-        RtcTokenDto rtcTokenDto = agoraService.create(crewId, voiceRoomRequestDto);
+        RtcTokenDto rtcTokenDto = agoraService.create(voiceRoomRequestDto);
 
         // then
-        assertThat(rtcTokenDto.getChannelName()).isEqualTo("crew-" + crewId);
         assertThat(rtcTokenDto.getToken()).isNotNull();
         assertThat(rtcTokenDto.getExpiresIn()).isNotNull();
     }
@@ -60,7 +59,7 @@ class AgoraServiceTest extends IntegrationTestSupport {
         Long beforeTokenCreated = crewReportRepository.count();
 
         // when
-        RtcTokenDto rtcTokenDto = agoraService.create(crewId, voiceRoomRequestDto);
+        RtcTokenDto rtcTokenDto = agoraService.create(voiceRoomRequestDto);
         Long afterTokenCreated = crewReportRepository.count();
 
         // then
