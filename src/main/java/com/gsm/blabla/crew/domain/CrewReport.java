@@ -1,5 +1,6 @@
 package com.gsm.blabla.crew.domain;
 
+import com.gsm.blabla.member.domain.Member;
 import jakarta.persistence.*;
 import java.util.List;
 import lombok.Builder;
@@ -25,10 +26,14 @@ public class CrewReport {
     @OneToMany(mappedBy = "crewReport")
     private List<CrewReportKeyword> keywords;
 
+    @OneToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Builder
-    public CrewReport(LocalDateTime startedAt, LocalDateTime endAt) {
+    public CrewReport(LocalDateTime startedAt, Member member) {
         this.startedAt = startedAt;
-        this.endAt = endAt;
+        this.member = member;
     }
 
     public void updateEndAt(LocalDateTime endAt) {

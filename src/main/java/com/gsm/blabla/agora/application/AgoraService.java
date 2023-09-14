@@ -5,9 +5,11 @@ import com.gsm.blabla.agora.RtcTokenBuilder2.Role;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
-import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.domain.CrewReport;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
+import com.gsm.blabla.member.dao.MemberRepository;
 import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class AgoraService {
     private String appCertificate;
 
     private final CrewReportRepository crewReportRepository;
+    private final MemberRepository memberRepository;
 
     static final int TOKEN_EXPIRATION_TIME = 1000 * 60 * 30;
     static final int PRIVILEGE_EXPIRATION_TIME = 1000 * 60 * 30;
@@ -40,6 +43,9 @@ public class AgoraService {
              crewReportRepository.save(
                 CrewReport.builder()
                     .startedAt(LocalDateTime.now())
+                    .member(memberRepository.findById(memberId).orElseThrow(
+                        () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+                    ))
                     .build()
              );
         }
