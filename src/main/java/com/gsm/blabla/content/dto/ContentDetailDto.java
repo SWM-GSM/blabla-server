@@ -20,10 +20,10 @@ public class ContentDetailDto {
     private String thumbnailUrl; // 컨텐츠 썸네일 URL
     private Boolean isCompleted; // 컨텐츠 완료 여부
 
-    public static ContentDetailDto contentViewResponse(Content content, ContentDetail contentDetail, Long memberId, MemberContentDetailRepository memberContentRepository) {
+    public static ContentDetailDto contentViewResponse(ContentDetail contentDetail, Long memberId, MemberContentDetailRepository memberContentRepository) {
         return ContentDetailDto.builder()
                 .id(contentDetail.getId())
-                .title(content.getTitle())
+                .title(contentDetail.getTitle())
                 .thumbnailUrl("https://img.youtube.com/vi/" + contentDetail.getContentUrl().split("youtu.be/")[1] + "/hqdefault.jpg")
                 .description(contentDetail.getDescription())
                 .isCompleted(memberContentRepository.findByContentDetailIdAndMemberId(contentDetail.getId(), memberId).isPresent())
