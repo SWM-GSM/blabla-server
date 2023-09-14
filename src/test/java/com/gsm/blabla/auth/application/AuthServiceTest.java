@@ -133,7 +133,6 @@ class AuthServiceTest extends IntegrationTestSupport {
         return MemberRequestDto.builder()
             .socialLoginType(socialLoginType)
             .learningLanguage("ko")
-            .pushNotification(false)
             .build();
     }
 }

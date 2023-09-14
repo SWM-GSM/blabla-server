@@ -42,7 +42,6 @@ class AuthControllerTest extends ControllerTestSupport {
                     MemberRequestDto.builder()
                         .socialLoginType("TEST")
                         .learningLanguage("ko")
-                        .pushNotification(false)
                         .build()
                 ))
         )

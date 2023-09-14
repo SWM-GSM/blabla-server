@@ -18,7 +18,6 @@ public class MemberRequestDto {
 
     private String socialLoginType;
     private String learningLanguage;
-    private Boolean pushNotification;
     private List<Long> ids;
 
     public Member toEntity(String nickname, String profileImage) {
@@ -27,7 +26,6 @@ public class MemberRequestDto {
             .nickname(nickname)
             .profileImage(profileImage)
             .learningLanguage(learningLanguage)
-            .pushNotification(pushNotification)
             .build();
     }
 }
