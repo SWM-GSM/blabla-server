@@ -264,53 +264,6 @@ public class CrewService {
         return CrewReportResponseDto.crewReportResponse(info, members, bubbleChart, keyword, languageRatio, feedbacks);
     }
 
-    @Transactional(readOnly = true)
-    public Map<String, List<CrewReportResponseDto>> getAllReports(Long crewId, String sort) {
-        Crew crew = crewRepository.findById(crewId).orElseThrow(
-            () -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다.")
-        );
-        List<CrewReport> crewReports = crewReportRepository.findAll();
-
-        List<CrewReportResponseDto> reports = new ArrayList<>(
-            crewReports.stream()
-            .map(crewReport -> {
-                boolean generated = crewReportAnalysisRepository.findByCrewReport(crewReport)
-                    .isPresent();
-                List<MemberResponseDto> members = crewReport.getVoiceFiles().stream()
-                    .map(VoiceFile::getMember)
-                    .distinct()
-                    .map(MemberResponseDto::crewReportResponse)
-                    .toList();
-
-                Optional<CrewReportAnalysis> crewReportAnalysis = crewReportAnalysisRepository.findByCrewReport(
-                    crewReport);
-
-                Map<String, String> info = crewReportAnalysis.map(
-                    reportAnalysis -> getReportInfo(crewReport, reportAnalysis)).orElse(
-                        Map.of("createdAt", "2000-01-01 00:00",
-                            "durationTime", "2000-01-01 00:00"
-                        )
-                );
-
-                return CrewReportResponseDto.crewReportListResponse(crewReport.getId(), generated,
-                    members, info);
-            })
-            .sorted(Comparator
-                .comparing(CrewReportResponseDto::getGenerated)
-                .thenComparing((CrewReportResponseDto report) -> {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                return LocalDateTime.parse(report.getInfo().get("createdAt"), formatter);
-            }, Comparator.reverseOrder()))
-            .toList()
-        );
-
-        if (sort.equals("asc")) {
-            Collections.reverse(reports);
-        }
-
-        return Collections.singletonMap("reports", reports);
-    }
-
     private Map<String, String> getReportInfo(CrewReport crewReport, CrewReportAnalysis crewReportAnalysis) {
         Map<String, String> info = new HashMap<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
