@@ -1,7 +1,8 @@
 package com.gsm.blabla.admin.api;
 
 import com.gsm.blabla.admin.application.FcmService;
-import com.gsm.blabla.admin.dto.PushMessageRequestDto;
+import com.gsm.blabla.admin.dto.FcmMessage;
+import com.gsm.blabla.admin.dto.FcmMessageRequestDto;
 import com.gsm.blabla.global.response.DataResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +31,7 @@ public class AdminController {
 
     @Operation(summary = "FCM 푸시 알림 전송 API")
     @PostMapping(value = "/fcm")
-    public DataResponseDto<Map<String, String>> pushMessage(@RequestBody PushMessageRequestDto pushMessageRequestDto) throws IOException {
-        return DataResponseDto.of(fcmService.sendMessageTo(pushMessageRequestDto));
+    public DataResponseDto<Map<String, String>> pushMessage(@RequestBody FcmMessageRequestDto fcmMessageRequestDto) throws IOException {
+        return DataResponseDto.of(fcmService.sendMessageTo(fcmMessageRequestDto));
     }
 }
