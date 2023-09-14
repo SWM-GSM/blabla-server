@@ -50,14 +50,6 @@ public class CrewController {
         return DataResponseDto.of(crewService.getReport(reportId));
     }
 
-    @Operation(summary = "크루 리포트 목록 조회 API")
-    @GetMapping(value = "/crews/{crewId}/reports")
-    public DataResponseDto<Map<String, List<CrewReportResponseDto>>> getAllReports(
-        @PathVariable("crewId") Long crewId,
-        @RequestParam(value = "sort", defaultValue = "desc") String sort) {
-        return DataResponseDto.of(crewService.getAllReports(crewId, sort));
-    }
-
     @Operation(summary = "멤버 프로필 조회 API")
     @GetMapping("/{language}/crews/{crewId}/profile/{memberId}")
     public DataResponseDto<MemberProfileResponseDto> getMemberProfile(

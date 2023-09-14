@@ -68,42 +68,4 @@ class CrewServiceTest extends IntegrationTestSupport {
             .extracting("comment")
             .containsExactlyInAnyOrder("테스트 피드백 by cat", "테스트 피드백 by dog");
     }
-
-    // TODO: generated = false인 경우에 대해 테스트 케이스 추가
-    @DisplayName("[GET] 크루 리포트 목록을 조회한다.")
-    @Test
-    @WithCustomMockUser(id = "2")
-    void getAllReports() {
-        // given
-        Long crewId = createPreparedCrew(member1, "테스트", 8, 1, 1, true);
-        Crew crew = crewRepository.findById(crewId)
-            .orElseThrow(() -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
-        joinCrew(member2, crew);
-
-        CrewReport crewReport1 = createReport(member1, member2, crew, now); // 리포트 1
-        CrewReport crewReport2 = createReport(member1, member2, crew, now.plusDays(1)); // 리포트 2
-        CrewReport crewReport3 = createReport(member1, member2, crew, now.plusDays(2)); // 리포트 3
-
-        // when
-        List<CrewReportResponseDto> response = crewService.getAllReports(crewId, "desc").get("reports");
-
-        // then
-        assertThat(response).hasSize(3)
-            .extracting("id", "generated")
-            .containsExactlyInAnyOrder(
-                tuple(crewReport1.getId(), true),
-                tuple(crewReport2.getId(), true),
-                tuple(crewReport3.getId(), true)
-            );
-        // TODO: createdAt 검증 좀 더 구체적으로
-        assertThat(response).hasSize(3)
-            .extracting("info")
-            .extracting("createdAt")
-            .allMatch(createdAt -> Pattern.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}", createdAt.toString()));
-        assertThat(response).hasSize(3)
-            .extracting("info")
-            .extracting("durationTime")
-            .containsExactlyInAnyOrder("00:26:30", "00:26:30", "00:26:30");
-        // TODO: members에 대한 검증 추가
-    }
 }
