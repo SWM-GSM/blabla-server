@@ -5,7 +5,6 @@ import com.gsm.blabla.agora.RtcTokenBuilder2.Role;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
-import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.domain.CrewReport;
 import com.gsm.blabla.global.util.SecurityUtil;
 import java.time.LocalDateTime;
