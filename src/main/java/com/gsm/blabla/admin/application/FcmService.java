@@ -67,7 +67,7 @@ public class FcmService {
     }
 
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "/src/main/resources/firebase-service-key.json";
+        String firebaseConfigPath = "firebase-service-key.json";
 
         GoogleCredentials googleCredentials = GoogleCredentials
             .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
