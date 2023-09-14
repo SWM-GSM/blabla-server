@@ -1,10 +1,10 @@
-package com.gsm.blabla.fcm.application;
+package com.gsm.blabla.admin.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.JsonParseException;
-import com.gsm.blabla.fcm.dto.PushMessageRequestDto;
+import com.gsm.blabla.admin.dto.PushMessageRequestDto;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
