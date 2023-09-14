@@ -1,5 +1,6 @@
 package com.gsm.blabla.crew.api;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -26,6 +27,7 @@ class CrewControllerTest extends ControllerTestSupport {
     void setUp() {
         memberRequestDto = MemberRequestDto.builder()
             .socialLoginType("TEST")
+            .learningLanguage("ko")
             .build();
     }
 
@@ -48,10 +50,9 @@ class CrewControllerTest extends ControllerTestSupport {
             "eng", 40
         );
         List<MemberResponseDto> feedbacks = List.of(
-            MemberResponseDto.builder().nickname("테스트1").profileImage("cat").comment("테스트1").build(),
+            MemberResponseDto.builder().nickname("테스트1").profileImage("wolf").comment("테스트1").build(),
             MemberResponseDto.builder().nickname("테스트2").profileImage("dog").comment("테스트2").build(),
-            MemberResponseDto.builder().nickname("테스트3").profileImage("lion").comment("테스트3").build(),
-            MemberResponseDto.builder().nickname("테스트4").profileImage("bear").comment("테스트4").build()
+            MemberResponseDto.builder().nickname("테스트3").profileImage("lion").comment("테스트3").build()
         );
 
         given(crewService.getReport(any(Long.class)))
@@ -60,17 +61,17 @@ class CrewControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/reports/1")
+            get("/crews/reports/{reportId}", any(Long.class))
         )
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.info.createdAt").value("2023.05.30 16:00"))
             .andExpect(jsonPath("$.data.info.durationTime").value("00:23:40"))
-            .andExpect(jsonPath("$.data.members").isArray())
+            .andExpect(jsonPath("$.data.members", hasSize(4)))
             .andExpect(jsonPath("$.data.bubbleChart").value("www.test.com"))
-            .andExpect(jsonPath("$.data.keyword").isArray())
+            .andExpect(jsonPath("$.data.keyword", hasSize(4)))
             .andExpect(jsonPath("$.data.languageRatio").isMap())
-            .andExpect(jsonPath("$.data.feedbacks").isArray());
+            .andExpect(jsonPath("$.data.feedbacks", hasSize(3)));
     }
 
     private Map<String, String> getInfo() {
