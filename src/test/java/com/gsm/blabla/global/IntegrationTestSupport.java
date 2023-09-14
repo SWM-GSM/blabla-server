@@ -93,7 +93,6 @@ public abstract class IntegrationTestSupport {
             .nickname("테스트")
             .profileImage(profileImage)
             .learningLanguage("ko")
-            .pushNotification(false)
             .build()
         );
     }
