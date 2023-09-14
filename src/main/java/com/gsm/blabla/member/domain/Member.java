@@ -37,19 +37,18 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER; // 역할
 
-    private Boolean pushNotification; // 푸시 알림 허용 여부
+    private Boolean pushNotification = false; // 푸시 알림 허용 여부
 
     private Boolean isWithdrawal = false; // 탈퇴 여부
 
 
     @Builder
     public Member(SocialLoginType socialLoginType, String nickname, String profileImage,
-        String learningLanguage, Boolean pushNotification) {
+        String learningLanguage) {
         this.socialLoginType = socialLoginType;
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.learningLanguage = learningLanguage;
-        this.pushNotification = pushNotification;
     }
 
     public void updateMember(MemberProfileRequestDto memberProfileRequestDto) {

@@ -93,7 +93,6 @@ public abstract class IntegrationTestSupport {
             .nickname("테스트")
             .profileImage(profileImage)
             .learningLanguage("ko")
-            .pushNotification(false)
             .build()
         );
     }
@@ -143,7 +142,16 @@ public abstract class IntegrationTestSupport {
         );
     }
 
-    protected CrewReport startVoiceRoom(Crew crew, LocalDateTime startedAt) {
+    protected CrewReport createReport(Member member1, Member member2, LocalDateTime startedAt) {
+        CrewReport crewReport = startVoiceRoom(startedAt);
+        exitVoiceRoom(member1, crewReport);
+        exitVoiceRoom(member2, crewReport);
+        createReportAnalysis(crewReport);
+
+        return crewReport;
+    }
+
+    protected CrewReport startVoiceRoom(LocalDateTime startedAt) {
         return crewReportRepository.save(
             CrewReport.builder()
                 .startedAt(startedAt)
@@ -169,7 +177,7 @@ public abstract class IntegrationTestSupport {
         voiceFile.createFeedback("테스트 피드백 ");
     }
 
-    protected void createReportAnalysis(CrewReport crewReport, LocalDateTime startedAt) {
+    protected void createReportAnalysis(CrewReport crewReport) {
         crewReportAnalysisRepository.save(
             CrewReportAnalysis.builder()
                 .crewReport(crewReport)
@@ -192,14 +200,5 @@ public abstract class IntegrationTestSupport {
                 .count(count)
                 .build()
         );
-    }
-
-    protected CrewReport createReport(Member member1, Member member2, Crew crew, LocalDateTime startedAt) {
-        CrewReport crewReport = startVoiceRoom(crew, startedAt);
-        exitVoiceRoom(member1, crewReport);
-        exitVoiceRoom(member2, crewReport);
-        createReportAnalysis(crewReport, startedAt);
-
-        return crewReport;
     }
 }

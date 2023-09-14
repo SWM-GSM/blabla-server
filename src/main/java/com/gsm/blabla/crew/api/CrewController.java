@@ -6,7 +6,6 @@ import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -48,14 +47,6 @@ public class CrewController {
     public DataResponseDto<CrewReportResponseDto> getReport(
             @PathVariable("reportId") Long reportId) {
         return DataResponseDto.of(crewService.getReport(reportId));
-    }
-
-    @Operation(summary = "크루 리포트 목록 조회 API")
-    @GetMapping(value = "/crews/{crewId}/reports")
-    public DataResponseDto<Map<String, List<CrewReportResponseDto>>> getAllReports(
-        @PathVariable("crewId") Long crewId,
-        @RequestParam(value = "sort", defaultValue = "desc") String sort) {
-        return DataResponseDto.of(crewService.getAllReports(crewId, sort));
     }
 
     @Operation(summary = "멤버 프로필 조회 API")
