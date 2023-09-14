@@ -1,7 +1,6 @@
 package com.gsm.blabla.crew.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 
 import com.gsm.blabla.crew.domain.Crew;
 import com.gsm.blabla.crew.domain.CrewReport;
@@ -13,7 +12,6 @@ import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.domain.Member;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
