@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CrewReport {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="crew_report_id")
     private Long id;
 
     private LocalDateTime startedAt;
@@ -31,8 +30,9 @@ public class CrewReport {
     private Member member;
 
     @Builder
-    public CrewReport(LocalDateTime startedAt, Member member) {
+    public CrewReport(LocalDateTime startedAt, LocalDateTime endAt, Member member) {
         this.startedAt = startedAt;
+        this.endAt = endAt;
         this.member = member;
     }
 
