@@ -1,8 +1,7 @@
 package com.gsm.blabla.crew.api;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -14,8 +13,6 @@ import com.gsm.blabla.global.ControllerTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
 import com.gsm.blabla.member.dto.MemberRequestDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +27,7 @@ class CrewControllerTest extends ControllerTestSupport {
     void setUp() {
         memberRequestDto = MemberRequestDto.builder()
             .socialLoginType("TEST")
-            .pushNotification(false)
+            .learningLanguage("ko")
             .build();
     }
 
@@ -53,10 +50,9 @@ class CrewControllerTest extends ControllerTestSupport {
             "eng", 40
         );
         List<MemberResponseDto> feedbacks = List.of(
-            MemberResponseDto.builder().nickname("테스트1").profileImage("cat").comment("테스트1").build(),
+            MemberResponseDto.builder().nickname("테스트1").profileImage("wolf").comment("테스트1").build(),
             MemberResponseDto.builder().nickname("테스트2").profileImage("dog").comment("테스트2").build(),
-            MemberResponseDto.builder().nickname("테스트3").profileImage("lion").comment("테스트3").build(),
-            MemberResponseDto.builder().nickname("테스트4").profileImage("bear").comment("테스트4").build()
+            MemberResponseDto.builder().nickname("테스트3").profileImage("lion").comment("테스트3").build()
         );
 
         given(crewService.getReport(any(Long.class)))
@@ -65,40 +61,17 @@ class CrewControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/reports/1")
+            get("/crews/reports/{reportId}", any(Long.class))
         )
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.info.createdAt").value("2023.05.30 16:00"))
             .andExpect(jsonPath("$.data.info.durationTime").value("00:23:40"))
-            .andExpect(jsonPath("$.data.members").isArray())
+            .andExpect(jsonPath("$.data.members", hasSize(4)))
             .andExpect(jsonPath("$.data.bubbleChart").value("www.test.com"))
-            .andExpect(jsonPath("$.data.keyword").isArray())
+            .andExpect(jsonPath("$.data.keyword", hasSize(4)))
             .andExpect(jsonPath("$.data.languageRatio").isMap())
-            .andExpect(jsonPath("$.data.feedbacks").isArray());
-    }
-
-    @DisplayName("[GET] 크루 리포트 목록을 조회한다.")
-    @Test
-    @WithCustomMockUser
-    void getAllReports() throws Exception {
-        // given
-        Map<String, List<CrewReportResponseDto>> reports = new HashMap<>();
-        List<MemberResponseDto> members = getMembers();
-        Map<String, String> info = getInfo();
-        reports.put("reports", Collections.nCopies(6, CrewReportResponseDto.crewReportListResponse(
-            1L, true, members, info)));
-
-        given(crewService.getAllReports(anyLong(), anyString()))
-            .willReturn(reports);
-
-        // when // then
-        mockMvc.perform(
-            get("/crews/1/reports")
-        )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.reports").isArray());
+            .andExpect(jsonPath("$.data.feedbacks", hasSize(3)));
     }
 
     private Map<String, String> getInfo() {

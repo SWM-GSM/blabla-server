@@ -43,9 +43,9 @@ class ReportServiceTest extends IntegrationTestSupport {
             .orElseThrow(() -> new GeneralException(Code.CREW_NOT_FOUND, "존재하지 않는 크루입니다."));
         joinCrew(member2, crew);
 
-        CrewReport crewReport1 = createReport(member1, member2, crew, now);
-        CrewReport crewReport2 = createReport(member1, member2, crew, now.plusDays(1));
-        CrewReport crewReport3 = createReport(member1, member2, crew, now.plusDays(2));
+        CrewReport crewReport1 = createReport(member1, member2, now);
+        CrewReport crewReport2 = createReport(member1, member2, now.plusDays(1));
+        CrewReport crewReport3 = createReport(member1, member2, now.plusDays(2));
 
         // when
         List<HistoryResponseDto> histories = reportService.getHistory().get("histories");
