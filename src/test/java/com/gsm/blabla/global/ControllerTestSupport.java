@@ -2,6 +2,7 @@ package com.gsm.blabla.global;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gsm.blabla.admin.api.AdminController;
+import com.gsm.blabla.admin.application.FcmService;
 import com.gsm.blabla.agora.api.AgoraController;
 import com.gsm.blabla.agora.application.AgoraService;
 import com.gsm.blabla.auth.api.AuthController;
@@ -57,4 +58,7 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected ScheduleService scheduleService;
+
+    @MockBean
+    protected FcmService fcmService;
 }
