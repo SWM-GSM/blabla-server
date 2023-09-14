@@ -55,7 +55,7 @@ public class ContentService {
             List<ContentDetail> contentDetailList = contentDetailRepository.findAllByContent(content);
 
             List<ContentDetailDto> contentViewResponseDtoList = contentDetailList.stream()
-                    .map(contentDetail -> ContentDetailDto.contentViewResponse(content, contentDetail, memberId, memberContentDetailRepository))
+                    .map(contentDetail -> ContentDetailDto.contentViewResponse(contentDetail, memberId, memberContentDetailRepository))
                     .toList();
 
             contentCategoryResponseDtoList.add(ContentsResponseDto.contentCategoryResponse(content, contentViewResponseDtoList));
@@ -75,7 +75,7 @@ public class ContentService {
         final Long memberId = SecurityUtil.getMemberId();
 
         List<ContentDetailDto> contentDetailDtoList = contentDetailList.stream()
-                .map(contentDetail -> ContentDetailDto.contentViewResponse(content, contentDetail, memberId, memberContentDetailRepository))
+                .map(contentDetail -> ContentDetailDto.contentViewResponse(contentDetail, memberId, memberContentDetailRepository))
                 .toList();
 
         return ContentDetailsResponseDto.contentListResponse(content, contentDetailDtoList);
