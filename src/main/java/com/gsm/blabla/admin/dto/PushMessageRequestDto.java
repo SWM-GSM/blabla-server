@@ -1,4 +1,4 @@
-package com.gsm.blabla.fcm.dto;
+package com.gsm.blabla.admin.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
