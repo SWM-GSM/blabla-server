@@ -25,7 +25,7 @@ public class CrewReport {
     @OneToMany(mappedBy = "crewReport")
     private List<CrewReportKeyword> keywords;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
