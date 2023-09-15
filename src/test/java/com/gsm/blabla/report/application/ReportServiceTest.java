@@ -2,24 +2,17 @@ package com.gsm.blabla.report.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.gsm.blabla.crew.domain.Crew;
-import com.gsm.blabla.crew.domain.CrewReport;
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
-import com.gsm.blabla.global.exception.GeneralException;
-import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.report.dto.HistoryResponseDto;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class ReportServiceTest extends IntegrationTestSupport {
