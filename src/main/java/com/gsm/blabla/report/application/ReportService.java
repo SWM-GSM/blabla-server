@@ -5,8 +5,6 @@ import com.gsm.blabla.crew.dao.VoiceFileRepository;
 import com.gsm.blabla.crew.domain.CrewReport;
 import com.gsm.blabla.crew.domain.CrewReportAnalysis;
 import com.gsm.blabla.crew.domain.VoiceFile;
-import com.gsm.blabla.global.exception.GeneralException;
-import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.content.dao.MemberContentDetailRepository;
 import com.gsm.blabla.content.domain.MemberContentDetail;
