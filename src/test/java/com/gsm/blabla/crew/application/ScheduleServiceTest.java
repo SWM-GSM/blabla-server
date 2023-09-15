@@ -1,16 +1,11 @@
 package com.gsm.blabla.crew.application;
 
-import com.gsm.blabla.crew.dao.CrewRepository;
 import com.gsm.blabla.crew.domain.MemberSchedule;
 import com.gsm.blabla.crew.domain.Schedule;
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
-import com.gsm.blabla.common.enums.PreferMember;
-import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.crew.dao.MemberScheduleRepository;
 import com.gsm.blabla.crew.dao.ScheduleRepository;
-import com.gsm.blabla.crew.domain.MeetingCycle;
-import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.crew.dto.ScheduleRequestDto;
 import com.gsm.blabla.crew.dto.ScheduleResponseDto;
 import com.gsm.blabla.global.exception.GeneralException;
@@ -39,7 +34,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     Member member2;
     LocalDateTime meetingTime;
     String meetingTimeInString; // 현재 시각으로부터 3일 뒤
-    CrewRequestDto crewRequestDto;
+
     ScheduleRequestDto scheduleRequestDto;
 
     @Autowired
@@ -54,27 +49,10 @@ class ScheduleServiceTest extends IntegrationTestSupport {
     @Autowired
     MemberScheduleRepository memberScheduleRepository;
 
-    @Autowired
-    CrewRepository crewRepository;
-
     @BeforeEach
     void setUp() {
-        member1 = createMember("cat");
-        member2 = createMember("dog");
-
-        crewRequestDto = CrewRequestDto.builder()
-            .coverImage("test")
-            .name("테스트")
-            .description("테스트 크루입니다.")
-            .meetingCycle(MeetingCycle.EVERYDAY)
-            .tags(List.of(Tag.CULTURE, Tag.FILM_MUSIC))
-            .maxNum(8)
-            .korLevel(1)
-            .engLevel(1)
-            .preferMember(PreferMember.SAME_HOBBY)
-            .detail("테스트 크루입니다.")
-            .autoApproval(true)
-            .build();
+        member1 = createMember("테스트", "cat");
+        member2 = createMember("테스트", "dog");
 
         meetingTime = LocalDateTime.of(LocalDate.now().plusDays(3), LocalTime.of(16, 0, 0));
         meetingTimeInString =meetingTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
