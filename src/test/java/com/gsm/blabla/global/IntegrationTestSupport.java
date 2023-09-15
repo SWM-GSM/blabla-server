@@ -1,26 +1,21 @@
 package com.gsm.blabla.global;
 
 import com.gsm.blabla.auth.application.AuthService;
-import com.gsm.blabla.common.enums.PreferMember;
-import com.gsm.blabla.common.enums.Tag;
+import com.gsm.blabla.content.dao.ContentDetailRepository;
+import com.gsm.blabla.content.dao.ContentRepository;
+import com.gsm.blabla.content.dao.MemberContentDetailRepository;
+import com.gsm.blabla.content.domain.Content;
+import com.gsm.blabla.content.domain.ContentDetail;
+import com.gsm.blabla.content.domain.MemberContentDetail;
 import com.gsm.blabla.crew.application.CrewService;
-import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.dao.CrewReportAnalysisRepository;
 import com.gsm.blabla.crew.dao.CrewReportKeywordRepository;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
-import com.gsm.blabla.crew.dao.CrewRepository;
-import com.gsm.blabla.crew.dao.CrewTagRepository;
 import com.gsm.blabla.crew.dao.VoiceFileRepository;
-import com.gsm.blabla.crew.domain.Crew;
-import com.gsm.blabla.crew.domain.CrewMember;
-import com.gsm.blabla.crew.domain.CrewMemberRole;
 import com.gsm.blabla.crew.domain.CrewReport;
 import com.gsm.blabla.crew.domain.CrewReportAnalysis;
 import com.gsm.blabla.crew.domain.CrewReportKeyword;
-import com.gsm.blabla.crew.domain.CrewTag;
-import com.gsm.blabla.crew.domain.MeetingCycle;
 import com.gsm.blabla.crew.domain.VoiceFile;
-import com.gsm.blabla.crew.dto.CrewRequestDto;
 import com.gsm.blabla.auth.dao.AppleAccountRepository;
 import com.gsm.blabla.auth.dao.GoogleAccountRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
@@ -28,7 +23,7 @@ import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.LocalTime;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,15 +57,6 @@ public abstract class IntegrationTestSupport {
     protected AppleAccountRepository appleAccountRepository;
 
     @Autowired
-    protected CrewRepository crewRepository;
-
-    @Autowired
-    protected CrewMemberRepository crewMemberRepository;
-
-    @Autowired
-    protected CrewTagRepository crewTagRepository;
-
-    @Autowired
     private CrewReportRepository crewReportRepository;
 
     @Autowired
@@ -82,68 +68,32 @@ public abstract class IntegrationTestSupport {
     @Autowired
     private CrewReportKeywordRepository crewReportKeywordRepository;
 
+    @Autowired
+    private ContentRepository contentRepository;
+
+    @Autowired
+    private ContentDetailRepository contentDetailRepository;
+
+    @Autowired
+    private MemberContentDetailRepository memberContentDetailRepository;
+
     @AfterEach
     void cleanUpDatabase() {
         databaseCleanup.execute();
     }
 
-    protected Member createMember(String profileImage) {
+    protected Member createMember(String nickname, String profileImage) {
         return memberRepository.save(Member.builder()
             .socialLoginType(SocialLoginType.TEST)
-            .nickname("테스트")
+            .nickname(nickname)
             .profileImage(profileImage)
             .learningLanguage("ko")
             .build()
         );
     }
 
-    protected Long createPreparedCrew(Member member, String name, int maxNum, int korLevel, int engLevel, boolean autoApproval) {
-        CrewRequestDto crewRequestDto = CrewRequestDto.builder()
-            .coverImage("test")
-            .name(name)
-            .description("테스트 크루입니다.")
-            .meetingCycle(MeetingCycle.EVERYDAY)
-            .tags(List.of(Tag.CULTURE, Tag.FILM_MUSIC))
-            .maxNum(maxNum)
-            .korLevel(korLevel)
-            .engLevel(engLevel)
-            .preferMember(PreferMember.SAME_HOBBY)
-            .detail("테스트 크루입니다.")
-            .autoApproval(autoApproval)
-            .build();
-
-        Crew crew = crewRepository.save(crewRequestDto.toEntity());
-
-        crewRequestDto.getTags().forEach(tag ->
-            crewTagRepository.save(CrewTag.builder()
-                .crew(crew)
-                .tag(tag)
-                .build()
-            )
-        );
-
-        crewMemberRepository.save(CrewMember.builder()
-            .crew(crew)
-            .member(member)
-            .role(CrewMemberRole.LEADER)
-            .build()
-        );
-
-        return crew.getId();
-    }
-
-    protected void joinCrew(Member member, Crew crew) {
-        crewMemberRepository.save(
-            CrewMember.builder()
-                .member(member)
-                .crew(crew)
-                .role(CrewMemberRole.MEMBER)
-                .build()
-        );
-    }
-
     protected CrewReport createReport(Member member1, Member member2, LocalDateTime startedAt) {
-        CrewReport crewReport = startVoiceRoom(startedAt);
+        CrewReport crewReport = startVoiceRoom(startedAt, member1);
         exitVoiceRoom(member1, crewReport);
         exitVoiceRoom(member2, crewReport);
         createReportAnalysis(crewReport);
@@ -151,11 +101,12 @@ public abstract class IntegrationTestSupport {
         return crewReport;
     }
 
-    protected CrewReport startVoiceRoom(LocalDateTime startedAt) {
+    protected CrewReport startVoiceRoom(LocalDateTime startedAt, Member member) {
         return crewReportRepository.save(
             CrewReport.builder()
                 .startedAt(startedAt)
                 .endAt(startedAt.plusMinutes(26).plusSeconds(30))
+                .member(member)
                 .build()
         );
     }
@@ -198,6 +149,42 @@ public abstract class IntegrationTestSupport {
                 .crewReport(crewReport)
                 .keyword(keyword)
                 .count(count)
+                .build()
+        );
+    }
+
+    protected void createMemberContentDetail(Member member) {
+        Content content = contentRepository.save(
+            Content.builder()
+                .title("주토피아")
+                .description("꿈과 희망의 나라 주토피아")
+                .language("ko")
+                .thumbnailURL("www.test.com")
+                .build()
+        );
+
+        ContentDetail contentDetail = contentDetailRepository.save(
+            ContentDetail.builder()
+                .content(content)
+                .title("다짐하는 표현")
+                .description("주디가 주토피아 경찰을 대표하여 표창을 받는다.")
+                .guideSentence("실망시키지 않겠습니다.")
+                .targetSentence("I won't let you down.")
+                .contentUrl("www.test.com")
+                .startedAt(LocalTime.of(0, 0, 0))
+                .stoppedAt(LocalTime.of(0, 0, 1))
+                .endedAt(LocalTime.of(0, 0, 2))
+                .build()
+        );
+
+        memberContentDetailRepository.save(
+            MemberContentDetail.builder()
+                .member(member)
+                .contentDetail(contentDetail)
+                .userAnswer("test")
+                .longFeedback("test")
+                .starScore(3.0)
+                .contextScore(3.0)
                 .build()
         );
     }

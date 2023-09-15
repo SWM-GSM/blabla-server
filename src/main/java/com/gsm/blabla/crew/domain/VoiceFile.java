@@ -16,8 +16,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VoiceFile {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="voice_file_id")
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

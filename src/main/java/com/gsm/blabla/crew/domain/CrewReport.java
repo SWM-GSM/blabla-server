@@ -1,5 +1,6 @@
 package com.gsm.blabla.crew.domain;
 
+import com.gsm.blabla.member.domain.Member;
 import jakarta.persistence.*;
 import java.util.List;
 import lombok.Builder;
@@ -12,8 +13,9 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class CrewReport {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="crew_report_id")
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDateTime startedAt;
@@ -25,10 +27,15 @@ public class CrewReport {
     @OneToMany(mappedBy = "crewReport")
     private List<CrewReportKeyword> keywords;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Builder
-    public CrewReport(LocalDateTime startedAt, LocalDateTime endAt) {
+    public CrewReport(LocalDateTime startedAt, LocalDateTime endAt, Member member) {
         this.startedAt = startedAt;
         this.endAt = endAt;
+        this.member = member;
     }
 
     public void updateEndAt(LocalDateTime endAt) {
