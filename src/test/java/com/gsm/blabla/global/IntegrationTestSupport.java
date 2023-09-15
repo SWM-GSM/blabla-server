@@ -87,10 +87,10 @@ public abstract class IntegrationTestSupport {
         databaseCleanup.execute();
     }
 
-    protected Member createMember(String profileImage) {
+    protected Member createMember(String nickname, String profileImage) {
         return memberRepository.save(Member.builder()
             .socialLoginType(SocialLoginType.TEST)
-            .nickname("테스트")
+            .nickname(nickname)
             .profileImage(profileImage)
             .learningLanguage("ko")
             .build()

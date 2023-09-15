@@ -28,8 +28,8 @@ class ReportServiceTest extends IntegrationTestSupport {
 
     @BeforeEach
     void setUp() {
-        member1 = createMember("cat");
-        member2 = createMember("dog");
+        member1 = createMember("테스트1", "cat");
+        member2 = createMember("테스트2", "dog");
     }
 
     @DisplayName("[GET] 히스토리를 조회한다.")

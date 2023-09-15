@@ -59,8 +59,8 @@ class ScheduleServiceTest extends IntegrationTestSupport {
 
     @BeforeEach
     void setUp() {
-        member1 = createMember("cat");
-        member2 = createMember("dog");
+        member1 = createMember("테스트", "cat");
+        member2 = createMember("테스트", "dog");
 
         crewRequestDto = CrewRequestDto.builder()
             .coverImage("test")
