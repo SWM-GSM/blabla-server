@@ -25,8 +25,8 @@ class CrewServiceTest extends IntegrationTestSupport {
 
     @BeforeEach
     void setUp() {
-        member1 = createMember("dog");
-        member2 = createMember("wolf");
+        member1 = createMember("테스트", "dog");
+        member2 = createMember("테스트", "wolf");
     }
 
     @DisplayName("[GET] 크루 리포트를 조회한다.")
