@@ -97,53 +97,8 @@ public abstract class IntegrationTestSupport {
         );
     }
 
-    protected Long createPreparedCrew(Member member, String name, int maxNum, int korLevel, int engLevel, boolean autoApproval) {
-        CrewRequestDto crewRequestDto = CrewRequestDto.builder()
-            .coverImage("test")
-            .name(name)
-            .description("테스트 크루입니다.")
-            .meetingCycle(MeetingCycle.EVERYDAY)
-            .tags(List.of(Tag.CULTURE, Tag.FILM_MUSIC))
-            .maxNum(maxNum)
-            .korLevel(korLevel)
-            .engLevel(engLevel)
-            .preferMember(PreferMember.SAME_HOBBY)
-            .detail("테스트 크루입니다.")
-            .autoApproval(autoApproval)
-            .build();
-
-        Crew crew = crewRepository.save(crewRequestDto.toEntity());
-
-        crewRequestDto.getTags().forEach(tag ->
-            crewTagRepository.save(CrewTag.builder()
-                .crew(crew)
-                .tag(tag)
-                .build()
-            )
-        );
-
-        crewMemberRepository.save(CrewMember.builder()
-            .crew(crew)
-            .member(member)
-            .role(CrewMemberRole.LEADER)
-            .build()
-        );
-
-        return crew.getId();
-    }
-
-    protected void joinCrew(Member member, Crew crew) {
-        crewMemberRepository.save(
-            CrewMember.builder()
-                .member(member)
-                .crew(crew)
-                .role(CrewMemberRole.MEMBER)
-                .build()
-        );
-    }
-
     protected CrewReport createReport(Member member1, Member member2, LocalDateTime startedAt) {
-        CrewReport crewReport = startVoiceRoom(startedAt);
+        CrewReport crewReport = startVoiceRoom(startedAt, member1);
         exitVoiceRoom(member1, crewReport);
         exitVoiceRoom(member2, crewReport);
         createReportAnalysis(crewReport);
@@ -151,11 +106,12 @@ public abstract class IntegrationTestSupport {
         return crewReport;
     }
 
-    protected CrewReport startVoiceRoom(LocalDateTime startedAt) {
+    protected CrewReport startVoiceRoom(LocalDateTime startedAt, Member member) {
         return crewReportRepository.save(
             CrewReport.builder()
                 .startedAt(startedAt)
                 .endAt(startedAt.plusMinutes(26).plusSeconds(30))
+                .member(member)
                 .build()
         );
     }
