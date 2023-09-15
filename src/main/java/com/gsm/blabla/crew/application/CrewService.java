@@ -34,16 +34,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class CrewService {
 
-    private final CrewRepository crewRepository;
-    private final CrewTagRepository crewTagRepository;
-    private final CrewMemberRepository crewMemberRepository;
     private final MemberRepository memberRepository;
-    private final ApplyMessageRepository applyMessageRepository;
     private final VoiceFileRepository voiceFileRepository;
     private final CrewReportRepository crewReportRepository;
     private final S3UploaderService s3UploaderService;
     private final RestTemplate restTemplate;
-    private final CrewAccuseRepository crewAccuseRepository;
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
     private final CrewReportKeywordRepository crewReportKeywordRepository;
 
@@ -110,10 +105,6 @@ public class CrewService {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         );
-
-        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
-                .orElseThrow(() -> new GeneralException(Code.MEMBER_NOT_JOINED, "해당 멤버는 해당 크루의 멤버가 아닙니다."));
-
 
         return MemberProfileResponseDto.getCrewMemberProfile(member);
     }
