@@ -4,8 +4,6 @@ import com.gsm.blabla.crew.domain.MemberSchedule;
 import com.gsm.blabla.crew.domain.Schedule;
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
-import com.gsm.blabla.common.enums.PreferMember;
-import com.gsm.blabla.common.enums.Tag;
 import com.gsm.blabla.crew.dao.MemberScheduleRepository;
 import com.gsm.blabla.crew.dao.ScheduleRepository;
 import com.gsm.blabla.crew.dto.ScheduleRequestDto;
