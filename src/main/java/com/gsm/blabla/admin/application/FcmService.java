@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.JsonParseException;
-import com.gsm.blabla.admin.dto.PushMessageRequestDto;
+import com.gsm.blabla.admin.dto.FcmMessage;
+import com.gsm.blabla.admin.dto.FcmMessageRequestDto;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.Collections;
@@ -29,10 +30,10 @@ public class FcmService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/blabla-391200/messages:send";
     private final ObjectMapper objectMapper;
 
-    public Map<String, String> sendMessageTo(PushMessageRequestDto pushMessageRequestDto) throws IOException {
-        String targetToken = pushMessageRequestDto.getMessage().getToken();
-        String title = pushMessageRequestDto.getMessage().getNotification().getTitle();
-        String body = pushMessageRequestDto.getMessage().getNotification().getBody();
+    public Map<String, String> sendMessageTo(FcmMessageRequestDto fcmMessageRequestDto) throws IOException {
+        String targetToken = fcmMessageRequestDto.getTargetToken();
+        String title = fcmMessageRequestDto.getTitle();
+        String body = fcmMessageRequestDto.getBody();
 
         String message = makeMessage(targetToken, title, body);
 
@@ -50,11 +51,11 @@ public class FcmService {
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
-        PushMessageRequestDto pushMessageRequestDto = PushMessageRequestDto.builder()
+        FcmMessage fcmMessage = FcmMessage.builder()
             .validateOnly(false)
-            .message(PushMessageRequestDto.Message.builder()
+            .message(FcmMessage.Message.builder()
                 .token(targetToken)
-                .notification(PushMessageRequestDto.Notification.builder()
+                .notification(FcmMessage.Notification.builder()
                     .title(title)
                     .body(body)
                     .build()
@@ -62,7 +63,7 @@ public class FcmService {
                 .build()
             )
             .build();
-        return objectMapper.writeValueAsString(pushMessageRequestDto);
+        return objectMapper.writeValueAsString(fcmMessage);
     }
 
     private String getAccessToken() throws IOException {
