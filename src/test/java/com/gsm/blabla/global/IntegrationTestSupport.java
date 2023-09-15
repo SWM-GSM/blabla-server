@@ -3,6 +3,12 @@ package com.gsm.blabla.global;
 import com.gsm.blabla.auth.application.AuthService;
 import com.gsm.blabla.common.enums.PreferMember;
 import com.gsm.blabla.common.enums.Tag;
+import com.gsm.blabla.content.dao.ContentDetailRepository;
+import com.gsm.blabla.content.dao.ContentRepository;
+import com.gsm.blabla.content.dao.MemberContentDetailRepository;
+import com.gsm.blabla.content.domain.Content;
+import com.gsm.blabla.content.domain.ContentDetail;
+import com.gsm.blabla.content.domain.MemberContentDetail;
 import com.gsm.blabla.crew.application.CrewService;
 import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.dao.CrewReportAnalysisRepository;
@@ -28,6 +34,7 @@ import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +88,15 @@ public abstract class IntegrationTestSupport {
 
     @Autowired
     private CrewReportKeywordRepository crewReportKeywordRepository;
+
+    @Autowired
+    private ContentRepository contentRepository;
+
+    @Autowired
+    private ContentDetailRepository contentDetailRepository;
+
+    @Autowired
+    private MemberContentDetailRepository memberContentDetailRepository;
 
     @AfterEach
     void cleanUpDatabase() {
@@ -154,6 +170,42 @@ public abstract class IntegrationTestSupport {
                 .crewReport(crewReport)
                 .keyword(keyword)
                 .count(count)
+                .build()
+        );
+    }
+
+    protected void createMemberContentDetail(Member member) {
+        Content content = contentRepository.save(
+            Content.builder()
+                .title("주토피아")
+                .description("꿈과 희망의 나라 주토피아")
+                .language("ko")
+                .thumbnailURL("www.test.com")
+                .build()
+        );
+
+        ContentDetail contentDetail = contentDetailRepository.save(
+            ContentDetail.builder()
+                .content(content)
+                .title("다짐하는 표현")
+                .description("주디가 주토피아 경찰을 대표하여 표창을 받는다.")
+                .guideSentence("실망시키지 않겠습니다.")
+                .targetSentence("I won't let you down.")
+                .contentUrl("www.test.com")
+                .startedAt(LocalTime.of(0, 0, 0))
+                .stoppedAt(LocalTime.of(0, 0, 1))
+                .endedAt(LocalTime.of(0, 0, 2))
+                .build()
+        );
+
+        memberContentDetailRepository.save(
+            MemberContentDetail.builder()
+                .member(member)
+                .contentDetail(contentDetail)
+                .userAnswer("test")
+                .longFeedback("test")
+                .starScore(3.0)
+                .contextScore(3.0)
                 .build()
         );
     }
