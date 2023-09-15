@@ -8,12 +8,9 @@ import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.content.domain.ContentDetail;
 import com.gsm.blabla.content.domain.MemberContentDetail;
 import com.gsm.blabla.crew.application.CrewService;
-import com.gsm.blabla.crew.dao.CrewMemberRepository;
 import com.gsm.blabla.crew.dao.CrewReportAnalysisRepository;
 import com.gsm.blabla.crew.dao.CrewReportKeywordRepository;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
-import com.gsm.blabla.crew.dao.CrewRepository;
-import com.gsm.blabla.crew.dao.CrewTagRepository;
 import com.gsm.blabla.crew.dao.VoiceFileRepository;
 import com.gsm.blabla.crew.domain.CrewReport;
 import com.gsm.blabla.crew.domain.CrewReportAnalysis;
@@ -58,15 +55,6 @@ public abstract class IntegrationTestSupport {
 
     @Autowired
     protected AppleAccountRepository appleAccountRepository;
-
-    @Autowired
-    protected CrewRepository crewRepository;
-
-    @Autowired
-    protected CrewMemberRepository crewMemberRepository;
-
-    @Autowired
-    protected CrewTagRepository crewTagRepository;
 
     @Autowired
     private CrewReportRepository crewReportRepository;
