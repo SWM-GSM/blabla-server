@@ -17,6 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,44 +37,80 @@ class ReportServiceTest extends IntegrationTestSupport {
         member2 = createMember("테스트2", "dog");
     }
 
-    @DisplayName("[GET] 히스토리 조회 시나리오")
-    @TestFactory
-    @WithCustomMockUser
-    Collection<DynamicTest> getHistory() {
+    @Nested
+    @DisplayName("[GET] 히스토리를 조회한다.")
+    class getHistory {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        @Test
+        @DisplayName("크루 리포트만 있을 경우")
+        @WithCustomMockUser
+        void getHistoryWithOnlyCrewReport() {
+            //given
+            createReport(member1, member2, now.plusDays(1));
+            createReport(member1, member2, now);
+            createReport(member1, member2, now.plusDays(2));
+
+            // when
+            List<HistoryResponseDto> histories = reportService.getHistory().get("histories");
+
+            // then
+            assertThat(histories).hasSize(3);
+            assertThat(histories.get(0)).extracting("datetime").isEqualTo(now.plusDays(2).format(formatter));
+            assertThat(histories.get(1)).extracting("datetime").isEqualTo(now.plusDays(1).format(formatter));
+            assertThat(histories.get(2)).extracting("datetime").isEqualTo(now.format(formatter));
+
+            assertThat(histories.get(0).getReports().get(0).getType()).isEqualTo("crew");
+            assertThat(histories.get(0).getReports().get(0).getInfo().get("title")).isEqualTo("테스트1 외 1명");
+            assertThat(histories.get(0).getReports().get(0).getInfo().get("subTitle")).isEqualTo("00:26:30");
+        }
+
+        @Test
+        @DisplayName("컨텐츠 연습 기록만 있을 경우")
+        @WithCustomMockUser
+        void getHistoryWithOnlyMemberContentDetail() {
             // given
-            return List.of(
-                DynamicTest.dynamicTest("크루 리포트만 있을 경우", () -> {
-                    //given
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    createReport(member1, member2, now.plusDays(1));
-                    createReport(member1, member2, now);
-                    createReport(member1, member2, now.plusDays(2));
+            createMemberContentDetail(member1);
+            createMemberContentDetail(member1);
 
-                    // when
-                    List<HistoryResponseDto> histories = reportService.getHistory().get("histories");
+            // when
+            List<HistoryResponseDto> histories = reportService.getHistory().get("histories");
 
-                    // then
-                    assertThat(histories).hasSize(3);
-                    assertThat(histories.get(0)).extracting("datetime").isEqualTo(now.plusDays(2).format(formatter));
-                    assertThat(histories.get(1)).extracting("datetime").isEqualTo(now.plusDays(1).format(formatter));
-                    assertThat(histories.get(2)).extracting("datetime").isEqualTo(now.format(formatter));
+            // then
+            assertThat(histories).hasSize(1);
+            assertThat(histories.get(0)).extracting("datetime").isEqualTo(now.format(formatter));
 
-                    assertThat(histories.get(0).getReports().get(0).getInfo().get("title")).isEqualTo("테스트1 외 1명");
-                }),
-                DynamicTest.dynamicTest("연습실 컨텐츠만 있을 경우", () -> {
-                    //given
+            assertThat(histories.get(0).getReports().get(0).getType()).isEqualTo("personal");
+            assertThat(histories.get(0).getReports().get(0).getInfo().get("title")).isEqualTo("다짐하는 표현");
+            assertThat(histories.get(0).getReports().get(0).getInfo().get("subTitle")).isEqualTo("주토피아");
+        }
 
-                    // when
+        @Test
+        @DisplayName("둘 다 있을 경우")
+        @WithCustomMockUser
+        void getHistoryWithBothData() {
+            // given
+            createReport(member1, member2, now.plusDays(1));
+            createReport(member1, member2, now);
+            createReport(member1, member2, now.plusDays(2));
 
-                    // then
-                }),
-                DynamicTest.dynamicTest("크루 리포트와 연습실 컨텐츠 둘 다 있을 경우", () -> {
-                    //given
+            createMemberContentDetail(member1);
+            createMemberContentDetail(member1);
 
-                    // when
+            // when
+            List<HistoryResponseDto> histories = reportService.getHistory().get("histories");
 
-                    // then
-                })
-            );
+            // then
+            assertThat(histories).hasSize(3);
+
+            assertThat(histories.get(0)).extracting("datetime").isEqualTo(now.plusDays(2).format(formatter));
+            assertThat(histories.get(1)).extracting("datetime").isEqualTo(now.plusDays(1).format(formatter));
+            assertThat(histories.get(2)).extracting("datetime").isEqualTo(now.format(formatter));
+
+            assertThat(histories.get(2).getReports()).hasSize(3);
+            assertThat(histories.get(2).getReports().get(0).getType()).isEqualTo("crew");
+            assertThat(histories.get(2).getReports().get(1).getType()).isEqualTo("personal");
+            assertThat(histories.get(2).getReports().get(2).getType()).isEqualTo("personal");
+        }
     }
 }
