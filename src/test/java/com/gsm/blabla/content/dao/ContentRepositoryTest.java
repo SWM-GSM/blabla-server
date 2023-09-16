@@ -16,11 +16,6 @@ import static org.assertj.core.api.Assertions.tuple;
 @SpringBootTest
 class ContentRepositoryTest extends RepositoryTestSupport {
 
-    @AfterEach
-    void afterEach() {
-        contentRepository.deleteAll();
-    }
-
     @Autowired
     private ContentRepository contentRepository;
 
