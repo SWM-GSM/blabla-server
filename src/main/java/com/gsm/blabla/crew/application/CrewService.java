@@ -47,8 +47,8 @@ public class CrewService {
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
     private final CrewReportKeywordRepository crewReportKeywordRepository;
 
-    @Value("${ai.voice-analysis-url}")
-    private String voiceAnalysisUrl;
+    @Value("${ai.voice-analysis-request-url}")
+    private String voiceAnalysisRequestUrl;
 
     @Value("${ai.report-analysis-trigger-url}")
     private String reportAnalysisTriggerUrl;
@@ -58,36 +58,12 @@ public class CrewService {
 
 
 
-    public Map<String, String> uploadAndAnalyzeVoiceFile(Long reportId, MultipartFile file) {
-        if (file.getSize() == 0) {
-            throw new GeneralException(Code.FILE_IS_EMPTY, "음성 파일이 비어있습니다.");
-        }
-
-        Long memberId = SecurityUtil.getMemberId();
-
-        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm"));
-        String filePath = String.format("reports/%s/members/%s/%s/%s.wav", String.valueOf(reportId), String.valueOf(memberId), fileName, fileName);
-        String fileUrl = s3UploaderService.uploadFile(filePath, file);
-
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonFileUrl = "{\"fileUrl\":\"" + fileUrl + "\"}";
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonFileUrl, headers);
-        String response = restTemplate.postForObject(voiceAnalysisUrl, requestEntity, String.class);
-
-        VoiceAnalysisResponseDto voiceAnalysisResponseDto = null;
-        try {
-            voiceAnalysisResponseDto = objectMapper.readValue(response, VoiceAnalysisResponseDto.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+    public Map<String, String> createVoiceFile(Long reportId, VoiceAnalysisResponseDto voiceAnalysisResponseDto) {
         if (voiceAnalysisResponseDto == null) {
             throw new GeneralException(Code.VOICE_ANALYSIS_IS_NULL, "음성 분석 결과가 비어있습니다.");
         }
+
+        Long memberId = SecurityUtil.getMemberId();
 
         CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
                 () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
@@ -101,7 +77,7 @@ public class CrewService {
                 VoiceFile.builder()
                         .member(member)
                         .crewReport(crewReport)
-                        .fileUrl(fileUrl)
+                        .fileUrl(voiceAnalysisResponseDto.getFileUrl())
                         .totalCallTime(voiceAnalysisResponseDto.getTotalCallTime())
                         .koreanTime(voiceAnalysisResponseDto.getKoreanTime())
                         .englishTime(voiceAnalysisResponseDto.getEnglishTime())
@@ -109,6 +85,31 @@ public class CrewService {
                         .build()
         );
         return Collections.singletonMap("message", "음성 파일 분석이 완료되었습니다.");
+    }
+
+    public Map<String, String> createVoiceFileRequest(Long reportId, MultipartFile file) {
+        if (file.getSize() == 0) {
+            throw new GeneralException(Code.FILE_IS_EMPTY, "음성 파일이 비어있습니다.");
+        }
+
+        Long memberId = SecurityUtil.getMemberId();
+
+        String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm"));
+        String filePath = String.format("reports/%s/members/%s/%s/%s.wav", String.valueOf(reportId), String.valueOf(memberId), fileName, fileName);
+        String fileUrl = s3UploaderService.uploadFile(filePath, file);
+
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("fileUrl", fileUrl);
+        paramMap.put("reportId", String.valueOf(reportId));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(paramMap, headers);
+
+        restTemplate.postForObject(voiceAnalysisRequestUrl, requestEntity, String.class);
+
+        return Collections.singletonMap("message", "음성 파일 분석 요청이 완료되었습니다.");
     }
 
     @Transactional(readOnly = true)
