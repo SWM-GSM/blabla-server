@@ -24,10 +24,18 @@ public class CrewController {
 
     @Operation(summary = "음성 파일 분석 API")
     @PostMapping(value = "/crews/reports/{reportId}/voice-file")
-    public DataResponseDto<Map<String, String>> uploadAndAnalyzeVoiceFile(
+    public DataResponseDto<Map<String, String>> createVoiceFile(
+            @PathVariable("reportId") Long reportId,
+            @RequestBody VoiceAnalysisResponseDto voiceAnalysisResponseDto) {
+        return DataResponseDto.of(crewService.createVoiceFile(reportId, voiceAnalysisResponseDto));
+    }
+
+    @Operation(summary = "음성 파일 분석 요청 API")
+    @PostMapping(value = "/crews/reports/{reportId}/voice-file/request")
+    public DataResponseDto<Map<String, String>> createVoiceFileRequest(
             @PathVariable("reportId") Long reportId,
             @RequestParam("file") MultipartFile file) {
-        return DataResponseDto.of(crewService.uploadAndAnalyzeVoiceFile(reportId, file));
+        return DataResponseDto.of(crewService.createVoiceFileRequest(reportId, file));
     }
 
     @Operation(summary = "크루 리포트 생성 API")
