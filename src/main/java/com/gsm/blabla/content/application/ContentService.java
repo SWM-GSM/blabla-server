@@ -46,7 +46,7 @@ public class ContentService {
 
     @Transactional(readOnly = true)
     public Map<String, List<ContentsResponseDto>> getContents(String language) {
-        List<Content> contentList = contentRepository.findAllByLanguage(language);
+        List<Content> contentList = contentRepository.findAllByLanguageOrderBySequence(language);
 
         final Long memberId = SecurityUtil.getMemberId();
 
@@ -70,7 +70,7 @@ public class ContentService {
                 () -> new GeneralException(Code.CONTENT_NOT_FOUND, "존재하지 않는 컨텐츠 카테고리입니다.")
         );
 
-        List<ContentDetail> contentDetailList = contentDetailRepository.findAllByContent(content);
+        List<ContentDetail> contentDetailList = contentDetailRepository.findAllByContentOrderBySequence(content);
 
         final Long memberId = SecurityUtil.getMemberId();
 
