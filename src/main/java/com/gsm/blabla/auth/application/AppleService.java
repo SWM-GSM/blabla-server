@@ -38,7 +38,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -74,7 +73,7 @@ public class AppleService {
             String headerOfIdentityToken = identityToken.substring(0, identityToken.indexOf("."));
 
             Map<String, String> header = new ObjectMapper().readValue(
-                new String(Base64Utils.decodeFromUrlSafeString(headerOfIdentityToken), StandardCharsets.UTF_8),
+                new String(Base64.getUrlDecoder().decode(headerOfIdentityToken), StandardCharsets.UTF_8),
                 Map.class
             );
             ApplePublicKeyDto.Key key = applePublicKey.getMatchedKeyBy(header.get("kid"), header.get("alg"))
