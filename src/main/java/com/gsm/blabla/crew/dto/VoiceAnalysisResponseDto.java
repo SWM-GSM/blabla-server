@@ -17,6 +17,9 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
 public class VoiceAnalysisResponseDto {
+
+    private String fileUrl;
+
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     private Duration totalCallTime;
 
