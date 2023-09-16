@@ -46,13 +46,4 @@ class ContentRepositoryTest {
                 );
     }
 
-    private static Content createContent(String title, String description, String language) {
-        return Content.builder()
-                .title(title)
-                .description(description)
-                .language(language)
-                .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
-                .build();
-    }
-
 }

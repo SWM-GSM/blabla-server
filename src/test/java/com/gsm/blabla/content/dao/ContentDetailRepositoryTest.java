@@ -2,6 +2,7 @@ package com.gsm.blabla.content.dao;
 
 import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.content.domain.ContentDetail;
+import com.gsm.blabla.global.RepositoryTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,20 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-@SpringBootTest
-class ContentDetailRepositoryTest {
-
-    @AfterEach
-    void afterEach() {
-        contentDetailRepository.deleteAll();
-        contentRepository.deleteAll();
-    }
-
-    @Autowired
-    private ContentRepository contentRepository;
-
-    @Autowired
-    private ContentDetailRepository contentDetailRepository;
+class ContentDetailRepositoryTest extends RepositoryTestSupport {
 
     @DisplayName("컨텐츠를 통해 세부 컨텐츠 리스트를 조회한다.")
     @Test
@@ -54,28 +42,7 @@ class ContentDetailRepositoryTest {
                 );
     }
 
-    private static ContentDetail getContentDetail(Content content, String title, String description, LocalTime startedAt, LocalTime stoppedAt, LocalTime endedAt) {
-        ContentDetail contentDetail = ContentDetail.builder()
-            .content(content)
-            .title(title)
-            .description(description)
-            .contentUrl("https://www.youtube.com/watch?v=sHpGT4SQwgw")
-            .guideSentence("나는 오스틴 입니다. About the Fit의 창업자 입니다.")
-            .targetSentence("I'm Jules Ostin. I'm the founder of About the Fit.")
-            .startedAt(startedAt)
-            .stoppedAt(stoppedAt)
-            .endedAt(endedAt)
-            .build();
-        return contentDetail;
-    }
 
-    private static Content createContent(String title, String description, String language) {
-        return Content.builder()
-                .title(title)
-                .description(description)
-                .language(language)
-                .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
-                .build();
     }
 
 }
