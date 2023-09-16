@@ -6,6 +6,9 @@ import com.gsm.blabla.global.response.DataResponseDto;
 import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.io.IOException;
+import java.time.LocalTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +22,7 @@ public class CrewController {
     private final CrewService crewService;
 
 
-    @Operation(summary = "음성 파일 업로드 & 분석 API")
+    @Operation(summary = "음성 파일 분석 API")
     @PostMapping(value = "/crews/reports/{reportId}/voice-file")
     public DataResponseDto<Map<String, String>> uploadAndAnalyzeVoiceFile(
             @PathVariable("reportId") Long reportId,
@@ -30,16 +33,17 @@ public class CrewController {
     @Operation(summary = "크루 리포트 생성 API")
     @PostMapping(value = "/crews/reports/{reportId}")
     public DataResponseDto<Map<String, String>> createReport(
-            @PathVariable("reportId") Long reportId) {
-        return DataResponseDto.of(crewService.createReport(reportId));
+            @PathVariable("reportId") Long reportId,
+            @RequestBody TargetTokenDto targetTokenDto) {
+        return DataResponseDto.of(crewService.createReport(reportId, targetTokenDto));
     }
-
 
     @Operation(summary = "크루 리포트 생성 요청 API")
     @PostMapping(value = "/crews/reports/{reportId}/request")
     public DataResponseDto<Map<String, String>> createReportRequest(
-            @PathVariable("reportId") Long reportId) {
-        return DataResponseDto.of(crewService.createReportRequest(reportId));
+            @PathVariable("reportId") Long reportId,
+            @RequestBody TargetTokenDto targetTokenDto) {
+        return DataResponseDto.of(crewService.createReportRequest(reportId, targetTokenDto));
     }
 
     @Operation(summary = "크루 리포트 조회 API")

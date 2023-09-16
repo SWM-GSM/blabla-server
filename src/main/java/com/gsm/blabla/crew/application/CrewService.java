@@ -2,6 +2,8 @@ package com.gsm.blabla.crew.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gsm.blabla.admin.application.FcmService;
+import com.gsm.blabla.admin.dto.FcmMessageRequestDto;
 import com.gsm.blabla.crew.dao.*;
 import com.gsm.blabla.crew.domain.*;
 import com.gsm.blabla.crew.dto.*;
@@ -11,6 +13,7 @@ import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +25,7 @@ import com.gsm.blabla.member.dto.MemberResponseDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +42,21 @@ public class CrewService {
     private final VoiceFileRepository voiceFileRepository;
     private final CrewReportRepository crewReportRepository;
     private final S3UploaderService s3UploaderService;
+    private final FcmService fcmService;
     private final RestTemplate restTemplate;
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
     private final CrewReportKeywordRepository crewReportKeywordRepository;
+
+    @Value("${ai.voice-analysis-url}")
+    private String voiceAnalysisUrl;
+
+    @Value("${ai.report-analysis-trigger-url}")
+    private String reportAnalysisTriggerUrl;
+
+    @Value("${ai.report-analysis-url}")
+    private String reportAnalysisUrl;
+
+
 
     public Map<String, String> uploadAndAnalyzeVoiceFile(Long reportId, MultipartFile file) {
         if (file.getSize() == 0) {
@@ -53,7 +69,6 @@ public class CrewService {
         String filePath = String.format("reports/%s/members/%s/%s/%s.wav", String.valueOf(reportId), String.valueOf(memberId), fileName, fileName);
         String fileUrl = s3UploaderService.uploadFile(filePath, file);
 
-        String fastApiUrl = "http://13.209.117.21:8000/ai/voice-analysis";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -62,7 +77,7 @@ public class CrewService {
         String jsonFileUrl = "{\"fileUrl\":\"" + fileUrl + "\"}";
 
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonFileUrl, headers);
-        String response = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
+        String response = restTemplate.postForObject(voiceAnalysisUrl, requestEntity, String.class);
 
         VoiceAnalysisResponseDto voiceAnalysisResponseDto = null;
         try {
@@ -109,7 +124,7 @@ public class CrewService {
         return MemberProfileResponseDto.getCrewMemberProfile(member);
     }
 
-    public Map<String, String> createReportRequest(Long reportId) {
+    public Map<String, String> createReportRequest(Long reportId, TargetTokenDto targetTokenDto) {
 
         LocalDateTime endAt = LocalDateTime.now();
         CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
@@ -119,37 +134,34 @@ public class CrewService {
 
         Long voiceFileCount = voiceFileRepository.countAllByCrewReportId(reportId);
 
-        String crewReportAnalysisTriggerUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis/sqs";
-
-        Map<String, Long> paramMap = new HashMap<>();
-        paramMap.put("reportId", reportId);
-        paramMap.put("targetVoiceFileCount", voiceFileCount);
+        Map<String, String> paramMap = new HashMap<>();
+        paramMap.put("reportId", String.valueOf(reportId));
+        paramMap.put("targetVoiceFileCount", String.valueOf(voiceFileCount));
+        paramMap.put("targetToken", targetTokenDto.getTargetToken());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Map<String, Long>> requestEntity = new HttpEntity<>(paramMap, headers);
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(paramMap, headers);
 
         // TODO: response 예외 처리
-        restTemplate.postForObject(crewReportAnalysisTriggerUrl, requestEntity, String.class);
+        restTemplate.postForObject(reportAnalysisTriggerUrl, requestEntity, String.class);
 
         return Collections.singletonMap("message", "리포트 생성 요청이 완료되었습니다.");
     }
 
-    public Map<String, String> createReport(Long reportId) {
+    public Map<String, String> createReport(Long reportId, TargetTokenDto targetTokenDto) {
 
         List<VoiceFile> voiceFiles = voiceFileRepository.getAllByCrewReportId(reportId);
         List<String> fileUrls = voiceFiles.stream()
                 .map(VoiceFile::getFileUrl)
                 .toList();
 
-        String crewReportAnalysisUrl = "https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/crew-report-analysis";
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<List<String>> requestEntity = new HttpEntity<>(fileUrls, headers);
-        String response = restTemplate.postForObject(crewReportAnalysisUrl, requestEntity, String.class);
+        String response = restTemplate.postForObject(reportAnalysisUrl, requestEntity, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         AiCrewReportResponseDto aiCrewReportResponseDto = null;
@@ -185,6 +197,17 @@ public class CrewService {
                                 .build()
                         )
                         .toList());
+
+        FcmMessageRequestDto fcmMessageRequestDto = FcmMessageRequestDto.builder()
+                .targetToken(targetTokenDto.getTargetToken())
+                .title("리포트 생성 완료")
+                .body("리포트 생성이 완료되었습니다.")
+                .build();
+        try {
+            fcmService.sendMessageTo(fcmMessageRequestDto);
+        } catch (IOException e) {
+            throw new GeneralException(Code.FCM_FAILED, "FCM 메시지 전송에 실패했습니다.");
+        }
 
         return Collections.singletonMap("message", "리포트 생성이 완료되었습니다.");
     }
