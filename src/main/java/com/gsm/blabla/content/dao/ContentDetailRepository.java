@@ -9,5 +9,6 @@ import java.util.List;
 public interface ContentDetailRepository extends JpaRepository<ContentDetail, Long> {
 
     List<ContentDetail> findAllByContent(Content content);
+    List<ContentDetail> findAllByContentOrderBySequence(Content content);
 
 }
