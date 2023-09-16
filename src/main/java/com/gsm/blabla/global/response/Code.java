@@ -84,6 +84,12 @@ public enum Code {
     PRACTICE_HISTORY_FILE_SIZE_EXCEEDED("PH001", HttpStatus.BAD_REQUEST, "PracticeHistory file size exceeded"),
 
     /*
+     * fcm 관련 오류
+     * HEAD NAME - fcm (fcm)
+     * */
+    FCM_FAILED("FCM001", HttpStatus.INTERNAL_SERVER_ERROR, "FCM failed"),
+
+    /*
     * 서버 관련 오류
     * HEAD NAME - S (Server)
     * */
