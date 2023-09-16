@@ -6,11 +6,15 @@ import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.content.domain.ContentDetail;
 import com.gsm.blabla.crew.dao.ScheduleRepository;
 import java.time.LocalTime;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public abstract class RepositoryTestSupport {
+
+    @Autowired
+    protected DatabaseCleanup databaseCleanup;
 
     @Autowired
     protected ContentRepository contentRepository;
@@ -20,6 +24,11 @@ public abstract class RepositoryTestSupport {
 
     @Autowired
     protected ScheduleRepository scheduleRepository;
+
+    @AfterEach
+    void cleanUpDatabase() {
+        databaseCleanup.execute();
+    }
 
     protected ContentDetail createContentDetail(Content content, String title, String description,
         LocalTime startedAt, LocalTime stoppedAt, LocalTime endedAt, Long sequence) {
