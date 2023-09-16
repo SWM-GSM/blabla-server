@@ -18,13 +18,15 @@ public class Content {
     private String description; // 컨텐츠 설명
     private String language; // 언어
     private String thumbnailURL; // 컨텐츠 썸네일 URL
+    private Long sequence; // 컨텐츠 순서
 
     @Builder
-    public Content(String title, String description, String language, String thumbnailURL) {
+    public Content(String title, String description, String language, String thumbnailURL, Long sequence) {
         this.title = title;
         this.description = description;
         this.language = language;
         this.thumbnailURL = thumbnailURL;
+        this.sequence = sequence;
     }
 
 }
