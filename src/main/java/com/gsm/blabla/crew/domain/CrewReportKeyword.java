@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CrewReportKeyword {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,4 +27,5 @@ public class CrewReportKeyword {
         this.keyword = keyword;
         this.count = count;
     }
+
 }
