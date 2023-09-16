@@ -27,9 +27,11 @@ public class ContentDetail {
     private LocalTime startedAt; // 컨텐츠 시작 시간
     private LocalTime stoppedAt; // 컨텐츠 중지 시간
     private LocalTime endedAt; // 컨텐츠 종료 시간
+    private Long sequence; // 컨텐츠 순서
 
     @Builder
-    public ContentDetail(Content content, String contentUrl, String title, String description, String guideSentence, String targetSentence, LocalTime startedAt, LocalTime stoppedAt, LocalTime endedAt) {
+    public ContentDetail(Content content, String contentUrl, String title, String description, String guideSentence,
+        String targetSentence, LocalTime startedAt, LocalTime stoppedAt, LocalTime endedAt, Long sequence) {
         this.content = content;
         this.contentUrl = contentUrl;
         this.title = title;
@@ -39,6 +41,7 @@ public class ContentDetail {
         this.startedAt = startedAt;
         this.stoppedAt = stoppedAt;
         this.endedAt = endedAt;
+        this.sequence = sequence;
     }
 
 }
