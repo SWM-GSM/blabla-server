@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
 public class VoiceAnalysisResponseDto {
 
+    private Long memberId;
     private String fileUrl;
 
     @JsonDeserialize(using = LocalTimeDeserializer.class)
