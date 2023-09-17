@@ -33,7 +33,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-            .requestMatchers("/h2-console/**", "/swagger-ui/**");
+            .requestMatchers( "/swagger-ui/**");
     }
 
     @Bean
@@ -67,9 +67,8 @@ public class SecurityConfig {
                     .requestMatchers("/**").permitAll()
                     .requestMatchers(
                         "/oauth/**",
-                        "/ko/common/levels/**","/ko/common/keywords/**",
-                        "/en/common/levels/**","/en/common/keywords/**",
-                        "/members/nicknames/**"
+                        "/members/nicknames/**",
+                        "/admin/**"
                     ).permitAll()
                     .requestMatchers(PathRequest.toH2Console()).permitAll() // H2-console 화면을 사용하기 위해
                     .anyRequest().authenticated()

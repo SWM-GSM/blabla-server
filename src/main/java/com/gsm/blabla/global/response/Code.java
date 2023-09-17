@@ -66,7 +66,7 @@ public enum Code {
 
     /*
      * Content Detail 관련 오류
-     * HEAD NAME - CTD (Content Detail)
+     * HEAD NAME - CTD (ContentDetail)
      * */
     CONTENT_DETAIL_NOT_FOUND("CTD001", HttpStatus.NOT_FOUND, "Content Detail not found"),
 
@@ -84,10 +84,17 @@ public enum Code {
     PRACTICE_HISTORY_FILE_SIZE_EXCEEDED("PH001", HttpStatus.BAD_REQUEST, "PracticeHistory file size exceeded"),
 
     /*
-     * fcm 관련 오류
+     * FCM 관련 오류
      * HEAD NAME - fcm (fcm)
      * */
     FCM_FAILED("FCM001", HttpStatus.INTERNAL_SERVER_ERROR, "FCM failed"),
+
+    /*
+     * VoiceRoom 관련 오류
+     * HEAD NAME - VR (VoiceRoom)
+     * */
+    ALREADY_IN_VOICE_ROOM("VR001", HttpStatus.BAD_REQUEST, "Already in voice room"),
+    MEMBER_NOT_IN_VOICE_ROOM("VR002", HttpStatus.BAD_REQUEST, "Member not in voice room"),
 
     /*
     * 서버 관련 오류

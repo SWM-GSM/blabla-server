@@ -37,4 +37,12 @@ public class MemberResponseDto {
             .comment(voiceFile.getFeedback())
             .build();
     }
+
+    public static MemberResponseDto voiceRoomResponse(Member member) {
+        return MemberResponseDto.builder()
+            .id(member.getId())
+            .nickname(member.getNickname())
+            .profileImage(member.getProfileImage())
+            .build();
+    }
 }
