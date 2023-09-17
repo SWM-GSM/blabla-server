@@ -66,7 +66,7 @@ public enum Code {
 
     /*
      * Content Detail 관련 오류
-     * HEAD NAME - CTD (Content Detail)
+     * HEAD NAME - CTD (ContentDetail)
      * */
     CONTENT_DETAIL_NOT_FOUND("CTD001", HttpStatus.NOT_FOUND, "Content Detail not found"),
 
@@ -84,7 +84,7 @@ public enum Code {
     PRACTICE_HISTORY_FILE_SIZE_EXCEEDED("PH001", HttpStatus.BAD_REQUEST, "PracticeHistory file size exceeded"),
 
     /*
-     * fcm 관련 오류
+     * FCM 관련 오류
      * HEAD NAME - fcm (fcm)
      * */
     FCM_FAILED("FCM001", HttpStatus.INTERNAL_SERVER_ERROR, "FCM failed"),
