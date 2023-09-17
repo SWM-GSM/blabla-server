@@ -7,17 +7,19 @@ import com.gsm.blabla.agora.domain.VoiceRoom;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
+import com.gsm.blabla.crew.dao.VoiceFileRepository;
 import com.gsm.blabla.crew.domain.CrewReport;
+import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class AgoraService {
     private final CrewReportRepository crewReportRepository;
     private final MemberRepository memberRepository;
     private final VoiceRoomRepository voiceRoomRepository;
+    private final VoiceFileRepository voiceFileRepository;
 
     static final int TOKEN_EXPIRATION_TIME = 1000 * 60 * 30;
     static final int PRIVILEGE_EXPIRATION_TIME = 1000 * 60 * 30;
@@ -86,5 +89,18 @@ public class AgoraService {
             .toList();
 
         return Collections.singletonMap("members", membersInVoiceRoom);
+    }
+
+    public Map<String, List<MemberResponseDto>> getPreviousMembers(Long reportId) {
+
+        List<MemberResponseDto> membersInVoiceRoom = voiceFileRepository.findAllByCrewReportId(reportId)
+                .stream()
+                .map(VoiceFile::getMember)
+                .map(MemberResponseDto::voiceRoomResponse)
+                .collect(Collectors.toMap(MemberResponseDto::getId, Function.identity(), (m1, m2) -> m1))
+                .values().stream()
+                .toList();
+
+        return Collections.singletonMap("previousMembers", membersInVoiceRoom);
     }
 }
