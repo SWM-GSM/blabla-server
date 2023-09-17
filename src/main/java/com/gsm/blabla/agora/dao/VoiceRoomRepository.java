@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface VoiceRoomRepository extends JpaRepository<VoiceRoom, Long> {
 
     Boolean existsByMemberId(Long memberId);
+    List<VoiceRoom> findAllByInVoiceRoom(Boolean inVoiceRoom);
     VoiceRoom findByMemberId(Long memberId);
 }
