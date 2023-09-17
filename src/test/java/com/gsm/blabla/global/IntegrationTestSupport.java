@@ -1,5 +1,8 @@
 package com.gsm.blabla.global;
 
+import com.gsm.blabla.agora.application.AgoraService;
+import com.gsm.blabla.agora.dao.VoiceRoomRepository;
+import com.gsm.blabla.agora.domain.VoiceRoom;
 import com.gsm.blabla.auth.application.AuthService;
 import com.gsm.blabla.content.dao.ContentDetailRepository;
 import com.gsm.blabla.content.dao.ContentRepository;
@@ -18,6 +21,8 @@ import com.gsm.blabla.crew.domain.CrewReportKeyword;
 import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.auth.dao.AppleAccountRepository;
 import com.gsm.blabla.auth.dao.GoogleAccountRepository;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
@@ -48,6 +53,9 @@ public abstract class IntegrationTestSupport {
     protected AuthService authService;
 
     @Autowired
+    protected AgoraService agoraService;
+
+    @Autowired
     protected MemberRepository memberRepository;
 
     @Autowired
@@ -57,7 +65,7 @@ public abstract class IntegrationTestSupport {
     protected AppleAccountRepository appleAccountRepository;
 
     @Autowired
-    private CrewReportRepository crewReportRepository;
+    protected CrewReportRepository crewReportRepository;
 
     @Autowired
     private VoiceFileRepository voiceFileRepository;
@@ -77,6 +85,9 @@ public abstract class IntegrationTestSupport {
     @Autowired
     private MemberContentDetailRepository memberContentDetailRepository;
 
+    @Autowired
+    protected VoiceRoomRepository voiceRoomRepository;
+
     @AfterEach
     void cleanUpDatabase() {
         databaseCleanup.execute();
@@ -94,6 +105,7 @@ public abstract class IntegrationTestSupport {
 
     protected CrewReport createReport(Member member1, Member member2, LocalDateTime startedAt) {
         CrewReport crewReport = startVoiceRoom(startedAt, member1);
+        joinVoiceRoom(member2);
         exitVoiceRoom(member1, crewReport);
         exitVoiceRoom(member2, crewReport);
         createReportAnalysis(crewReport);
@@ -101,54 +113,32 @@ public abstract class IntegrationTestSupport {
         return crewReport;
     }
 
+    protected void joinVoiceRoom(Member member) {
+        Long memberId = member.getId();
+        boolean inVoiceRoom = voiceRoomRepository.existsByMemberId(memberId);
+        if (inVoiceRoom) {
+            VoiceRoom voiceRoom = voiceRoomRepository.findByMemberId(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_IN_VOICE_ROOM, "보이스룸에 접속하지 않은 유저입니다.")
+            );
+            voiceRoom.updateInVoiceRoom(true);
+        } else {
+            voiceRoomRepository.save(
+                VoiceRoom.builder()
+                    .member(member)
+                    .inVoiceRoom(true)
+                    .build()
+            );
+        }
+    }
+
     protected CrewReport startVoiceRoom(LocalDateTime startedAt, Member member) {
+        joinVoiceRoom(member);
+
         return crewReportRepository.save(
             CrewReport.builder()
                 .startedAt(startedAt)
                 .endAt(startedAt.plusMinutes(26).plusSeconds(30))
                 .member(member)
-                .build()
-        );
-    }
-
-    protected void exitVoiceRoom(Member member, CrewReport crewReport) {
-        VoiceFile voiceFile = voiceFileRepository.save(
-            VoiceFile.builder()
-                .member(member)
-                .crewReport(crewReport)
-                .fileUrl("www.test.com")
-                .totalCallTime(Duration.ofMinutes(26).plusSeconds(30))
-                .koreanTime(Duration.ofMinutes(20))
-                .englishTime(Duration.ofMinutes(6))
-                .redundancyTime(Duration.ofSeconds(30))
-                .feedback("테스트 피드백 by " + member.getProfileImage())
-                .build()
-        );
-
-        voiceFile.createFeedback("테스트 피드백 ");
-    }
-
-    protected void createReportAnalysis(CrewReport crewReport) {
-        crewReportAnalysisRepository.save(
-            CrewReportAnalysis.builder()
-                .crewReport(crewReport)
-                .koreanTime(Duration.ofMinutes(20))
-                .englishTime(Duration.ofMinutes(6))
-                .cloudUrl("www.test.com")
-                .build()
-        );
-
-        createKeyword(crewReport, "테스트1", 38L);
-        createKeyword(crewReport, "테스트2", 30L);
-        createKeyword(crewReport, "테스트3", 20L);
-    }
-
-    protected void createKeyword(CrewReport crewReport, String keyword, Long count) {
-        crewReportKeywordRepository.save(
-            CrewReportKeyword.builder()
-                .crewReport(crewReport)
-                .keyword(keyword)
-                .count(count)
                 .build()
         );
     }
@@ -185,6 +175,60 @@ public abstract class IntegrationTestSupport {
                 .longFeedback("test")
                 .starScore(3.0)
                 .contextScore(3.0)
+                .build()
+        );
+    }
+
+    private void updateInVoiceRoom(Member member) {
+        VoiceRoom voiceRoom = voiceRoomRepository.findByMemberId(member.getId()).orElseThrow(
+            () -> new GeneralException(com.gsm.blabla.global.response.Code.MEMBER_NOT_IN_VOICE_ROOM, "보이스룸에 접속하지 않은 유저입니다.")
+        );
+        voiceRoom.updateInVoiceRoom(false);
+    }
+
+    private void saveVoiceFile(Member member, CrewReport crewReport) {
+        VoiceFile voiceFile = voiceFileRepository.save(
+            VoiceFile.builder()
+                .member(member)
+                .crewReport(crewReport)
+                .fileUrl("www.test.com")
+                .totalCallTime(Duration.ofMinutes(26).plusSeconds(30))
+                .koreanTime(Duration.ofMinutes(20))
+                .englishTime(Duration.ofMinutes(6))
+                .redundancyTime(Duration.ofSeconds(30))
+                .feedback("테스트 피드백 by " + member.getProfileImage())
+                .build()
+        );
+
+        voiceFile.createFeedback("테스트 피드백");
+    }
+
+    private void exitVoiceRoom(Member member, CrewReport crewReport) {
+        updateInVoiceRoom(member);
+        saveVoiceFile(member, crewReport);
+    }
+
+    private void createReportAnalysis(CrewReport crewReport) {
+        crewReportAnalysisRepository.save(
+            CrewReportAnalysis.builder()
+                .crewReport(crewReport)
+                .koreanTime(Duration.ofMinutes(20))
+                .englishTime(Duration.ofMinutes(6))
+                .cloudUrl("www.test.com")
+                .build()
+        );
+
+        createKeyword(crewReport, "테스트1", 38L);
+        createKeyword(crewReport, "테스트2", 30L);
+        createKeyword(crewReport, "테스트3", 20L);
+    }
+
+    private void createKeyword(CrewReport crewReport, String keyword, Long count) {
+        crewReportKeywordRepository.save(
+            CrewReportKeyword.builder()
+                .crewReport(crewReport)
+                .keyword(keyword)
+                .count(count)
                 .build()
         );
     }

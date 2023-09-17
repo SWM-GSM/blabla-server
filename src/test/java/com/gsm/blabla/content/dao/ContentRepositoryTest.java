@@ -2,7 +2,6 @@ package com.gsm.blabla.content.dao;
 
 import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.global.RepositoryTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
