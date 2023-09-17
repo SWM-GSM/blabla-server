@@ -9,16 +9,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Agora 관련 API")
 @RestController
+@RequestMapping("/crews/voice-room")
 @RequiredArgsConstructor
 public class AgoraController {
     private final AgoraService agoraService;
 
     @Operation(summary = "보이스룸 입장 API")
-    @PostMapping(value = "/crews/voice-room")
+    @PostMapping(value = "")
     public DataResponseDto<RtcTokenDto> create(
         @RequestBody VoiceRoomRequestDto voiceRoomRequestDto) {
         return DataResponseDto.of(agoraService.create(voiceRoomRequestDto));
