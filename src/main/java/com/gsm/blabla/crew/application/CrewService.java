@@ -66,19 +66,13 @@ public class CrewService {
             throw new GeneralException(Code.VOICE_ANALYSIS_IS_NULL, "음성 분석 결과가 비어있습니다.");
         }
 
-        Long memberId = SecurityUtil.getMemberId();
-
         CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
                 () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
         );
 
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-        );
-
         voiceFileRepository.save(
                 VoiceFile.builder()
-                        .member(member)
+                        .member(crewReport.getMember())
                         .crewReport(crewReport)
                         .fileUrl(voiceAnalysisResponseDto.getFileUrl())
                         .totalCallTime(voiceAnalysisResponseDto.getTotalCallTime())
