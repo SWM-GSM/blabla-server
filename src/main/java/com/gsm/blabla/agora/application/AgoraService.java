@@ -12,7 +12,6 @@ import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
-import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.time.LocalDateTime;
 import java.util.Collections;

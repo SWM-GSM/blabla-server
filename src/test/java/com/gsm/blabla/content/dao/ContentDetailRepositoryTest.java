@@ -3,11 +3,8 @@ package com.gsm.blabla.content.dao;
 import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.content.domain.ContentDetail;
 import com.gsm.blabla.global.RepositoryTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalTime;
 import java.util.List;

@@ -14,7 +14,6 @@ import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.global.ControllerTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
-import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.util.Date;
 import java.util.List;
