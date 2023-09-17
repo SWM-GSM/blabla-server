@@ -10,11 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Agora 관련 API")
 @RestController
@@ -34,5 +30,12 @@ public class AgoraController {
     @GetMapping(value = "")
     public DataResponseDto<Map<String, List<MemberResponseDto>>> getMembers() {
         return DataResponseDto.of(agoraService.getMembers());
+    }
+
+    @Operation(summary = "이전 보이스룸 접속 유저 목록 조회 API")
+    @GetMapping(value = "/previous/{reportId}")
+    public DataResponseDto<Map<String, List<MemberResponseDto>>> getPreviousMembers(
+            @PathVariable Long reportId) {
+        return DataResponseDto.of(agoraService.getPreviousMembers(reportId));
     }
 }
