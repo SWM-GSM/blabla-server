@@ -2,6 +2,8 @@ package com.gsm.blabla.agora.application;
 
 import com.gsm.blabla.agora.RtcTokenBuilder2;
 import com.gsm.blabla.agora.RtcTokenBuilder2.Role;
+import com.gsm.blabla.agora.dao.VoiceRoomRepository;
+import com.gsm.blabla.agora.domain.VoiceRoom;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
@@ -10,8 +12,13 @@ import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.member.dao.MemberRepository;
+import com.gsm.blabla.member.domain.Member;
+import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -71,5 +78,14 @@ public class AgoraService {
             .expiresIn(new Date(now + TOKEN_EXPIRATION_TIME).getTime())
             .reportId(crewReportRepository.findCurrentId())
             .build();
+    }
+
+    public Map<String, List<MemberResponseDto>> getMembers() {
+        List<MemberResponseDto> membersInVoiceRoom = voiceRoomRepository.findAllByInVoiceRoom(true).stream()
+            .map(VoiceRoom::getMember)
+            .map(MemberResponseDto::voiceRoomResponse)
+            .toList();
+
+        return Collections.singletonMap("members", membersInVoiceRoom);
     }
 }
