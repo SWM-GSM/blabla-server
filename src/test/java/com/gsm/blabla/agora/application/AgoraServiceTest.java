@@ -2,10 +2,8 @@ package com.gsm.blabla.agora.application;
 
 import static org.assertj.core.api.Assertions.*;
 
-import com.gsm.blabla.agora.dao.VoiceRoomRepository;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
-import com.gsm.blabla.crew.dao.CrewReportRepository;
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
 import com.gsm.blabla.member.domain.Member;
@@ -17,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class AgoraServiceTest extends IntegrationTestSupport {
     Member member1;
