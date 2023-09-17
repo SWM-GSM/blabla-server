@@ -67,7 +67,6 @@ class ScheduleControllerTest extends ControllerTestSupport {
         // when // then
         mockMvc.perform(
             get("/crews/schedules")
-                .header("Authorization", "test")
         )
             .andDo(print())
             .andExpect(status().isOk())

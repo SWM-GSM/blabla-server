@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class AgoraServiceTest extends IntegrationTestSupport {
     Member member1;
-    Long crewId;
 
     @Autowired
     private AgoraService agoraService;
