@@ -2,6 +2,7 @@ package com.gsm.blabla.agora.application;
 
 import static org.assertj.core.api.Assertions.*;
 
+import com.gsm.blabla.agora.dao.VoiceRoomRepository;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
@@ -61,6 +62,23 @@ class AgoraServiceTest extends IntegrationTestSupport {
         // when
         RtcTokenDto rtcTokenDto = agoraService.create(voiceRoomRequestDto);
         Long afterTokenCreated = crewReportRepository.count();
+
+        // then
+        assertThat(afterTokenCreated).isEqualTo(beforeTokenCreated + 1);
+    }
+    @DisplayName("[POST] 보이스룸 최초 입장 시, 보이스룸 엔티티가 저장된다.")
+    @Test
+    @WithCustomMockUser
+    void voiceRoomcreatedAtFirst() {
+        // given
+        VoiceRoomRequestDto voiceRoomRequestDto = VoiceRoomRequestDto.builder()
+            .isActivated(false)
+            .build();
+        long beforeTokenCreated = voiceRoomRepository.count();
+
+        // when
+        agoraService.create(voiceRoomRequestDto);
+        long afterTokenCreated = voiceRoomRepository.count();
 
         // then
         assertThat(afterTokenCreated).isEqualTo(beforeTokenCreated + 1);
