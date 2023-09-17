@@ -21,6 +21,8 @@ import com.gsm.blabla.crew.domain.CrewReportKeyword;
 import com.gsm.blabla.crew.domain.VoiceFile;
 import com.gsm.blabla.auth.dao.AppleAccountRepository;
 import com.gsm.blabla.auth.dao.GoogleAccountRepository;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.domain.SocialLoginType;
@@ -31,6 +33,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.security.core.parameters.P;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -103,6 +106,7 @@ public abstract class IntegrationTestSupport {
 
     protected CrewReport createReport(Member member1, Member member2, LocalDateTime startedAt) {
         CrewReport crewReport = startVoiceRoom(startedAt, member1);
+        joinVoiceRoom(member2);
         exitVoiceRoom(member1, crewReport);
         exitVoiceRoom(member2, crewReport);
         createReportAnalysis(crewReport);
@@ -111,12 +115,21 @@ public abstract class IntegrationTestSupport {
     }
 
     protected void joinVoiceRoom(Member member) {
-        voiceRoomRepository.save(
-            VoiceRoom.builder()
-                .member(member)
-                .inVoiceRoom(true)
-                .build()
-        );
+        Long memberId = member.getId();
+        boolean inVoiceRoom = voiceRoomRepository.existsByMemberId(memberId);
+        if (inVoiceRoom) {
+            VoiceRoom voiceRoom = voiceRoomRepository.findByMemberId(memberId).orElseThrow(
+                () -> new GeneralException(Code.MEMBER_NOT_IN_VOICE_ROOM, "보이스룸에 접속하지 않은 유저입니다.")
+            );
+            voiceRoom.updateInVoiceRoom(true);
+        } else {
+            voiceRoomRepository.save(
+                VoiceRoom.builder()
+                    .member(member)
+                    .inVoiceRoom(true)
+                    .build()
+            );
+        }
     }
 
     protected CrewReport startVoiceRoom(LocalDateTime startedAt, Member member) {
@@ -168,7 +181,9 @@ public abstract class IntegrationTestSupport {
     }
 
     private void updateInVoiceRoom(Member member) {
-        VoiceRoom voiceRoom = voiceRoomRepository.findByMemberId(member.getId());
+        VoiceRoom voiceRoom = voiceRoomRepository.findByMemberId(member.getId()).orElseThrow(
+            () -> new GeneralException(com.gsm.blabla.global.response.Code.MEMBER_NOT_IN_VOICE_ROOM, "보이스룸에 접속하지 않은 유저입니다.")
+        );
         voiceRoom.updateInVoiceRoom(false);
     }
 

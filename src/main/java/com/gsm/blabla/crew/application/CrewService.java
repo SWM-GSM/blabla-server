@@ -99,7 +99,9 @@ public class CrewService {
 
         boolean inVoiceRoom = voiceRoomRepository.existsByMemberId(memberId);
         if (inVoiceRoom) {
-            VoiceRoom voiceRoom = voiceRoomRepository.findByMemberId(memberId);
+            VoiceRoom voiceRoom = voiceRoomRepository.findByMemberId(memberId).orElseThrow(
+                    () -> new GeneralException(Code.MEMBER_NOT_IN_VOICE_ROOM, "보이스룸에 접속하지 않은 유저입니다.")
+            );
             voiceRoom.updateInVoiceRoom(false);
         } else {
             throw new GeneralException(Code.MEMBER_NOT_IN_VOICE_ROOM, "보이스룸에 접속하지 않은 유저입니다.");
