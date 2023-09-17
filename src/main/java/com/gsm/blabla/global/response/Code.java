@@ -90,6 +90,13 @@ public enum Code {
     FCM_FAILED("FCM001", HttpStatus.INTERNAL_SERVER_ERROR, "FCM failed"),
 
     /*
+     * VoiceRoom 관련 오류
+     * HEAD NAME - VR (VoiceRoom)
+     * */
+    ALREADY_IN_VOICE_ROOM("VR001", HttpStatus.BAD_REQUEST, "Already in voice room"),
+    MEMBER_NOT_IN_VOICE_ROOM("VR002", HttpStatus.BAD_REQUEST, "Member not in voice room"),
+
+    /*
     * 서버 관련 오류
     * HEAD NAME - S (Server)
     * */
