@@ -28,6 +28,7 @@ public class AgoraService {
 
     private final CrewReportRepository crewReportRepository;
     private final MemberRepository memberRepository;
+    private final VoiceRoomRepository voiceRoomRepository;
 
     static final int TOKEN_EXPIRATION_TIME = 1000 * 60 * 30;
     static final int PRIVILEGE_EXPIRATION_TIME = 1000 * 60 * 30;
@@ -48,6 +49,20 @@ public class AgoraService {
                     ))
                     .build()
              );
+        }
+
+        boolean inVoiceRoom = voiceRoomRepository.existsByMemberId(memberId);
+        if (inVoiceRoom) {
+            throw new GeneralException(Code.ALREADY_IN_VOICE_ROOM, "이미 보이스 채팅방에 입장하셨습니다.");
+        } else {
+            voiceRoomRepository.save(
+                VoiceRoom.builder()
+                    .member(memberRepository.findById(memberId).orElseThrow(
+                        () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+                    ))
+                    .inVoiceRoom(true)
+                    .build()
+            );
         }
 
         return RtcTokenDto.builder()

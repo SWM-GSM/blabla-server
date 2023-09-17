@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gsm.blabla.admin.application.FcmService;
 import com.gsm.blabla.admin.dto.FcmMessageRequestDto;
+import com.gsm.blabla.agora.dao.VoiceRoomRepository;
+import com.gsm.blabla.agora.domain.VoiceRoom;
 import com.gsm.blabla.crew.dao.*;
 import com.gsm.blabla.crew.domain.*;
 import com.gsm.blabla.crew.dto.*;
@@ -46,6 +48,7 @@ public class CrewService {
     private final RestTemplate restTemplate;
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
     private final CrewReportKeywordRepository crewReportKeywordRepository;
+    private final VoiceRoomRepository voiceRoomRepository;
 
     @Value("${ai.voice-analysis-request-url}")
     private String voiceAnalysisRequestUrl;
@@ -93,6 +96,14 @@ public class CrewService {
         }
 
         Long memberId = SecurityUtil.getMemberId();
+
+        boolean inVoiceRoom = voiceRoomRepository.existsByMemberId(memberId);
+        if (inVoiceRoom) {
+            VoiceRoom voiceRoom = voiceRoomRepository.findByMemberId(memberId);
+            voiceRoom.updateInVoiceRoom(false);
+        } else {
+            throw new GeneralException(Code.MEMBER_NOT_IN_VOICE_ROOM, "보이스룸에 접속하지 않은 유저입니다.");
+        }
 
         String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm"));
         String filePath = String.format("reports/%s/members/%s/%s/%s.wav", String.valueOf(reportId), String.valueOf(memberId), fileName, fileName);
