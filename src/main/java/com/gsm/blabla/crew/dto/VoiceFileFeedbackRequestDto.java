@@ -4,5 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class VoiceFileFeedbackRequestDto {
+
     private String content;
 }
