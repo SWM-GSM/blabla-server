@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.gsm.blabla.agora.dto.AccuseRequestDto;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.global.ControllerTestSupport;
@@ -81,5 +82,30 @@ class AgoraControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.data.members[0].nickname").value("test1"))
             .andExpect(jsonPath("$.data.members[1].nickname").value("test2"))
             .andExpect(jsonPath("$.data.members[2].nickname").value("test3"));
+    }
+
+    @DisplayName("[POST] 보이스룸 퇴장 시, 유저를 신고한다.")
+    @Test
+    @WithCustomMockUser
+    void accuse() throws Exception {
+        // given
+        given(agoraService.accuse(any(AccuseRequestDto.class)))
+            .willReturn(Map.of("message", "신고가 접수되었습니다."));
+
+        // when // then
+        mockMvc.perform(
+            post("/crews/voice-room/accuse")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(AccuseRequestDto.builder()
+                    .category("ABUSE")
+                    .description("")
+                    .reporteeId(1L)
+                    .build()
+                ))
+        )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.message").value("신고가 접수되었습니다."));
     }
 }
