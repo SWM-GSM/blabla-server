@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VoiceRoomRequestDto {
+public class AccuseRequestDto {
 
-    private Boolean isActivated;
+    private String category;
+    private String description;
+    private Long reporteeId;
 }
