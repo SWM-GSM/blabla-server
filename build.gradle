@@ -131,7 +131,10 @@ bootJar {
 jacocoTestReport {
     reports {
         html.enabled true
-        html.destination file("${buildDir}/jacoco/index.html")
+        html.destination file("${buildDir}/reports/jacoco/test/index.html")
+
+        xml.enabled true
+        xml.destination file("${buildDir}/reports/jacoco/test/jacoco.xml")
     }
 
     def Qdomains = []
