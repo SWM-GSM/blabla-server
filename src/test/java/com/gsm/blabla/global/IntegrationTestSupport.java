@@ -192,10 +192,6 @@ public abstract class IntegrationTestSupport {
                 .member(member)
                 .crewReport(crewReport)
                 .fileUrl("www.test.com")
-                .totalCallTime(Duration.ofMinutes(26).plusSeconds(30))
-                .koreanTime(Duration.ofMinutes(20))
-                .englishTime(Duration.ofMinutes(6))
-                .redundancyTime(Duration.ofSeconds(30))
                 .feedback("테스트 피드백 by " + member.getProfileImage())
                 .build()
         );
