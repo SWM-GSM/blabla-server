@@ -49,6 +49,7 @@ public class CrewService {
     private final CrewReportAnalysisRepository crewReportAnalysisRepository;
     private final CrewReportKeywordRepository crewReportKeywordRepository;
     private final VoiceRoomRepository voiceRoomRepository;
+    private final VoiceFileAnalysisRepository voiceFileAnalysisRepository;
 
     @Value("${ai.voice-analysis-request-url}")
     private String voiceAnalysisRequestUrl;
@@ -61,34 +62,29 @@ public class CrewService {
 
 
 
-    public Map<String, String> createVoiceFile(Long reportId, VoiceAnalysisResponseDto voiceAnalysisResponseDto) {
+    public Map<String, String> createVoiceFile(VoiceAnalysisResponseDto voiceAnalysisResponseDto) {
         if (voiceAnalysisResponseDto == null) {
             throw new GeneralException(Code.VOICE_ANALYSIS_IS_NULL, "음성 분석 결과가 비어있습니다.");
         }
 
-        Member member = memberRepository.findById(voiceAnalysisResponseDto.getMemberId()).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+        VoiceFile voiceFile = voiceFileRepository.findById(voiceAnalysisResponseDto.getVoiceFileId()).orElseThrow(
+                () -> new GeneralException(Code.VOICE_FILE_NOT_FOUND, "존재하지 않는 음성 파일입니다.")
         );
 
-        CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
-                () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
-        );
-
-        voiceFileRepository.save(
-                VoiceFile.builder()
-                        .member(member)
-                        .crewReport(crewReport)
-                        .fileUrl(voiceAnalysisResponseDto.getFileUrl())
+        voiceFileAnalysisRepository.save(
+                VoiceFileAnalysis.builder()
+                        .voiceFile(voiceFile)
                         .totalCallTime(voiceAnalysisResponseDto.getTotalCallTime())
-                        .koreanTime(voiceAnalysisResponseDto.getKoreanTime())
                         .englishTime(voiceAnalysisResponseDto.getEnglishTime())
+                        .koreanTime(voiceAnalysisResponseDto.getKoreanTime())
                         .redundancyTime(voiceAnalysisResponseDto.getRedundancyTime())
                         .build()
         );
+
         return Collections.singletonMap("message", "음성 파일 분석이 완료되었습니다.");
     }
 
-    public Map<String, String> createVoiceFileRequest(Long reportId, MultipartFile file) {
+    public Map<String, Long> createVoiceFileRequest(Long reportId, MultipartFile file) {
         if (file.getSize() == 0) {
             throw new GeneralException(Code.FILE_IS_EMPTY, "음성 파일이 비어있습니다.");
         }
@@ -109,10 +105,21 @@ public class CrewService {
         String filePath = String.format("reports/%s/members/%s/%s/%s.wav", String.valueOf(reportId), String.valueOf(memberId), fileName, fileName);
         String fileUrl = s3UploaderService.uploadFile(filePath, file);
 
+        Long voiceFileId = voiceFileRepository.save(
+                VoiceFile.builder()
+                        .member(memberRepository.findById(memberId).orElseThrow(
+                                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+                        ))
+                        .crewReport(crewReportRepository.findById(reportId).orElseThrow(
+                                () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
+                        ))
+                        .fileUrl(fileUrl)
+                        .build()
+        ).getId();
+
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("fileUrl", fileUrl);
-        paramMap.put("reportId", String.valueOf(reportId));
-        paramMap.put("memberId", String.valueOf(memberId));
+        paramMap.put("voiceFileId", String.valueOf(voiceFileId));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -121,7 +128,7 @@ public class CrewService {
 
         restTemplate.postForObject(voiceAnalysisRequestUrl, requestEntity, String.class);
 
-        return Collections.singletonMap("message", "음성 파일 분석 요청이 완료되었습니다.");
+        return Collections.singletonMap("voiceFileId", voiceFileId);
     }
 
     @Transactional(readOnly = true)
@@ -226,6 +233,7 @@ public class CrewService {
     }
 
     public Map<String, String> createFeedback(Long voiceFileId, VoiceFileFeedbackRequestDto voiceFileFeedbackRequestDto) {
+
         VoiceFile voiceFile = voiceFileRepository.findById(voiceFileId).orElseThrow(
                 () -> new GeneralException(Code.VOICE_FILE_NOT_FOUND, "존재하지 않는 음성 파일입니다.")
         );

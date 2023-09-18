@@ -21,16 +21,15 @@ public class CrewController {
 
 
     @Operation(summary = "음성 파일 분석 API")
-    @PostMapping(value = "/crews/reports/{reportId}/voice-file")
+    @PostMapping(value = "/crews/reports/voice-file")
     public DataResponseDto<Map<String, String>> createVoiceFile(
-            @PathVariable("reportId") Long reportId,
             @RequestBody VoiceAnalysisResponseDto voiceAnalysisResponseDto) {
-        return DataResponseDto.of(crewService.createVoiceFile(reportId, voiceAnalysisResponseDto));
+        return DataResponseDto.of(crewService.createVoiceFile(voiceAnalysisResponseDto));
     }
 
     @Operation(summary = "음성 파일 분석 요청 API")
     @PostMapping(value = "/crews/reports/{reportId}/voice-file/request")
-    public DataResponseDto<Map<String, String>> createVoiceFileRequest(
+    public DataResponseDto<Map<String, Long>> createVoiceFileRequest(
             @PathVariable("reportId") Long reportId,
             @RequestParam("file") MultipartFile file) {
         return DataResponseDto.of(crewService.createVoiceFileRequest(reportId, file));
