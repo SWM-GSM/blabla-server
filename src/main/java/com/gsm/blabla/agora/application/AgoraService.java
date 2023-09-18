@@ -65,10 +65,21 @@ public class AgoraService {
              );
         }
 
-        boolean inVoiceRoom = voiceRoomRepository.existsByMemberId(memberId);
-        if (inVoiceRoom) {
-            throw new GeneralException(Code.ALREADY_IN_VOICE_ROOM, "이미 보이스 채팅방에 입장하셨습니다.");
-        } else {
+        boolean inVoiceRoomExist = voiceRoomRepository.existsByMemberId(memberId);
+        if (inVoiceRoomExist) { // 보이스룸 접속 이력이 있는 유저
+            boolean inVoiceRoomIsTrue = voiceRoomRepository.findByMemberId(memberId).orElseThrow(
+                    () -> new GeneralException(Code.MEMBER_NOT_IN_VOICE_ROOM, "보이스룸 접속 이력이 없는 유저입니다.")
+                )
+                .getInVoiceRoom();
+            if (inVoiceRoomIsTrue) {
+                throw new GeneralException(Code.ALREADY_IN_VOICE_ROOM, "이미 보이스룸에 입장하셨습니다.");
+            } else {
+                VoiceRoom voiceRoom = voiceRoomRepository.findByMemberId(memberId).orElseThrow(
+                    () -> new GeneralException(Code.MEMBER_NOT_IN_VOICE_ROOM, "보이스룸에 접속하지 않은 유저입니다.")
+                );
+                voiceRoom.updateInVoiceRoom(true);
+            }
+        } else { // 보이스룸 접속 이력이 없는 유저
             voiceRoomRepository.save(
                 VoiceRoom.builder()
                     .member(memberRepository.findById(memberId).orElseThrow(
