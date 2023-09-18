@@ -2,10 +2,15 @@ package com.gsm.blabla.agora.application;
 
 import static org.assertj.core.api.Assertions.*;
 
+import com.gsm.blabla.agora.domain.Accuse;
+import com.gsm.blabla.agora.domain.AccuseCategory;
+import com.gsm.blabla.agora.dto.AccuseRequestDto;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
+import com.gsm.blabla.global.exception.GeneralException;
+import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.member.domain.Member;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 import java.time.LocalDateTime;
@@ -100,5 +105,33 @@ class AgoraServiceTest extends IntegrationTestSupport {
                 tuple(member1.getId(), member1.getNickname(), member1.getProfileImage()),
                 tuple(member2.getId(), member2.getNickname(), member2.getProfileImage())
             );
+    }
+
+    @DisplayName("[POST] 보이스룸 퇴장 시, 유저를 신고한다.")
+    @Test
+    @WithCustomMockUser
+    void accuse() {
+        // given
+        AccuseRequestDto accuseRequestDto = AccuseRequestDto.builder()
+            .category("ABUSE")
+            .description("")
+            .reporteeId(member2.getId())
+            .build();
+        long beforeAccuse = accuseRepository.count();
+
+        // when
+        String response = agoraService.accuse(accuseRequestDto).get("message");
+        Long afterAccuse = accuseRepository.count();
+        Accuse accuse = accuseRepository.findById(afterAccuse).orElseThrow(
+            () -> new GeneralException(Code.ACCUSE_NOT_FOUND, "존재하지 않는 신고입니다.")
+        );
+
+        // then
+        assertThat(response).isEqualTo("신고가 접수되었습니다.");
+        assertThat(afterAccuse).isEqualTo(beforeAccuse + 1);
+        assertThat(accuse.getCategory()).isEqualTo(AccuseCategory.valueOf(accuseRequestDto.getCategory()));
+        assertThat(accuse.getDescription()).isEmpty();
+        assertThat(accuse.getReporter().getId()).isEqualTo(member1.getId());
+        assertThat(accuse.getReportee().getId()).isEqualTo(member2.getId());
     }
 }

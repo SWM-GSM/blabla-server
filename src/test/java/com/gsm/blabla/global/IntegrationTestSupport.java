@@ -1,6 +1,7 @@
 package com.gsm.blabla.global;
 
 import com.gsm.blabla.agora.application.AgoraService;
+import com.gsm.blabla.agora.dao.AccuseRepository;
 import com.gsm.blabla.agora.dao.VoiceRoomRepository;
 import com.gsm.blabla.agora.domain.VoiceRoom;
 import com.gsm.blabla.auth.application.AuthService;
@@ -87,6 +88,9 @@ public abstract class IntegrationTestSupport {
 
     @Autowired
     protected VoiceRoomRepository voiceRoomRepository;
+
+    @Autowired
+    protected AccuseRepository accuseRepository;
 
     @AfterEach
     void cleanUpDatabase() {
