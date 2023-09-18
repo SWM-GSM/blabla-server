@@ -2,8 +2,12 @@ package com.gsm.blabla.agora.application;
 
 import com.gsm.blabla.agora.RtcTokenBuilder2;
 import com.gsm.blabla.agora.RtcTokenBuilder2.Role;
+import com.gsm.blabla.agora.dao.AccuseRepository;
 import com.gsm.blabla.agora.dao.VoiceRoomRepository;
+import com.gsm.blabla.agora.domain.Accuse;
+import com.gsm.blabla.agora.domain.AccuseCategory;
 import com.gsm.blabla.agora.domain.VoiceRoom;
+import com.gsm.blabla.agora.dto.AccuseRequestDto;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.crew.dao.CrewReportRepository;
@@ -38,6 +42,7 @@ public class AgoraService {
     private final MemberRepository memberRepository;
     private final VoiceRoomRepository voiceRoomRepository;
     private final VoiceFileRepository voiceFileRepository;
+    private final AccuseRepository accuseRepository;
 
     static final int TOKEN_EXPIRATION_TIME = 1000 * 60 * 30;
     static final int PRIVILEGE_EXPIRATION_TIME = 1000 * 60 * 30;
@@ -102,5 +107,24 @@ public class AgoraService {
                 .toList();
 
         return Collections.singletonMap("previousMembers", membersInVoiceRoom);
+    }
+
+    public Map<String, String> accuse(AccuseRequestDto accuseRequestDto) {
+        Long reporterId = SecurityUtil.getMemberId();
+
+        accuseRepository.save(
+            Accuse.builder()
+                .category(AccuseCategory.valueOf(accuseRequestDto.getCategory()))
+                .description(accuseRequestDto.getDescription())
+                .reporter(memberRepository.findById(reporterId).orElseThrow(
+                    () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+                ))
+                .reportee(memberRepository.findById(accuseRequestDto.getReporteeId()).orElseThrow(
+                    () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
+                ))
+            .build()
+        );
+
+        return Collections.singletonMap("message", "신고가 접수되었습니다.");
     }
 }
