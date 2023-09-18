@@ -95,6 +95,7 @@ public enum Code {
      * */
     ALREADY_IN_VOICE_ROOM("VR001", HttpStatus.BAD_REQUEST, "Already in voice room"),
     MEMBER_NOT_IN_VOICE_ROOM("VR002", HttpStatus.BAD_REQUEST, "Member not in voice room"),
+    ACCUSE_NOT_FOUND("VR003", HttpStatus.NOT_FOUND, "Accuse not found"),
 
     /*
     * 서버 관련 오류

@@ -1,6 +1,7 @@
 package com.gsm.blabla.agora.api;
 
 import com.gsm.blabla.agora.application.AgoraService;
+import com.gsm.blabla.agora.dto.AccuseRequestDto;
 import com.gsm.blabla.agora.dto.RtcTokenDto;
 import com.gsm.blabla.agora.dto.VoiceRoomRequestDto;
 import com.gsm.blabla.global.response.DataResponseDto;
@@ -37,5 +38,13 @@ public class AgoraController {
     public DataResponseDto<Map<String, List<MemberResponseDto>>> getPreviousMembers(
             @PathVariable Long reportId) {
         return DataResponseDto.of(agoraService.getPreviousMembers(reportId));
+    }
+
+    @Operation(summary = "보이스룸 신고 API")
+    @PostMapping(value = "/accuse")
+    public DataResponseDto<Map<String, String>> accuse(
+        @RequestBody AccuseRequestDto accuseRequestDto
+    ) {
+        return DataResponseDto.of(agoraService.accuse(accuseRequestDto));
     }
 }
