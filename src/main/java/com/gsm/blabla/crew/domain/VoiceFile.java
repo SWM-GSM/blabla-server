@@ -30,24 +30,13 @@ public class VoiceFile {
     private CrewReport crewReport;
 
     private String fileUrl;
-
-    private Duration totalCallTime;
-    private Duration koreanTime;
-    private Duration englishTime;
-    private Duration redundancyTime;
-    private LocalDateTime createdAt;
     private String feedback;
 
     @Builder
-    public VoiceFile(Member member, CrewReport crewReport, String fileUrl, Duration totalCallTime, Duration koreanTime, Duration englishTime, Duration redundancyTime) {
+    public VoiceFile(Member member, CrewReport crewReport, String fileUrl) {
         this.member = member;
         this.crewReport = crewReport;
         this.fileUrl = fileUrl;
-        this.totalCallTime = totalCallTime;
-        this.koreanTime = koreanTime;
-        this.englishTime = englishTime;
-        this.redundancyTime = redundancyTime;
-        this.createdAt = LocalDateTime.now();
     }
 
     public void createFeedback(String feedback) {
