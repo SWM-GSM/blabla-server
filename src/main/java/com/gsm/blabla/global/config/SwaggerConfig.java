@@ -4,17 +4,21 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class SwaggerConfig {
+
+    private final Environment environment;
 
     @Bean
     public OpenAPI openAPI() {
-        Info info = new Info().title("Blabla API")
+        Info info = new Info().title("Blabla API for " + environment.getActiveProfiles()[0])
             .version("1.0.0")
-            .description("블라블라 애플리케이션 API 서버 명세서입니다.")
             .contact(new Contact().name("랜딩 페이지").url("https://blablah.net/"));
 
         return new OpenAPI()
