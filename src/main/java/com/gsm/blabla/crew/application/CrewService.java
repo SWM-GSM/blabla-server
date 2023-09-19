@@ -126,7 +126,12 @@ public class CrewService {
 
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(paramMap, headers);
 
-        restTemplate.postForObject(voiceAnalysisRequestUrl, requestEntity, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(voiceAnalysisRequestUrl, requestEntity, String.class);
+        if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
+            voiceFileRepository.deleteById(voiceFileId);
+            //TODO: Reassigned local variable 문제 생각해보기
+            voiceFileId = 0L;
+        }
 
         return Collections.singletonMap("voiceFileId", voiceFileId);
     }
