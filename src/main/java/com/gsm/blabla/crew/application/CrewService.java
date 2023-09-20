@@ -84,7 +84,7 @@ public class CrewService {
         return Collections.singletonMap("message", "음성 파일 분석이 완료되었습니다.");
     }
 
-    public Map<String, Long> createVoiceFileRequest(Long reportId, MultipartFile file) {
+    public Map<String, Long> createVoiceFileRequest(Long reportId, MultipartFile file, String targetToken) {
         if (file.getSize() == 0) {
             throw new GeneralException(Code.FILE_IS_EMPTY, "음성 파일이 비어있습니다.");
         }
@@ -114,6 +114,7 @@ public class CrewService {
                                 () -> new GeneralException(Code.REPORT_NOT_FOUND, "존재하지 않는 리포트입니다.")
                         ))
                         .fileUrl(fileUrl)
+                        .targetToken(targetToken)
                         .build()
         ).getId();
 
@@ -149,7 +150,7 @@ public class CrewService {
         return MemberProfileResponseDto.getCrewMemberProfile(member);
     }
 
-    public Map<String, String> createReportRequest(Long reportId, TargetTokenDto targetTokenDto) {
+    public Map<String, String> createReportRequest(Long reportId) {
 
         LocalDateTime endAt = LocalDateTime.now();
         CrewReport crewReport = crewReportRepository.findById(reportId).orElseThrow(
@@ -162,7 +163,6 @@ public class CrewService {
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("reportId", String.valueOf(reportId));
         paramMap.put("targetVoiceFileCount", String.valueOf(voiceFileCount));
-        paramMap.put("targetToken", targetTokenDto.getTargetToken());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -175,7 +175,7 @@ public class CrewService {
         return Collections.singletonMap("message", "리포트 생성 요청이 완료되었습니다.");
     }
 
-    public Map<String, String> createReport(Long reportId, TargetTokenDto targetTokenDto) {
+    public Map<String, String> createReport(Long reportId) {
 
         List<VoiceFile> voiceFiles = voiceFileRepository.getAllByCrewReportId(reportId);
         List<String> fileUrls = voiceFiles.stream()
@@ -223,15 +223,21 @@ public class CrewService {
                         )
                         .toList());
 
-        FcmMessageRequestDto fcmMessageRequestDto = FcmMessageRequestDto.builder()
-                .targetToken(targetTokenDto.getTargetToken())
-                .title("리포트 생성 완료")
-                .body("리포트 생성이 완료되었습니다.")
-                .build();
-        try {
-            fcmService.sendMessageTo(fcmMessageRequestDto);
-        } catch (IOException e) {
-            throw new GeneralException(Code.FCM_FAILED, "FCM 메시지 전송에 실패했습니다.");
+        List<String> targetTokens = voiceFiles.stream()
+                .map(VoiceFile::getTargetToken)
+                .toList();
+
+        for (String targetToken : targetTokens) {
+            FcmMessageRequestDto fcmMessageRequestDto = FcmMessageRequestDto.builder()
+                    .targetToken(targetToken)
+                    .title("리포트 생성 완료")
+                    .body("리포트 생성이 완료되었습니다.")
+                    .build();
+            try {
+                fcmService.sendMessageTo(fcmMessageRequestDto);
+            } catch (IOException e) {
+                throw new GeneralException(Code.FCM_FAILED, "FCM 메시지 전송에 실패했습니다.");
+            }
         }
 
         return Collections.singletonMap("message", "리포트 생성이 완료되었습니다.");

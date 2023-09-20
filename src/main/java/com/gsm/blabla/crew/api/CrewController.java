@@ -31,24 +31,23 @@ public class CrewController {
     @PostMapping(value = "/crews/reports/{reportId}/voice-file/request")
     public DataResponseDto<Map<String, Long>> createVoiceFileRequest(
             @PathVariable("reportId") Long reportId,
-            @RequestParam("file") MultipartFile file) {
-        return DataResponseDto.of(crewService.createVoiceFileRequest(reportId, file));
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("targetToken") String targetToken) {
+        return DataResponseDto.of(crewService.createVoiceFileRequest(reportId, file, targetToken));
     }
 
     @Operation(summary = "크루 리포트 생성 API")
     @PostMapping(value = "/crews/reports/{reportId}")
     public DataResponseDto<Map<String, String>> createReport(
-            @PathVariable("reportId") Long reportId,
-            @RequestBody TargetTokenDto targetTokenDto) {
-        return DataResponseDto.of(crewService.createReport(reportId, targetTokenDto));
+            @PathVariable("reportId") Long reportId) {
+        return DataResponseDto.of(crewService.createReport(reportId));
     }
 
     @Operation(summary = "크루 리포트 생성 요청 API")
     @PostMapping(value = "/crews/reports/{reportId}/request")
     public DataResponseDto<Map<String, String>> createReportRequest(
-            @PathVariable("reportId") Long reportId,
-            @RequestBody TargetTokenDto targetTokenDto) {
-        return DataResponseDto.of(crewService.createReportRequest(reportId, targetTokenDto));
+            @PathVariable("reportId") Long reportId) {
+        return DataResponseDto.of(crewService.createReportRequest(reportId));
     }
 
     @Operation(summary = "크루 리포트 조회 API")
