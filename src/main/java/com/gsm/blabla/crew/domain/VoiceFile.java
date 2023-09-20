@@ -31,12 +31,14 @@ public class VoiceFile {
 
     private String fileUrl;
     private String feedback;
+    private String targetToken;
 
     @Builder
-    public VoiceFile(Member member, CrewReport crewReport, String fileUrl) {
+    public VoiceFile(Member member, CrewReport crewReport, String fileUrl, String targetToken) {
         this.member = member;
         this.crewReport = crewReport;
         this.fileUrl = fileUrl;
+        this.targetToken = targetToken;
     }
 
     public void createFeedback(String feedback) {
