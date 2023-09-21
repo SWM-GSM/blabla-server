@@ -18,9 +18,9 @@ public class ContentsResponseDto {
     private String title; // 컨텐츠 제목
     private String description; // 컨텐츠 설명
     private String thumbnailUrl; // 컨텐츠 썸네일 URL
-    private Double progress; // 연습실 진행도
+    private Double progress; // 컨텐츠 진행도
 
-    public static ContentsResponseDto contentCategoryResponse(Content content, List<ContentDetailDto> contentDetailDtoList) {
+    public static ContentsResponseDto contentResponse(Content content, List<ContentDetailDto> contentDetailDtoList) {
         long totalContents = contentDetailDtoList.size();
         long completedCount = contentDetailDtoList.stream()
                 .filter(ContentDetailDto::getIsCompleted)
