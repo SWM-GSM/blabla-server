@@ -58,7 +58,7 @@ public class ContentService {
                     .map(contentDetail -> ContentDetailDto.contentViewResponse(contentDetail, memberId, memberContentDetailRepository))
                     .toList();
 
-            contentsResponseDtoList.add(ContentsResponseDto.contentResponse(content, contentViewResponseDtoList));
+            contentsResponseDtoList.add(ContentsResponseDto.contentsResponse(content, contentViewResponseDtoList));
         }
 
         return Collections.singletonMap("contents", contentsResponseDtoList);
