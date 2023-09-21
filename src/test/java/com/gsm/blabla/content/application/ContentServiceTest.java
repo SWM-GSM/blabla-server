@@ -52,21 +52,6 @@ class ContentServiceTest extends IntegrationTestSupport {
     MemberContentDetail memberContentDetail2;
     MemberContentDetail memberContentDetail3;
 
-    @Autowired
-    private ContentService contentService;
-
-    @Autowired
-    private ContentRepository contentRepository;
-
-    @Autowired
-    private ContentDetailRepository contentDetailRepository;
-
-    @Autowired
-    private MemberContentDetailRepository memberContentDetailRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
-
     @BeforeEach
     void setUp() {
         member = createMember("테스트", "cat");
@@ -87,10 +72,6 @@ class ContentServiceTest extends IntegrationTestSupport {
         memberContentDetail1 = createMemberContentDetail(member, contentDetailEn1);
         memberContentDetail2 = createMemberContentDetail(member, contentDetailKo1);
         memberContentDetail3 = createMemberContentDetail(member, contentDetailKo3);
-
-        contentRepository.saveAll(List.of(contentEn1, contentEn2, contentKo1, contentKo2));
-        contentDetailRepository.saveAll(List.of(contentDetailEn1, contentDetailEn2, contentDetailEn3, contentDetailEn4, contentDetailKo1, contentDetailKo2, contentDetailKo3));
-        memberContentDetailRepository.saveAll(List.of(memberContentDetail1, memberContentDetail2, memberContentDetail3));
     }
 
     @DisplayName("영어 컨텐츠 리스트를 조회한다.")
