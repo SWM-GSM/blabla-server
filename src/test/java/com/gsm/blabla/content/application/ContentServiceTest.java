@@ -94,7 +94,7 @@ class ContentServiceTest extends IntegrationTestSupport {
     }
 
 
-    @DisplayName("영어 세부 컨텐츠 리스트를 조회한다.")
+    @DisplayName("세부 컨텐츠 리스트를 조회한다.")
     @WithCustomMockUser
     @Test
     void getContentDetails() {
@@ -117,7 +117,7 @@ class ContentServiceTest extends IntegrationTestSupport {
                 );
     }
 
-    @DisplayName("영어 세부 컨텐츠를 조회한다.")
+    @DisplayName("세부 컨텐츠를 조회한다.")
     @Test
     void getContentDetail() {
         // given
