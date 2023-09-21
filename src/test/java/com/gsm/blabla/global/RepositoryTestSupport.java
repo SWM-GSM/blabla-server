@@ -32,7 +32,7 @@ public abstract class RepositoryTestSupport {
 
     protected ContentDetail createContentDetail(Content content, String title, String description,
         LocalTime startedAt, LocalTime stoppedAt, LocalTime endedAt, Long sequence) {
-        ContentDetail contentDetail = ContentDetail.builder()
+        return contentDetailRepository.save(ContentDetail.builder()
             .content(content)
             .title(title)
             .description(description)
@@ -43,17 +43,16 @@ public abstract class RepositoryTestSupport {
             .stoppedAt(stoppedAt)
             .endedAt(endedAt)
             .sequence(sequence)
-            .build();
-        return contentDetail;
+            .build());
     }
 
     protected Content createContent(String title, String description, String language, Long sequence) {
-        return Content.builder()
+        return contentRepository.save(Content.builder()
             .title(title)
             .description(description)
             .language(language)
             .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
             .sequence(sequence)
-            .build();
+            .build());
     }
 }
