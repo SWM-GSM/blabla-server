@@ -22,7 +22,6 @@ class ContentRepositoryTest extends RepositoryTestSupport {
         Content content2 = createContent("셜록", "셜록을 통해 영국 억양과 일상 표현을 배워봅시다.", "en", 200L);
         Content content3 = createContent("오징어 게임", "드라마 오징어 게임을 통해 줄임말 표현을 배워봅시다.", "ko", 100L);
         Content content4 = createContent("왕좌의 게임", "왕좌의 게임을 통해 전쟁 표현을 배워봅시다.", "en", 100L);
-        contentRepository.saveAll(List.of(content1, content2, content3, content4));
 
         // when
         List<Content> contents = contentRepository.findAllByLanguageOrderBySequence("en");

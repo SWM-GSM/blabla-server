@@ -20,12 +20,10 @@ class ContentDetailRepositoryTest extends RepositoryTestSupport {
         // given
         Content content1 = createContent("인턴", "영화 인턴을 통해 비즈니스 표현을 배워봅시다.", "en", 3L);
         Content content2 = createContent("셜록", "셜록을 통해 영국 억양과 일상 표현을 배워봅시다.", "en", 1L);
-        contentRepository.saveAll(List.of(content1, content2));
 
         ContentDetail contentDetail1 = createContentDetail(content1, "소개 인사하기", "인턴을 통해 소개 인사를 배워봅시다.", LocalTime.of(12, 0, 0), LocalTime.of(12, 0, 10), LocalTime.of(12, 0, 20), 2L);
         ContentDetail contentDetail2 = createContentDetail(content1, "조언해주기", "인턴을 통해 조언해주기를 배워봅시다.", LocalTime.of(13, 0, 0), LocalTime.of(13, 0, 10), LocalTime.of(13, 0, 20), 1L);
         ContentDetail contentDetail3 = createContentDetail(content2, "인사 배우기", "셜록을 통해 일상 표현을 배워봅시다.", LocalTime.of(14, 0, 0), LocalTime.of(14, 0, 10), LocalTime.of(14, 0, 20), 2L);
-        contentDetailRepository.saveAll(List.of(contentDetail1, contentDetail2, contentDetail3));
 
         // when
         List<ContentDetail> contentDetails = contentDetailRepository.findAllByContentOrderBySequence(content1);
