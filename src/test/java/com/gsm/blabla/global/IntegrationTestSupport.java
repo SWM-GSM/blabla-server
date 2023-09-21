@@ -30,6 +30,8 @@ import com.gsm.blabla.member.domain.SocialLoginType;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -181,6 +183,43 @@ public abstract class IntegrationTestSupport {
                 .contextScore(3.0)
                 .build()
         );
+    }
+
+    protected ContentDetail createContentDetail(Content content, String title, String contentUrl, Long sequence) {
+        ContentDetail contentDetail = ContentDetail.builder()
+                .content(content)
+                .title(title)
+                .description("CEO 오스틴의 연설을 통하여 비즈니스 표현을 배워보세요.")
+                .contentUrl(contentUrl)
+                .guideSentence("나는 오스틴 입니다. About the Fit의 창업자 입니다.")
+                .targetSentence("I'm Jules Ostin. I'm the founder of About the Fit.")
+                .startedAt(LocalTime.of(0, 0, 0))
+                .stoppedAt(LocalTime.of(0, 0, 1))
+                .endedAt(LocalTime.of(0, 0, 2))
+                .sequence(sequence)
+                .build();
+        return contentDetail;
+    }
+
+    protected Content createContent(String title, String description, String language, Long sequence) {
+        return Content.builder()
+                .title(title)
+                .description(description)
+                .language(language)
+                .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
+                .sequence(sequence)
+                .build();
+    }
+
+    protected MemberContentDetail createMemberContentDetail(Member member, ContentDetail contentDetail) {
+        return MemberContentDetail.builder()
+                .member(member)
+                .contentDetail(contentDetail)
+                .userAnswer("test")
+                .longFeedback("test")
+                .starScore(3.0)
+                .contextScore(3.0)
+                .build();
     }
 
     private void updateInVoiceRoom(Member member) {
