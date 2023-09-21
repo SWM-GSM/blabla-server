@@ -7,6 +7,9 @@ import com.gsm.blabla.agora.api.AgoraController;
 import com.gsm.blabla.agora.application.AgoraService;
 import com.gsm.blabla.auth.api.AuthController;
 import com.gsm.blabla.auth.application.AuthService;
+import com.gsm.blabla.content.dto.ContentDetailDto;
+import com.gsm.blabla.content.dto.ContentDetailsResponseDto;
+import com.gsm.blabla.content.dto.ContentsResponseDto;
 import com.gsm.blabla.crew.api.CrewController;
 import com.gsm.blabla.crew.api.ScheduleController;
 import com.gsm.blabla.crew.application.CrewService;
@@ -19,6 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 
 @WebMvcTest(
     controllers = {
@@ -61,4 +68,26 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected FcmService fcmService;
+
+    protected ContentsResponseDto createContentsResponseDto(
+            Long id, String title, String description, Double progress) {
+        return ContentsResponseDto.builder()
+                .id(id)
+                .title(title)
+                .description(description)
+                .thumbnailUrl("https://img.youtube.com/vi/29ZlFKsc_ps/hqdefault.jpg")
+                .progress(progress)
+                .build();
+    }
+
+    protected ContentDetailDto createcontentDetailDto(
+            String title, String description, Boolean isCompleted) {
+        return ContentDetailDto.builder()
+                .title(title)
+                .description(description)
+                .thumbnailUrl("https://img.youtube.com/vi/0B2JUyXVp-c/hqdefault.jpg")
+                .isCompleted(isCompleted)
+                .build();
+    }
+
 }

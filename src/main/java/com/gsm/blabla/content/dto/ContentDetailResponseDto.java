@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -23,9 +25,9 @@ public class ContentDetailResponseDto {
 
     public static ContentDetailResponseDto contentDetailResponseDto(ContentDetail contentDetail) {
         return ContentDetailResponseDto.builder()
-                .startedAtSec(contentDetail.getStartedAt().toSecondOfDay())
-                .stoppedAtSec(contentDetail.getStoppedAt().toSecondOfDay())
-                .endedAtSec(contentDetail.getEndedAt().toSecondOfDay())
+                .startedAtSec(localTimeToSeconds(contentDetail.getStartedAt()))
+                .stoppedAtSec(localTimeToSeconds(contentDetail.getStoppedAt()))
+                .endedAtSec(localTimeToSeconds(contentDetail.getEndedAt()))
                 .guideSentence(contentDetail.getGuideSentence())
                 .targetSentence(contentDetail.getTargetSentence())
                 .title(contentDetail.getTitle())
@@ -34,4 +36,11 @@ public class ContentDetailResponseDto {
                 .build();
     }
 
+    private static Integer localTimeToSeconds(LocalTime localTime) {
+        int hour = localTime.getHour();
+        int minute = localTime.getMinute();
+        int second = localTime.getSecond();
+
+        return hour * 3600 + minute * 60 + second;
+    }
 }
