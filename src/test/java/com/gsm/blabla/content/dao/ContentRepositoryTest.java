@@ -4,7 +4,6 @@ import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.global.RepositoryTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
@@ -15,17 +14,14 @@ import static org.assertj.core.api.Assertions.tuple;
 @SpringBootTest
 class ContentRepositoryTest extends RepositoryTestSupport {
 
-    @Autowired
-    private ContentRepository contentRepository;
-
-    @DisplayName("영어로 컨텐츠 리스트를 조회한다.")
+    @DisplayName("영어 컨텐츠 리스트를 순서대로 조회한다.")
     @Test
-    void findAllByLanguage() {
+    void findAllByLanguageOrderBySequence() {
         // given
-        Content content1 = createContent("인턴", "영화 인턴을 통해 비즈니스 표현을 배워봅시다.", "en", 3L);
-        Content content2 = createContent("셜록", "셜록을 통해 영국 억양과 일상 표현을 배워봅시다.", "en", 2L);
-        Content content3 = createContent("오징어 게임", "드라마 오징어 게임을 통해 줄임말 표현을 배워봅시다.", "ko", 1L);
-        Content content4 = createContent("왕좌의 게임", "왕좌의 게임을 통해 전쟁 표현을 배워봅시다.", "en", 1L);
+        Content content1 = createContent("인턴", "영화 인턴을 통해 비즈니스 표현을 배워봅시다.", "en", 300L);
+        Content content2 = createContent("셜록", "셜록을 통해 영국 억양과 일상 표현을 배워봅시다.", "en", 200L);
+        Content content3 = createContent("오징어 게임", "드라마 오징어 게임을 통해 줄임말 표현을 배워봅시다.", "ko", 100L);
+        Content content4 = createContent("왕좌의 게임", "왕좌의 게임을 통해 전쟁 표현을 배워봅시다.", "en", 100L);
         contentRepository.saveAll(List.of(content1, content2, content3, content4));
 
         // when
