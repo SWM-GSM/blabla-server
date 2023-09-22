@@ -50,18 +50,18 @@ public class ContentService {
 
         final Long memberId = SecurityUtil.getMemberId();
 
-        List<ContentsResponseDto> contentCategoryResponseDtoList = new ArrayList<>();
+        List<ContentsResponseDto> contentsResponseDtoList = new ArrayList<>();
         for (Content content : contentList) {
-            List<ContentDetail> contentDetailList = contentDetailRepository.findAllByContent(content);
+            List<ContentDetail> contentDetailList = contentDetailRepository.findAllByContentOrderBySequence(content);
 
             List<ContentDetailDto> contentViewResponseDtoList = contentDetailList.stream()
                     .map(contentDetail -> ContentDetailDto.contentViewResponse(contentDetail, memberId, memberContentDetailRepository))
                     .toList();
 
-            contentCategoryResponseDtoList.add(ContentsResponseDto.contentCategoryResponse(content, contentViewResponseDtoList));
+            contentsResponseDtoList.add(ContentsResponseDto.contentsResponse(content, contentViewResponseDtoList));
         }
 
-        return Collections.singletonMap("contents", contentCategoryResponseDtoList);
+        return Collections.singletonMap("contents", contentsResponseDtoList);
     }
 
     @Transactional(readOnly = true)
