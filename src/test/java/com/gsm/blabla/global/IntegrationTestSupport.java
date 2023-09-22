@@ -5,6 +5,7 @@ import com.gsm.blabla.agora.dao.AccuseRepository;
 import com.gsm.blabla.agora.dao.VoiceRoomRepository;
 import com.gsm.blabla.agora.domain.VoiceRoom;
 import com.gsm.blabla.auth.application.AuthService;
+import com.gsm.blabla.content.application.ContentService;
 import com.gsm.blabla.content.dao.ContentDetailRepository;
 import com.gsm.blabla.content.dao.ContentRepository;
 import com.gsm.blabla.content.dao.MemberContentDetailRepository;
@@ -30,6 +31,7 @@ import com.gsm.blabla.member.domain.SocialLoginType;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +59,9 @@ public abstract class IntegrationTestSupport {
     protected AgoraService agoraService;
 
     @Autowired
+    protected ContentService contentService;
+
+    @Autowired
     protected MemberRepository memberRepository;
 
     @Autowired
@@ -69,22 +74,22 @@ public abstract class IntegrationTestSupport {
     protected CrewReportRepository crewReportRepository;
 
     @Autowired
-    private VoiceFileRepository voiceFileRepository;
+    protected VoiceFileRepository voiceFileRepository;
 
     @Autowired
-    private CrewReportAnalysisRepository crewReportAnalysisRepository;
+    protected CrewReportAnalysisRepository crewReportAnalysisRepository;
 
     @Autowired
     private CrewReportKeywordRepository crewReportKeywordRepository;
 
     @Autowired
-    private ContentRepository contentRepository;
+    protected ContentRepository contentRepository;
 
     @Autowired
-    private ContentDetailRepository contentDetailRepository;
+    protected ContentDetailRepository contentDetailRepository;
 
     @Autowired
-    private MemberContentDetailRepository memberContentDetailRepository;
+    protected MemberContentDetailRepository memberContentDetailRepository;
 
     @Autowired
     protected VoiceRoomRepository voiceRoomRepository;
@@ -172,6 +177,48 @@ public abstract class IntegrationTestSupport {
         );
 
         memberContentDetailRepository.save(
+            MemberContentDetail.builder()
+                .member(member)
+                .contentDetail(contentDetail)
+                .userAnswer("test")
+                .longFeedback("test")
+                .starScore(3.0)
+                .contextScore(3.0)
+                .build()
+        );
+    }
+
+    protected ContentDetail createContentDetail(Content content, String title, String contentUrl, Long sequence) {
+        return contentDetailRepository.save(
+            ContentDetail.builder()
+                .content(content)
+                .title(title)
+                .description("CEO 오스틴의 연설을 통하여 비즈니스 표현을 배워보세요.")
+                .contentUrl(contentUrl)
+                .guideSentence("나는 오스틴 입니다. About the Fit의 창업자 입니다.")
+                .targetSentence("I'm Jules Ostin. I'm the founder of About the Fit.")
+                .startedAt(LocalTime.of(0, 0, 0))
+                .stoppedAt(LocalTime.of(0, 0, 1))
+                .endedAt(LocalTime.of(0, 0, 2))
+                .sequence(sequence)
+                .build()
+        );
+    }
+
+    protected Content createContent(String title, String description, String language, Long sequence) {
+        return contentRepository.save(
+            Content.builder()
+                .title(title)
+                .description(description)
+                .language(language)
+                .thumbnailURL("https://img.youtube.com/vi/sHpGT4SQwgw/hqdefault.jpg")
+                .sequence(sequence)
+                .build()
+        );
+    }
+
+    protected MemberContentDetail createMemberContentDetail(Member member, ContentDetail contentDetail) {
+        return memberContentDetailRepository.save(
             MemberContentDetail.builder()
                 .member(member)
                 .contentDetail(contentDetail)
