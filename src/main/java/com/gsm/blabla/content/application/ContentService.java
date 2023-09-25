@@ -89,32 +89,28 @@ public class ContentService {
         return ContentDetailResponseDto.contentDetailResponseDto(contentDetail);
     }
 
-    public PracticeFeedbackResponseDto createFeedback(Long contentDetailId, UserAnswerRequestDto userAnswerRequestDto) {
+    public MemberContentDetailResponseDto createFeedback(Long contentDetailId, UserSentenceRequestDto userSentenceRequestDto) {
         ContentDetail contentDetail = contentDetailRepository.findById(contentDetailId)
                 .orElseThrow(() -> new GeneralException(Code.CONTENT_DETAIL_NOT_FOUND, "존재하지 않는 세부 컨텐츠입니다.")
         );
 
-        String language = contentDetail.getContent().getLanguage();
-
-        PracticeFeedbackRequestDto practiceFeedbackRequestDto = PracticeFeedbackRequestDto.builder()
-                .userAnswer(userAnswerRequestDto.getUserAnswer())
-                .answer(contentDetail.getTargetSentence())
+        AIPracticeFeedbackRequestDto practiceFeedbackRequestDto = AIPracticeFeedbackRequestDto.builder()
+                .userSentence(userSentenceRequestDto.getUserSentence())
+                .targetSentence(contentDetail.getTargetSentence())
                 .build();
 
-        String fastApiUrl = String.format("https://z64kktsmu3.execute-api.ap-northeast-2.amazonaws.com/dev/ai/%s/feedback", language);
+        String language = contentDetail.getContent().getLanguage();
+
+        String practiceFeedbackUrl = language.equals("ko") ? koPracticeFeedbackUrl : enPracticeFeedbackUrl;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<PracticeFeedbackRequestDto> requestEntity = new HttpEntity<>(practiceFeedbackRequestDto, headers);
-        String similarityResponse = restTemplate.postForObject(fastApiUrl, requestEntity, String.class);
+        HttpEntity<AIPracticeFeedbackRequestDto> requestEntity = new HttpEntity<>(practiceFeedbackRequestDto, headers);
+        AIPracticeFeedbackResponseDto aiPracticeFeedbackResponseDto = restTemplate.postForObject(practiceFeedbackUrl, requestEntity, AIPracticeFeedbackResponseDto.class);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        PracticeFeedbackResponseDto practiceFeedbackResponseDto = null;
-        try {
-            practiceFeedbackResponseDto = objectMapper.readValue(similarityResponse, PracticeFeedbackResponseDto.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        if (aiPracticeFeedbackResponseDto == null) {
+            throw new GeneralException(Code.PRACTICE_FEEDBACK_NOT_FOUND, "피드백이 존재하지 않습니다.");
         }
 
         Long memberId = SecurityUtil.getMemberId();
@@ -122,28 +118,27 @@ public class ContentService {
                 () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
         );
 
-        MemberContentDetail memberContentDetail = MemberContentDetail.builder()
+        MemberContentDetail memberContentDetail = memberContentDetailRepository.save(
+                MemberContentDetail.builder()
                 .member(member)
                 .contentDetail(contentDetail)
-                .userAnswer(userAnswerRequestDto.getUserAnswer())
-                .longFeedback(practiceFeedbackResponseDto.getLongFeedback())
-                .starScore(practiceFeedbackResponseDto.getStarScore())
-                .contextScore(practiceFeedbackResponseDto.getContextScore())
-                .build();
+                .userSentence(userSentenceRequestDto.getUserSentence())
+                .longFeedback(aiPracticeFeedbackResponseDto.getLongFeedback())
+                .contextScore(aiPracticeFeedbackResponseDto.getContextScore())
+                .build()
+                );
 
-        memberContentDetailRepository.save(memberContentDetail);
-
-        return PracticeFeedbackResponseDto.of(memberContentDetail);
+        return MemberContentDetailResponseDto.of(memberContentDetail);
     }
 
-    public PracticeFeedbackResponseDto getFeedback(Long contentDetailId) {
+    public MemberContentDetailResponseDto getFeedback(Long contentDetailId) {
         Long memberId = SecurityUtil.getMemberId();
 
         MemberContentDetail memberContentDetail = memberContentDetailRepository.findByContentDetailIdAndMemberId(contentDetailId, memberId)
                 .orElseThrow(() -> new GeneralException(Code.MEMBER_CONTENT_NOT_FOUND, "존재하지 않는 유저 컨텐츠입니다.")
         );
 
-        return PracticeFeedbackResponseDto.of(memberContentDetail);
+        return MemberContentDetailResponseDto.of(memberContentDetail);
     }
 
     public Map<String, String> savePracticeHistory(Long contentDetailId, List<MultipartFile> files) {
