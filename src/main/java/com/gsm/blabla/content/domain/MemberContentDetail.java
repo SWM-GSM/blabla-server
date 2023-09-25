@@ -25,22 +25,20 @@ public class MemberContentDetail {
     @JoinColumn(name = "content_detail_id")
     private ContentDetail contentDetail;
 
-    private String userAnswer; // 유저 답변
+    private String userSentence; // 유저 답변
 
     @Column(length = 2000)
     private String longFeedback; // GPT 장문 피드백
 
-    private Double starScore; // 별점 - 문장 유사도
-    private Double contextScore; // 문맥 점수 - 번역된 문장 유사도
+    private Double contextScore; // 문맥 점수
     private LocalDateTime joinedAt;
 
     @Builder
-    public MemberContentDetail(Member member, ContentDetail contentDetail, String userAnswer, String longFeedback, Double starScore, Double contextScore) {
+    public MemberContentDetail(Member member, ContentDetail contentDetail, String userSentence, String longFeedback,  Double contextScore) {
         this.member = member;
         this.contentDetail = contentDetail;
-        this.userAnswer = userAnswer;
+        this.userSentence = userSentence;
         this.longFeedback = longFeedback;
-        this.starScore = starScore;
         this.contextScore = contextScore;
         this.joinedAt = LocalDateTime.now();
     }

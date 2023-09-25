@@ -78,6 +78,12 @@ public enum Code {
     MEMBER_CONTENT_NOT_FOUND("MC001", HttpStatus.NOT_FOUND, "MemberContent not found"),
 
     /*
+     * Practice 관련 오류
+     * HEAD NAME - P (Practice)
+     * */
+    PRACTICE_FEEDBACK_NOT_FOUND("P001", HttpStatus.NO_CONTENT, "PracticeFeedback not found"),
+
+    /*
      * PracticeHistory 관련 오류
      * HEAD NAME - PH (PracticeHistory)
      * */

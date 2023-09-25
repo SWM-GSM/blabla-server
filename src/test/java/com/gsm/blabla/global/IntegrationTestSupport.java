@@ -180,9 +180,8 @@ public abstract class IntegrationTestSupport {
             MemberContentDetail.builder()
                 .member(member)
                 .contentDetail(contentDetail)
-                .userAnswer("test")
+                .userSentence("test")
                 .longFeedback("test")
-                .starScore(3.0)
                 .contextScore(3.0)
                 .build()
         );
@@ -222,9 +221,8 @@ public abstract class IntegrationTestSupport {
             MemberContentDetail.builder()
                 .member(member)
                 .contentDetail(contentDetail)
-                .userAnswer("test")
+                .userSentence("test")
                 .longFeedback("test")
-                .starScore(3.0)
                 .contextScore(3.0)
                 .build()
         );
