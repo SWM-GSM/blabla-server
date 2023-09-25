@@ -1,7 +1,5 @@
 package com.gsm.blabla.content.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gsm.blabla.global.application.S3UploaderService;
 import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
@@ -18,6 +16,7 @@ import com.gsm.blabla.global.exception.GeneralException;
 import com.gsm.blabla.global.response.Code;
 import com.gsm.blabla.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -43,6 +42,12 @@ public class ContentService {
     private final PracticeHistoryRepository practiceHistoryRepository;
     private final RestTemplate restTemplate;
     private final S3UploaderService s3UploaderService;
+
+    @Value("${ai.ko-practice-feedback-url}")
+    private String koPracticeFeedbackUrl;
+
+    @Value("${ai.en-practice-feedback-url}")
+    private String enPracticeFeedbackUrl;
 
     @Transactional(readOnly = true)
     public Map<String, List<ContentsResponseDto>> getContents(String language) {
