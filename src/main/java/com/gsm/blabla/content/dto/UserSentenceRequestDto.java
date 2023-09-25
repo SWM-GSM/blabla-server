@@ -3,8 +3,7 @@ package com.gsm.blabla.content.dto;
 import lombok.Getter;
 
 @Getter
-public class UserAnswerRequestDto {
+public class UserSentenceRequestDto {
 
-    private String userAnswer;
-
+    private String userSentence;
 }

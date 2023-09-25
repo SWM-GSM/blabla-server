@@ -8,35 +8,28 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class PracticeFeedbackResponseDto {
+public class MemberContentDetailResponseDto {
 
-    // TODO: 인공지능 서버 Response와 DTO 분리 고민
-    private Double starScore;
-    private Double contextScore;
-    private String longFeedback;
-
-    private Integer starRating;
     private Integer contextRating;
-    private String userAnswer;
+    private String userSentence;
     private String targetSentence;
+    private String longFeedback;
 
     public static Integer getStarScoreCategory(double starScore) {
         if (starScore <= 0.3) {
             return 1;
-        } else if (starScore >= 0.75) {
+        } else if (starScore >= 0.8) {
             return 3;
         } else {
             return 2;
         }
     }
-    public static PracticeFeedbackResponseDto of(MemberContentDetail memberContentDetail) {
-        return PracticeFeedbackResponseDto.builder()
-                .starRating(getStarScoreCategory(memberContentDetail.getStarScore()))
+
+    public static MemberContentDetailResponseDto of(MemberContentDetail memberContentDetail) {
+        return MemberContentDetailResponseDto.builder()
                 .contextRating(getStarScoreCategory(memberContentDetail.getContextScore()))
                 .longFeedback(memberContentDetail.getLongFeedback())
-                .userAnswer(memberContentDetail.getUserAnswer())
+                .userSentence(memberContentDetail.getUserSentence())
                 .targetSentence(memberContentDetail.getContentDetail().getTargetSentence())
                 .build();
     }

@@ -48,15 +48,15 @@ public class ContentController {
 
     @Operation(summary = "연습실 피드백 생성 API")
     @PostMapping("/detail/{contentDetailId}/feedback")
-    public DataResponseDto<PracticeFeedbackResponseDto> createFeedback(
+    public DataResponseDto<MemberContentDetailResponseDto> createFeedback(
             @PathVariable Long contentDetailId,
-            @RequestBody UserAnswerRequestDto userAnswerRequestDto) {
+            @RequestBody UserSentenceRequestDto userAnswerRequestDto) {
         return DataResponseDto.of(contentService.createFeedback(contentDetailId, userAnswerRequestDto));
     }
 
     @Operation(summary = "연습실 피드백 조회 API")
     @GetMapping("/detail/{contentDetailId}/feedback")
-    public DataResponseDto<PracticeFeedbackResponseDto> getFeedback(
+    public DataResponseDto<MemberContentDetailResponseDto> getFeedback(
             @PathVariable Long contentDetailId) {
         return DataResponseDto.of(contentService.getFeedback(contentDetailId));
     }
