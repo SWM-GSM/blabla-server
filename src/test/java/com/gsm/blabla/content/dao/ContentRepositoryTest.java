@@ -11,7 +11,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-@SpringBootTest
 class ContentRepositoryTest extends RepositoryTestSupport {
 
     @DisplayName("영어 컨텐츠 리스트를 순서대로 조회한다.")
