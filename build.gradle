@@ -84,6 +84,9 @@ dependencies {
     // fcm
     implementation 'com.google.firebase:firebase-admin:9.1.1'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+
+    // flyway
+    implementation 'org.flywaydb:flyway-mysql'
 }
 
 tasks.named('test') {
