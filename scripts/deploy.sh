@@ -6,7 +6,7 @@ JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep '.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
 CURRENT_DEV_PID=$(lsof -ti:8080)
-#CURRENT_PROD_PID=$(lsof -ti:8081)
+CURRENT_PROD_PID=$(lsof -ti:8081)
 
 if [ -z $CURRENT_DEV_PID ]
 then
