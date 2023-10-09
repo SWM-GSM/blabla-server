@@ -1,6 +1,7 @@
 # <img src="https://github.com/SWM-GSM/blabla-server/assets/65899774/9b2e6d8e-5a2c-46fe-a8b0-0f082ac58202" align="left" width="100"> 블라블라(blabla)
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FSWM-GSM%2Fblabla-server&count_bg=%23FF9973&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 [![Github Actions](https://github.com/SWM-GSM/blabla-server/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/SWM-GSM/blabla-server/actions)
+[![codecov](https://codecov.io/gh/leeeeeyeon/blabla-server/graph/badge.svg?token=R4D8ED79JW)](https://codecov.io/gh/leeeeeyeon/blabla-server)
 
 🗣️ 영어 스피킹, 연습부터 실전까지 모두 블라블라에서! <br> <br>
 💭 블라블라는 `언어 교환`과 `AI 기반 피드백 리포트`를 통해 영어 스피킹 실력을 향상할 수 있도록 돕는 소셜 기반 에듀테크 서비스입니다. <br>
