@@ -28,11 +28,10 @@ jobs:
       - name: Run build with Gradle Wrapper
         run: ./gradlew clean build
 
-      - name: Report to CodeCov
+      - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./build/reports/jacoco/test/jacoco.xml
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip .
