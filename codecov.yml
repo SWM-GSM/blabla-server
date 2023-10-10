@@ -1,5 +1,5 @@
 comment:
-  layout: "diff, flags, files"
+  layout: "reach,diff,flags,files,footer"
   behavior: default
   require_changes: false
   require_base: false
