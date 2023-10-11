@@ -1,9 +1,10 @@
 name: blabla API Server - CI
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - develop
+    types: [labeled]
 
 permissions:
   contents: read
@@ -11,6 +12,7 @@ permissions:
 jobs:
   CI:
     runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'safe to test')
     steps:
       - uses: actions/checkout@v4
         with:
