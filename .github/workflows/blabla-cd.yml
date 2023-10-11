@@ -1,14 +1,13 @@
-name: API Server - CI/CD
+name: blabla API Server - CD
 
 on:
   push:
-    branches: ["main", "develop"]
-
-permissions:
-  contents: read
+    branches:
+      - main
+      - develop
 
 jobs:
-  CI-CD:
+  CD:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,11 +26,6 @@ jobs:
 
       - name: Run build with Gradle Wrapper
         run: ./gradlew clean build
-
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip .
