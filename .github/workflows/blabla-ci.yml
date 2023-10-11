@@ -5,6 +5,8 @@ on:
     branches:
       - develop
     types: [labeled]
+    labels:
+      - 'safe to test'
 
 permissions:
   contents: read
