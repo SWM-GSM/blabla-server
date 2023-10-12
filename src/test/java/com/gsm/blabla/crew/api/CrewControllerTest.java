@@ -61,7 +61,7 @@ class CrewControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/reports/{reportId}", any(Long.class))
+            get("/api/v1/crews/reports/{reportId}", any(Long.class))
         )
             .andDo(print())
             .andExpect(status().isOk())

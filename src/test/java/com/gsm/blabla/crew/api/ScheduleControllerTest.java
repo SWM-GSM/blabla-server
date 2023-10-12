@@ -38,7 +38,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/crews/schedules")
+            post("/api/v1/crews/schedules")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "test")
@@ -66,7 +66,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/schedules")
+            get("/api/v1/crews/schedules")
         )
             .andDo(print())
             .andExpect(status().isOk())
@@ -90,7 +90,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/schedules/upcoming")
+            get("/api/v1/crews/schedules/upcoming")
         )
             .andDo(print())
             .andExpect(status().isOk())
@@ -111,7 +111,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/crews/schedules/join")
+            post("/api/v1/crews/schedules/join")
                 .with(csrf())
                 .header("Authorization", "test")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -136,7 +136,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            delete("/crews/schedules")
+            delete("/api/v1/crews/schedules")
                 .with(csrf())
                 .header("Authorization", "test")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

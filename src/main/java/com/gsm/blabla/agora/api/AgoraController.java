@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Agora 관련 API")
 @RestController
-@RequestMapping("/crews/voice-room")
+@RequestMapping("/api/v1/crews/voice-room")
 @RequiredArgsConstructor
 public class AgoraController {
     private final AgoraService agoraService;

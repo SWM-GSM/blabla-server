@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Crew 관련 API")
 @RestController
+@RequestMapping("/api/v1/crews/reports")
 @RequiredArgsConstructor
 public class CrewController {
 
@@ -21,14 +22,14 @@ public class CrewController {
 
 
     @Operation(summary = "음성 파일 분석 API")
-    @PostMapping(value = "/crews/reports/voice-file")
+    @PostMapping(value = "/voice-file")
     public DataResponseDto<Map<String, String>> createVoiceFile(
             @RequestBody VoiceAnalysisResponseDto voiceAnalysisResponseDto) {
         return DataResponseDto.of(crewService.createVoiceFile(voiceAnalysisResponseDto));
     }
 
     @Operation(summary = "음성 파일 분석 요청 API")
-    @PostMapping(value = "/crews/reports/{reportId}/voice-file/request")
+    @PostMapping(value = "/{reportId}/voice-file/request")
     public DataResponseDto<Map<String, Long>> createVoiceFileRequest(
             @PathVariable("reportId") Long reportId,
             @RequestParam("file") MultipartFile file,
@@ -37,21 +38,21 @@ public class CrewController {
     }
 
     @Operation(summary = "크루 리포트 생성 API")
-    @PostMapping(value = "/crews/reports/{reportId}")
+    @PostMapping(value = "/{reportId}")
     public DataResponseDto<Map<String, String>> createReport(
             @PathVariable("reportId") Long reportId) {
         return DataResponseDto.of(crewService.createReport(reportId));
     }
 
     @Operation(summary = "크루 리포트 생성 요청 API")
-    @PostMapping(value = "/crews/reports/{reportId}/request")
+    @PostMapping(value = "/{reportId}/request")
     public DataResponseDto<Map<String, String>> createReportRequest(
             @PathVariable("reportId") Long reportId) {
         return DataResponseDto.of(crewService.createReportRequest(reportId));
     }
 
     @Operation(summary = "크루 리포트 조회 API")
-    @GetMapping(value = "/crews/reports/{reportId}")
+    @GetMapping(value = "/{reportId}")
     public DataResponseDto<CrewReportResponseDto> getReport(
             @PathVariable("reportId") Long reportId) {
         return DataResponseDto.of(crewService.getReport(reportId));
