@@ -34,7 +34,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/oauth/sign-up")
+            post("/api/v1/oauth/sign-up")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "test")

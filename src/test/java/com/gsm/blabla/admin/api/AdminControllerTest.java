@@ -17,7 +17,7 @@ class AdminControllerTest extends ControllerTestSupport {
     @WithCustomMockUser
     void getHealthCheck() throws Exception {
         mockMvc.perform(
-            get("/admin/health-check")
+            get("/api/v1/admin/health-check")
         )
             .andDo(print())
             .andExpect(status().isOk())

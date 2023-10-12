@@ -43,7 +43,7 @@ class AgoraControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/crews/voice-room")
+            post("/api/v1/crews/voice-room")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
@@ -73,7 +73,7 @@ class AgoraControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/voice-room")
+            get("/api/v1/crews/voice-room")
 
         )
             .andDo(print())
@@ -94,7 +94,7 @@ class AgoraControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/crews/voice-room/accuse")
+            post("/api/v1/crews/voice-room/accuse")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(AccuseRequestDto.builder()

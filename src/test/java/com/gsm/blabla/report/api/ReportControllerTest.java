@@ -50,7 +50,7 @@ class ReportControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/reports/history")
+            get("/api/v1/reports/history")
                 .with(csrf())
         )
             .andDo(print())
