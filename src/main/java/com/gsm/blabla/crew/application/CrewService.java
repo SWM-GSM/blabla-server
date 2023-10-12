@@ -137,19 +137,6 @@ public class CrewService {
         return Collections.singletonMap("voiceFileId", voiceFileId);
     }
 
-    @Transactional(readOnly = true)
-    public MemberProfileResponseDto getMemberProfile(String language, Long crewId, Long memberId) {
-        if (!Objects.equals(language, "ko") && !Objects.equals(language, "en")) {
-            throw new GeneralException(Code.LANGUAGE_NOT_SUPPORTED, "ko 또는 en만 지원합니다.");
-        }
-
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new GeneralException(Code.MEMBER_NOT_FOUND, "존재하지 않는 유저입니다.")
-        );
-
-        return MemberProfileResponseDto.getCrewMemberProfile(member);
-    }
-
     public Map<String, String> createReportRequest(Long reportId) {
 
         LocalDateTime endAt = LocalDateTime.now();

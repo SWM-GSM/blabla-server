@@ -57,15 +57,6 @@ public class CrewController {
         return DataResponseDto.of(crewService.getReport(reportId));
     }
 
-    @Operation(summary = "멤버 프로필 조회 API")
-    @GetMapping("/{language}/crews/{crewId}/profile/{memberId}")
-    public DataResponseDto<MemberProfileResponseDto> getMemberProfile(
-            @PathVariable String language,
-            @PathVariable Long crewId,
-            @PathVariable Long memberId) {
-        return DataResponseDto.of(crewService.getMemberProfile(language, crewId, memberId));
-    }
-
     @Operation(summary = "음성 채팅 유저 피드백 저장 API")
     @PostMapping(value = "/voice-files/{voiceFileId}/feedback")
     public DataResponseDto<Map<String, String>> createFeedback(
