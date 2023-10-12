@@ -18,7 +18,7 @@ import java.util.Map;
 @Validated
 @Tag(name = "컨텐츠 관련 API")
 @RestController
-@RequestMapping("/contents")
+@RequestMapping("/api/v1/contents")
 @RequiredArgsConstructor
 public class ContentController {
 
