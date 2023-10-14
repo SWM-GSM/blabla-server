@@ -31,7 +31,7 @@ class CrewControllerTest extends ControllerTestSupport {
             .build();
     }
 
-    @DisplayName("[GET] 크루 리포트를 조회한다.")
+    @DisplayName("크루 리포트를 조회한다.")
     @Test
     @WithCustomMockUser
     void getReport() throws Exception {
