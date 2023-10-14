@@ -18,7 +18,7 @@ import org.springframework.http.MediaType;
 
 class AuthControllerTest extends ControllerTestSupport {
 
-    @DisplayName("[POST] TEST 타입으로 회원가입을 성공한다.")
+    @DisplayName("TEST 타입으로 회원가입을 성공한다.")
     @Test
     @WithCustomMockUser
     void signUp() throws Exception {
