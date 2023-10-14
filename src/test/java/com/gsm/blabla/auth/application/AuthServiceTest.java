@@ -35,7 +35,7 @@ class AuthServiceTest extends IntegrationTestSupport {
     @MockBean
     private AppleService appleService;
 
-    @DisplayName("[POST] 한국어를 배우고 싶은 유저가 회원가입을 할 때,")
+    @DisplayName("한국어를 배우고 싶은 유저가 회원가입을 할 때,")
     @TestFactory
     Collection<DynamicTest> signUp() {
         String providerAuthorization = "test";
