@@ -31,7 +31,7 @@ class ReportServiceTest extends IntegrationTestSupport {
     }
 
     @Nested
-    @DisplayName("[GET] 히스토리를 조회한다.")
+    @DisplayName("히스토리를 조회한다.")
     class getHistory {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 class AdminControllerTest extends ControllerTestSupport {
 
-    @DisplayName("[GET] 서버 정상 동작 시, health check가 통과한다.")
+    @DisplayName("서버 정상 동작 시, health check가 통과한다.")
     @Test
     @WithCustomMockUser
     void getHealthCheck() throws Exception {

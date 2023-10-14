@@ -29,7 +29,7 @@ class CrewServiceTest extends IntegrationTestSupport {
         member2 = createMember("테스트", "wolf");
     }
 
-    @DisplayName("[GET] 크루 리포트를 조회한다.")
+    @DisplayName("크루 리포트를 조회한다.")
     @Test
     @WithCustomMockUser
     void getReport() {
