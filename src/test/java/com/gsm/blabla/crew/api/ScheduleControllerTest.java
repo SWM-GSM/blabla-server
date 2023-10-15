@@ -28,7 +28,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
     String meetingTime = LocalDateTime.now().plusDays(3).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-    @DisplayName("[POST] 크루 스페이스 일정을 성공적으로 생성한다.")
+    @DisplayName("크루 스페이스 일정을 성공적으로 생성한다.")
     @Test
     @WithCustomMockUser
     void create() throws Exception {
@@ -38,7 +38,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/crews/schedules")
+            post("/api/v1/crews/schedules")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "test")
@@ -54,7 +54,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.data.scheduleId").value(1L));
     }
 
-    @DisplayName("[GET] 크루 스페이스 일정을 전체 조회한다.")
+    @DisplayName("크루 스페이스 일정을 전체 조회한다.")
     @Test
     @WithCustomMockUser
     void getAll() throws Exception {
@@ -66,14 +66,14 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/schedules")
+            get("/api/v1/crews/schedules")
         )
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.schedules", hasSize(3)));
     }
 
-    @DisplayName("[GET] 다가오는 크루 스페이스 일정을 조회한다.")
+    @DisplayName("다가오는 크루 스페이스 일정을 조회한다.")
     @Test
     @WithCustomMockUser
     void getUpcomingSchedule() throws Exception {
@@ -90,7 +90,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/schedules/upcoming")
+            get("/api/v1/crews/schedules/upcoming")
         )
             .andDo(print())
             .andExpect(status().isOk())
@@ -101,7 +101,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.data.profiles", hasSize(2)));
     }
 
-    @DisplayName("[POST] 크루 스페이스 일정에 참여한다.")
+    @DisplayName("크루 스페이스 일정에 참여한다.")
     @Test
     @WithCustomMockUser
     void joinSchedule() throws Exception {
@@ -111,7 +111,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/crews/schedules/join")
+            post("/api/v1/crews/schedules/join")
                 .with(csrf())
                 .header("Authorization", "test")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -126,7 +126,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.data.message").value("일정 참여가 완료되었습니다."));
     }
 
-    @DisplayName("[DELETE] 크루 스페이스 일정 참여를 취소한다.")
+    @DisplayName("크루 스페이스 일정 참여를 취소한다.")
     @Test
     @WithCustomMockUser
     void cancelSchedule() throws Exception {
@@ -136,7 +136,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            delete("/crews/schedules")
+            delete("/api/v1/crews/schedules")
                 .with(csrf())
                 .header("Authorization", "test")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

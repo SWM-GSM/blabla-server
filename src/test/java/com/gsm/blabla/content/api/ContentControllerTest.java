@@ -35,7 +35,7 @@ class ContentControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-                        get("/contents").header("Content-Language", "ko")
+                        get("/api/v1/contents").header("Content-Language", "ko")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -73,7 +73,7 @@ class ContentControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-                        get("/contents/{contentId}", 1L)
+                        get("/api/v1/contents/{contentId}", 1L)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -113,7 +113,7 @@ class ContentControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-                get("/contents/detail/{contentDetailId}", 1L)
+                get("/api/v1/contents/detail/{contentDetailId}", 1L)
         )
                 .andDo(print())
                 .andExpect(status().isOk())
