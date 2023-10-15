@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "크루 스페이스 일정 관련 API")
 @RestController
-@RequestMapping("/crews/schedules")
+@RequestMapping("/api/v1/crews/schedules")
 @RequiredArgsConstructor
 public class ScheduleController {
 

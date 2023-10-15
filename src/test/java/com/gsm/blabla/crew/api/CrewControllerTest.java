@@ -31,7 +31,7 @@ class CrewControllerTest extends ControllerTestSupport {
             .build();
     }
 
-    @DisplayName("[GET] 크루 리포트를 조회한다.")
+    @DisplayName("크루 리포트를 조회한다.")
     @Test
     @WithCustomMockUser
     void getReport() throws Exception {
@@ -61,7 +61,7 @@ class CrewControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/reports/{reportId}", any(Long.class))
+            get("/api/v1/crews/reports/{reportId}", any(Long.class))
         )
             .andDo(print())
             .andExpect(status().isOk())

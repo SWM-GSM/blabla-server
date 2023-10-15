@@ -60,7 +60,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         scheduleRequestDto = createScheduleRequestDto(3);
     }
 
-    @DisplayName("[POST] 유저가 크루 스페이스 스케줄을 성공적으로 생성한다.")
+    @DisplayName("유저가 크루 스페이스 스케줄을 성공적으로 생성한다.")
     @Test
     @WithCustomMockUser
     void create() {
@@ -83,7 +83,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         );
     }
 
-    @DisplayName("[POST] 크루 일정에 참여한다.")
+    @DisplayName("크루 일정에 참여한다.")
     @Test
     @WithCustomMockUser(id = "2")
     void joinSchedule() {
@@ -105,7 +105,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         assertThat(memberInScheduleAfter).isEqualTo(memberInScheduleBefore + 1);
     }
 
-    @DisplayName("[GET] 모든 크루 스페이스 일정을 조회한다.")
+    @DisplayName("모든 크루 스페이스 일정을 조회한다.")
     @Test
     @WithCustomMockUser(id = "2")
     void getAll() {
@@ -138,7 +138,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
             );
     }
 
-    @DisplayName("[GET] 다가오는 크루 일정을 조회한다.")
+    @DisplayName("다가오는 크루 일정을 조회한다.")
     @Test
     @WithCustomMockUser
     void getUpcomingSchedule() {
@@ -173,7 +173,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
         String cancelResult = scheduleService.cancelSchedule(ScheduleRequestDto.builder().scheduleId(scheduleId).build()).get("message");
 
         return List.of(
-            DynamicTest.dynamicTest("[DELETE] 일정 참여를 취소한다.", () -> {
+            DynamicTest.dynamicTest("일정 참여를 취소한다.", () -> {
                 // then
                 assertThat(cancelResult).isEqualTo("일정 참여가 취소되었습니다.");
                 assertThat(memberScheduleRepository.findByMemberAndSchedule(member1, scheduleRepository.findById(scheduleId)
@@ -181,7 +181,7 @@ class ScheduleServiceTest extends IntegrationTestSupport {
                     ).get().getStatus()
                 ).isEqualTo("NOT_JOINED");
             }),
-            DynamicTest.dynamicTest("[DELETE] 취소를 한 뒤, 다시 참여한다.", () -> {
+            DynamicTest.dynamicTest("취소를 한 뒤, 다시 참여한다.", () -> {
                 // when
                 scheduleService.joinSchedule(ScheduleRequestDto.builder().scheduleId(scheduleId).build());
 

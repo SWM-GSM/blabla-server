@@ -25,7 +25,7 @@ import org.springframework.http.MediaType;
 
 class AgoraControllerTest extends ControllerTestSupport {
 
-    @DisplayName("[POST] 보이스룸 입장을 위한 토큰을 발급 받는다.")
+    @DisplayName("보이스룸 입장을 위한 토큰을 발급 받는다.")
     @Test
     @WithCustomMockUser
     void create() throws Exception {
@@ -43,7 +43,7 @@ class AgoraControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/crews/voice-room")
+            post("/api/v1/crews/voice-room")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(
@@ -57,7 +57,7 @@ class AgoraControllerTest extends ControllerTestSupport {
             ;
     }
 
-    @DisplayName("[GET] 보이스룸에 접속한 유저 목록을 조회한다.")
+    @DisplayName("보이스룸에 접속한 유저 목록을 조회한다.")
     @Test
     @WithCustomMockUser
     void getMembers() throws Exception {
@@ -73,7 +73,7 @@ class AgoraControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/crews/voice-room")
+            get("/api/v1/crews/voice-room")
 
         )
             .andDo(print())
@@ -84,7 +84,7 @@ class AgoraControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.data.members[2].nickname").value("test3"));
     }
 
-    @DisplayName("[POST] 보이스룸 퇴장 시, 유저를 신고한다.")
+    @DisplayName("보이스룸 퇴장 시, 유저를 신고한다.")
     @Test
     @WithCustomMockUser
     void accuse() throws Exception {
@@ -94,7 +94,7 @@ class AgoraControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            post("/crews/voice-room/accuse")
+            post("/api/v1/crews/voice-room/accuse")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(AccuseRequestDto.builder()

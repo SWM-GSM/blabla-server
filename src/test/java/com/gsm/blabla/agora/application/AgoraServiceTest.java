@@ -32,7 +32,7 @@ class AgoraServiceTest extends IntegrationTestSupport {
         member2 = createMember("테스트2", "dog");
     }
 
-    @DisplayName("[POST] 보이스룸 입장을 위한 토큰을 발급 받는다.")
+    @DisplayName("보이스룸 입장을 위한 토큰을 발급 받는다.")
     @WithCustomMockUser
     @CsvSource({"true", "false"})
     @ParameterizedTest
@@ -50,7 +50,7 @@ class AgoraServiceTest extends IntegrationTestSupport {
         assertThat(rtcTokenDto.getExpiresIn()).isNotNull();
     }
 
-    @DisplayName("[POST] 보이스룸 최초 입장 시, 크루 리포트 엔티티가 저장된다.")
+    @DisplayName("보이스룸 최초 입장 시, 크루 리포트 엔티티가 저장된다.")
     @Test
     @WithCustomMockUser
     void crewReportCreatedAtFirst() {
@@ -68,7 +68,7 @@ class AgoraServiceTest extends IntegrationTestSupport {
         assertThat(afterTokenCreated).isEqualTo(beforeTokenCreated + 1);
     }
 
-    @DisplayName("[POST] 보이스룸 최초 입장 시, 보이스룸 엔티티가 저장된다.")
+    @DisplayName("보이스룸 최초 입장 시, 보이스룸 엔티티가 저장된다.")
     @Test
     @WithCustomMockUser
     void voiceRoomcreatedAtFirst() {
@@ -86,7 +86,7 @@ class AgoraServiceTest extends IntegrationTestSupport {
         assertThat(afterTokenCreated).isEqualTo(beforeTokenCreated + 1);
     }
 
-    @DisplayName("[GET] 보이스룸에 접속한 유저 목록을 조회한다.")
+    @DisplayName("보이스룸에 접속한 유저 목록을 조회한다.")
     @Test
     @WithCustomMockUser
     void getMembers() {
@@ -107,7 +107,7 @@ class AgoraServiceTest extends IntegrationTestSupport {
             );
     }
 
-    @DisplayName("[POST] 보이스룸 퇴장 시, 유저를 신고한다.")
+    @DisplayName("보이스룸 퇴장 시, 유저를 신고한다.")
     @Test
     @WithCustomMockUser
     void accuse() {

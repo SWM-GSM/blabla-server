@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 
 class ReportControllerTest extends ControllerTestSupport {
 
-    @DisplayName("[GET] 히스토리를 조회한다.")
+    @DisplayName("히스토리를 조회한다.")
     @Test
     @WithCustomMockUser
     void getHistory() throws Exception {
@@ -50,7 +50,7 @@ class ReportControllerTest extends ControllerTestSupport {
 
         // when // then
         mockMvc.perform(
-            get("/reports/history")
+            get("/api/v1/reports/history")
                 .with(csrf())
         )
             .andDo(print())
