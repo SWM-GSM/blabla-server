@@ -1,6 +1,6 @@
 # <img src="https://github.com/SWM-GSM/blabla-server/assets/65899774/9b2e6d8e-5a2c-46fe-a8b0-0f082ac58202" align="left" width="100"> 블라블라(blabla)
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FSWM-GSM%2Fblabla-server&count_bg=%23FF9973&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
-[![Github Actions](https://github.com/SWM-GSM/blabla-server/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/SWM-GSM/blabla-server/actions)
+[![blabla API Server - CD](https://github.com/SWM-GSM/blabla-server/actions/workflows/blabla-cd.yml/badge.svg)](https://github.com/SWM-GSM/blabla-server/actions/workflows/blabla-cd.yml)
 [![codecov](https://codecov.io/gh/SWM-GSM/blabla-server/graph/badge.svg?token=QZ33KMK85U)](https://codecov.io/gh/SWM-GSM/blabla-server)
 
 🗣️ 영어 스피킹, 연습부터 실전까지 모두 블라블라에서! <br> <br>
