@@ -40,3 +40,5 @@ Other - <img src="https://img.shields.io/badge/Swagger-6DB33F?style=for-the-soci
 |[이정연](https://github.com/leeeeeyeon)|[유태혁](https://github.com/yth01)|
 |:-:|:-:|
 |<img src="https://avatars.githubusercontent.com/u/65899774?v=4" alt="이정연" width="150" height="150">|<img src="https://avatars.githubusercontent.com/u/62024470?v=4" alt="유태혁" width="150" height="150">||
+
+[//]: # (SonarQube PR Comment 달리는지 확인)
