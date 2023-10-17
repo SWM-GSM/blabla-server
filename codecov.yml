@@ -9,6 +9,5 @@ comment:
     - main
 
 coverage:
-  patch:
-    default:
-      enabled: no
+  status:
+    patch: off
