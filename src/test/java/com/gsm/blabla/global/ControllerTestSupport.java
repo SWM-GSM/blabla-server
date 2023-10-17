@@ -8,7 +8,6 @@ import com.gsm.blabla.agora.application.AgoraService;
 import com.gsm.blabla.auth.api.AuthController;
 import com.gsm.blabla.auth.application.AuthService;
 import com.gsm.blabla.content.dto.ContentDetailDto;
-import com.gsm.blabla.content.dto.ContentDetailsResponseDto;
 import com.gsm.blabla.content.dto.ContentsResponseDto;
 import com.gsm.blabla.crew.api.CrewController;
 import com.gsm.blabla.crew.api.ScheduleController;
@@ -22,10 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
-
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 
 @WebMvcTest(
     controllers = {

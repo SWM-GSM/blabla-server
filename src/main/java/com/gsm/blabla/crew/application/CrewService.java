@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 
 import lombok.RequiredArgsConstructor;

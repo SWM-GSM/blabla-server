@@ -1,30 +1,19 @@
 package com.gsm.blabla.content.application;
 
-import com.gsm.blabla.content.dao.ContentDetailRepository;
-import com.gsm.blabla.content.dao.ContentRepository;
-import com.gsm.blabla.content.dao.MemberContentDetailRepository;
 import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.content.domain.ContentDetail;
 import com.gsm.blabla.content.domain.MemberContentDetail;
-import com.gsm.blabla.content.dto.ContentDetailDto;
 import com.gsm.blabla.content.dto.ContentDetailResponseDto;
 import com.gsm.blabla.content.dto.ContentDetailsResponseDto;
 import com.gsm.blabla.content.dto.ContentsResponseDto;
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
-import com.gsm.blabla.global.exception.GeneralException;
-import com.gsm.blabla.global.response.Code;
-import com.gsm.blabla.global.util.SecurityUtil;
-import com.gsm.blabla.member.dao.MemberRepository;
 import com.gsm.blabla.member.domain.Member;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
