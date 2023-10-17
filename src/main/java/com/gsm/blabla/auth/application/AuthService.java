@@ -63,22 +63,20 @@ public class AuthService {
                 if (googleAccountRepository.findById(googleAccountDto.getId()).isPresent()) {
                     throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 구글 계정입니다.");
                 }
-
                 member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
                 googleAccountRepository.save(GoogleAccount.builder()
                     .id(googleAccountDto.getId())
                     .member(member)
                     .build()
                 );
-
             }
+
             case "APPLE" -> {
                 AppleTokenDto appleTokenDto = appleService.getAppleToken(providerAuthorization);
                 AppleAccountDto appleAccountDto = appleService.getAppleAccount(appleTokenDto.getIdToken());
                 if (appleAccountRepository.findById(appleAccountDto.getSub()).isPresent()) {
                     throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 애플 계정입니다.");
                 }
-
                 member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
                 appleAccountRepository.save(AppleAccount.builder()
                     .id(appleAccountDto.getSub())
@@ -87,7 +85,11 @@ public class AuthService {
                     .build()
                 );
             }
-            case "TEST" -> member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
+
+            case "TEST" ->
+                member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
+
+            default -> throw new GeneralException(Code.BAD_REQUEST, "잘못된 요청입니다.");
         }
 
         return jwtService.issueJwt(member);
@@ -97,21 +99,18 @@ public class AuthService {
     public Object login(SocialLoginType socialLoginType, String providerAuthorization) {
         Optional<Member> member = Optional.empty();
 
-        switch (socialLoginType) {
-            case GOOGLE -> {
-                GoogleAccountDto googleAccountDto = googleService.getGoogleAccountInfo(providerAuthorization);
-                member = googleAccountRepository.findById(googleAccountDto.getId()).map(GoogleAccount::getMember);
-                if (member.isEmpty()) {
-                    throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
-                }
+        if (socialLoginType == SocialLoginType.GOOGLE) {
+            GoogleAccountDto googleAccountDto = googleService.getGoogleAccountInfo(providerAuthorization);
+            member = googleAccountRepository.findById(googleAccountDto.getId()).map(GoogleAccount::getMember);
+            if (member.isEmpty()) {
+                throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
             }
-            case APPLE -> {
-                AppleTokenDto appleTokenDto = appleService.getAppleToken(providerAuthorization);
-                AppleAccountDto appleAccountDto = appleService.getAppleAccount(appleTokenDto.getIdToken());
-                member = appleAccountRepository.findById(appleAccountDto.getSub()).map(AppleAccount::getMember);
-                if (member.isEmpty()) {
-                    throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
-                }
+        } else if (socialLoginType == SocialLoginType.APPLE) {
+            AppleTokenDto appleTokenDto = appleService.getAppleToken(providerAuthorization);
+            AppleAccountDto appleAccountDto = appleService.getAppleAccount(appleTokenDto.getIdToken());
+            member = appleAccountRepository.findById(appleAccountDto.getSub()).map(AppleAccount::getMember);
+            if (member.isEmpty()) {
+                throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
             }
         }
 

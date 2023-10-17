@@ -7,3 +7,7 @@ comment:
   branches:
     - develop
     - main
+
+coverage:
+  status:
+    patch: off

@@ -3,7 +3,6 @@ package com.gsm.blabla.crew.api;
 import com.gsm.blabla.crew.application.CrewService;
 import com.gsm.blabla.crew.dto.*;
 import com.gsm.blabla.global.response.DataResponseDto;
-import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
