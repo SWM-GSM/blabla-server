@@ -7,3 +7,8 @@ comment:
   branches:
     - develop
     - main
+
+coverage:
+  patch:
+    default:
+      enabled: no
