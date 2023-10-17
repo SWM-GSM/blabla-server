@@ -1,5 +1,8 @@
 package com.gsm.blabla.agora;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class RtcTokenBuilder2 {
     public enum Role {
         ROLE_PUBLISHER(1),
@@ -32,7 +35,7 @@ public class RtcTokenBuilder2 {
         try {
             return accessToken.build();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return "";
         }
     }
@@ -59,7 +62,7 @@ public class RtcTokenBuilder2 {
         try {
             return accessToken.build();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return "";
         }
     }
