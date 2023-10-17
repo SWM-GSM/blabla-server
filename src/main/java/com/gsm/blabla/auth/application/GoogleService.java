@@ -23,8 +23,6 @@ public class GoogleService {
     private final GoogleAccountRepository googleAccountRepository;
 
     public GoogleAccountDto getGoogleAccountInfo(String googleAccessToken) {
-        String GOOGLE_USERINFO_REQUEST_URL="https://www.googleapis.com/oauth2/v1/userinfo";
-
         // 1. header에 Access Token을 담는다
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + googleAccessToken);
@@ -35,7 +33,7 @@ public class GoogleService {
         ResponseEntity<GoogleAccountDto> response;
         try {
             response = restTemplate.exchange(
-                GOOGLE_USERINFO_REQUEST_URL,
+                "https://www.googleapis.com/oauth2/v1/userinfo",
                 HttpMethod.GET,
                 request,
                 GoogleAccountDto.class
