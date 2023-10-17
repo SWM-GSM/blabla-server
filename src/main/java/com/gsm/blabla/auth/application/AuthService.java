@@ -63,22 +63,20 @@ public class AuthService {
                 if (googleAccountRepository.findById(googleAccountDto.getId()).isPresent()) {
                     throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 구글 계정입니다.");
                 }
-
                 member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
                 googleAccountRepository.save(GoogleAccount.builder()
                     .id(googleAccountDto.getId())
                     .member(member)
                     .build()
                 );
-
             }
+
             case "APPLE" -> {
                 AppleTokenDto appleTokenDto = appleService.getAppleToken(providerAuthorization);
                 AppleAccountDto appleAccountDto = appleService.getAppleAccount(appleTokenDto.getIdToken());
                 if (appleAccountRepository.findById(appleAccountDto.getSub()).isPresent()) {
                     throw new GeneralException(Code.ALREADY_REGISTERED, "이미 가입된 애플 계정입니다.");
                 }
-
                 member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
                 appleAccountRepository.save(AppleAccount.builder()
                     .id(appleAccountDto.getSub())
@@ -87,7 +85,11 @@ public class AuthService {
                     .build()
                 );
             }
-            case "TEST" -> member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
+
+            case "TEST" ->
+                member = memberRepository.save(memberRequestDto.toEntity(nickname, profileImage));
+
+            default -> throw new GeneralException(Code.BAD_REQUEST, "잘못된 요청입니다.");
         }
 
         return jwtService.issueJwt(member);
