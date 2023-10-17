@@ -9,6 +9,7 @@ import com.gsm.blabla.global.util.SecurityUtil;
 import com.gsm.blabla.jwt.dao.JwtRepository;
 import com.gsm.blabla.member.dao.MemberRepository;
 
+import com.gsm.blabla.member.domain.SocialLoginType;
 import java.util.*;
 
 import com.gsm.blabla.member.domain.Member;
@@ -48,13 +49,10 @@ public class MemberService {
         jwtRepository.deleteByMemberId(memberId);
         memberRepository.delete(member);
 
-        switch (member.getSocialLoginType()) {
-            case GOOGLE -> {
-                googleService.unlinkGoogleAccount(memberId);
-            }
-            case APPLE -> {
-                appleService.revokeAppleAccount(memberId);
-            }
+        if (member.getSocialLoginType() == SocialLoginType.GOOGLE) {
+            googleService.unlinkGoogleAccount(memberId);
+        } else if (member.getSocialLoginType() == SocialLoginType.APPLE) {
+            appleService.revokeAppleAccount(memberId);
         }
 
         log.info("{} 님이 회원 탈퇴를 하였습니다.", member.getNickname());

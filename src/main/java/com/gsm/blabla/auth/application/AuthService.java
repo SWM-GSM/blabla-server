@@ -99,21 +99,18 @@ public class AuthService {
     public Object login(SocialLoginType socialLoginType, String providerAuthorization) {
         Optional<Member> member = Optional.empty();
 
-        switch (socialLoginType) {
-            case GOOGLE -> {
-                GoogleAccountDto googleAccountDto = googleService.getGoogleAccountInfo(providerAuthorization);
-                member = googleAccountRepository.findById(googleAccountDto.getId()).map(GoogleAccount::getMember);
-                if (member.isEmpty()) {
-                    throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
-                }
+        if (socialLoginType == SocialLoginType.GOOGLE) {
+            GoogleAccountDto googleAccountDto = googleService.getGoogleAccountInfo(providerAuthorization);
+            member = googleAccountRepository.findById(googleAccountDto.getId()).map(GoogleAccount::getMember);
+            if (member.isEmpty()) {
+                throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
             }
-            case APPLE -> {
-                AppleTokenDto appleTokenDto = appleService.getAppleToken(providerAuthorization);
-                AppleAccountDto appleAccountDto = appleService.getAppleAccount(appleTokenDto.getIdToken());
-                member = appleAccountRepository.findById(appleAccountDto.getSub()).map(AppleAccount::getMember);
-                if (member.isEmpty()) {
-                    throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
-                }
+        } else if (socialLoginType == SocialLoginType.APPLE) {
+            AppleTokenDto appleTokenDto = appleService.getAppleToken(providerAuthorization);
+            AppleAccountDto appleAccountDto = appleService.getAppleAccount(appleTokenDto.getIdToken());
+            member = appleAccountRepository.findById(appleAccountDto.getSub()).map(AppleAccount::getMember);
+            if (member.isEmpty()) {
+                throw new GeneralException(Code.MEMBER_NOT_FOUND, "가입되지 않은 유저입니다.");
             }
         }
 
