@@ -180,7 +180,7 @@ public class CrewService {
         try {
             aiCrewReportResponseDto = objectMapper.readValue(response, AiCrewReportResponseDto.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         if (aiCrewReportResponseDto == null) {
