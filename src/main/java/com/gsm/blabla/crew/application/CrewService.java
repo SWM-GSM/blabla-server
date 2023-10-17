@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import com.gsm.blabla.member.domain.Member;
-import com.gsm.blabla.member.dto.MemberProfileResponseDto;
 import com.gsm.blabla.member.dto.MemberResponseDto;
 
 import lombok.RequiredArgsConstructor;
@@ -180,7 +178,7 @@ public class CrewService {
         try {
             aiCrewReportResponseDto = objectMapper.readValue(response, AiCrewReportResponseDto.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         if (aiCrewReportResponseDto == null) {

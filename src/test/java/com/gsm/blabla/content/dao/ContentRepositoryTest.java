@@ -4,7 +4,6 @@ import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.global.RepositoryTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
