@@ -87,6 +87,9 @@ dependencies {
 
     // flyway
     implementation 'org.flywaydb:flyway-mysql'
+
+    // sentry
+    implementation 'io.sentry:sentry-logback:6.19.0'
 }
 
 tasks.named('test') {
