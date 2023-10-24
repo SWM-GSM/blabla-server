@@ -34,9 +34,19 @@
       </filter>
     </appender>
 
+    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>ERROR</level>
+      </filter>
+      <encoder>
+        <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n```%ex{full}```</pattern>
+      </encoder>
+    </appender>
+
     <root level="INFO">
       <appender-ref ref="ASYNC_DISCORD"/>
       <appender-ref ref="Console"/>
+      <appender-ref ref="Sentry"/>
     </root>
   </springProfile>
   <springProfile name="prod">
@@ -66,9 +76,19 @@
       </filter>
     </appender>
 
+    <appender name="Sentry" class="io.sentry.logback.SentryAppender">
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>ERROR</level>
+      </filter>
+      <encoder>
+        <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n```%ex{full}```</pattern>
+      </encoder>
+    </appender>
+
     <root level="INFO">
       <appender-ref ref="ASYNC_DISCORD"/>
       <appender-ref ref="Console"/>
+      <appender-ref ref="Sentry"/>
     </root>
   </springProfile>
 </configuration>
