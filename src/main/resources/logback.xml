@@ -39,7 +39,7 @@
         <level>ERROR</level>
       </filter>
       <encoder>
-        <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n```%ex{full}```</pattern>
+        <pattern>${CONSOLE_LOG_PATTERN}</pattern>
       </encoder>
     </appender>
 
@@ -81,7 +81,7 @@
         <level>ERROR</level>
       </filter>
       <encoder>
-        <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n```%ex{full}```</pattern>
+        <pattern>${CONSOLE_LOG_PATTERN}</pattern>
       </encoder>
     </appender>
 
