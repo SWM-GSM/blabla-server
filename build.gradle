@@ -90,6 +90,9 @@ dependencies {
 
     // sentry
     implementation 'io.sentry:sentry-logback:6.19.0'
+
+    // aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {
