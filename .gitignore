@@ -39,6 +39,7 @@ out/
 src/main/resources/**.yml
 src/main/resources/**.p8
 src/main/resources/**.json
+src/main/resources/**.properties
 src/main/generated/
 
 spy.log
