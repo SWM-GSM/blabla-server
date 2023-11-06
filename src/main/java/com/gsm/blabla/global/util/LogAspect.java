@@ -31,8 +31,9 @@ public class LogAspect {
     @Around("all()")
     public Object logging(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
+        Object result = null;
         try {
-            Object result = joinPoint.proceed();
+            result = joinPoint.proceed();
             return result;
         } finally {
             long end = System.currentTimeMillis();
@@ -48,6 +49,8 @@ public class LogAspect {
         String controllerName = joinPoint.getSignature().getDeclaringType().getName();
         String methodName = joinPoint.getSignature().getName();
         Map<String, Object> params = new HashMap<>();
+
+        Object result = null;
 
         try {
             String decodedURI = URLDecoder.decode(request.getRequestURI(), "UTF-8");
@@ -66,7 +69,7 @@ public class LogAspect {
         log.info("method: {}.{}", params.get("controller") ,params.get("method"));
         log.info("params: {}", params.get("params"));
 
-        Object result = joinPoint.proceed();
+        result = joinPoint.proceed();
 
         return result;
     }
@@ -76,7 +79,7 @@ public class LogAspect {
         Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String param = params.nextElement();
-            String replaceParam = param.replaceAll("\\.", "-");
+            String replaceParam = param.replace("\\.", "-");
             jsonObject.put(replaceParam, request.getParameter(param));
         }
         return jsonObject;
