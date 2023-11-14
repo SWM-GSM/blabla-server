@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
         AuthController.class,
         ScheduleController.class
     },
-    properties = "spring.profiles.active=local"
+    properties = "spring.profiles.active=test"
 )
 public abstract class ControllerTestSupport {
 
