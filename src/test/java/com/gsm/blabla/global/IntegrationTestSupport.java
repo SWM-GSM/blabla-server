@@ -39,7 +39,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = "spring.profiles.active=local"
+    properties = "spring.profiles.active=test"
 )
 public abstract class IntegrationTestSupport {
 

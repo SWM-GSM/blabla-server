@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = "spring.profiles.active=local"
+    properties = "spring.profiles.active=test"
 )
 public abstract class RepositoryTestSupport {
 
