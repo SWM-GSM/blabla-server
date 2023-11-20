@@ -27,7 +27,7 @@ public class ContentController {
     @Operation(summary = "컨텐츠 전체 조회 API")
     @GetMapping("")
     public DataResponseDto<Map<String, List<ContentsResponseDto>>> getContents(
-            @Pattern(regexp = "^(ko|en)$", message = "언어는 ko 또는 en 중 하나여야 합니다.")
+            @Pattern(regexp = "^(ko|en|cn|jp)$", message = "한국어, 영어, 중국어, 일본어를 지원하고 있습니다.")
             @RequestHeader(name="Content-Language") String language) {
         return DataResponseDto.of(contentService.getContents(language));
     }
