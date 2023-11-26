@@ -50,8 +50,8 @@ public class ContentController {
     @PostMapping("/detail/{contentDetailId}/feedback")
     public DataResponseDto<MemberContentDetailResponseDto> createFeedback(
             @PathVariable Long contentDetailId,
-            @RequestBody UserSentenceRequestDto userAnswerRequestDto) {
-        return DataResponseDto.of(contentService.createFeedback(contentDetailId, userAnswerRequestDto));
+            @RequestBody UserSentenceRequestDto userSentenceRequestDto) {
+        return DataResponseDto.of(contentService.createFeedback(contentDetailId, userSentenceRequestDto));
     }
 
     @Operation(summary = "연습실 피드백 조회 API")
