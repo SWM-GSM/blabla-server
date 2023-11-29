@@ -3,22 +3,31 @@ package com.gsm.blabla.content.application;
 import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.content.domain.ContentDetail;
 import com.gsm.blabla.content.domain.MemberContentDetail;
-import com.gsm.blabla.content.dto.ContentDetailResponseDto;
-import com.gsm.blabla.content.dto.ContentDetailsResponseDto;
-import com.gsm.blabla.content.dto.ContentsResponseDto;
+import com.gsm.blabla.content.dto.*;
 import com.gsm.blabla.global.IntegrationTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
 import com.gsm.blabla.member.domain.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 
 class ContentServiceTest extends IntegrationTestSupport {
 
@@ -133,4 +142,38 @@ class ContentServiceTest extends IntegrationTestSupport {
                 .containsExactly("소개 인사하기", "인턴을 통해 소개 인사를 배워봅시다.", "https://www.youtu.be/sHpGT4SQwgw", "나는 오스틴 입니다. About the Fit의 창업자 입니다.", "I'm Jules Ostin. I'm the founder of About the Fit.", 43200, 43210, 43220);
     }
 
+    @DisplayName("연습실 피드백을 조회한다.")
+    @WithCustomMockUser
+    @Test
+    void getFeedback() {
+        // given
+
+        // when
+        MemberContentDetailResponseDto memberContentDetailResponseDto = contentService.getFeedback(1L);
+
+        // then
+        assertThat(memberContentDetailResponseDto)
+                .extracting("userSentence", "longFeedback", "contextRating")
+                .containsExactly("test", "test", 3);
+    }
+
+    @DisplayName("연습 기록을 저장한다.")
+    @WithCustomMockUser
+    @Test
+    void createPracticeHistory() {
+        // given
+        List<MultipartFile> files = List.of(
+                new MockMultipartFile("files", "test1.wav", "audio/wav", "test1".getBytes()),
+                new MockMultipartFile("files", "test2.wav", "audio/wav", "test2".getBytes()),
+                new MockMultipartFile("files", "test3.wav", "audio/wav", "test3".getBytes())
+        );
+
+        contentDetailRepository.save(contentDetailEn1);
+
+        // when
+        contentService.savePracticeHistory(contentDetailEn1.getId(), files);
+
+        // then
+        assertThat(practiceHistoryRepository.findAll()).hasSize(3);
+    }
 }

@@ -1,18 +1,24 @@
 package com.gsm.blabla.content.api;
 
-import com.gsm.blabla.content.dto.ContentDetailDto;
-import com.gsm.blabla.content.dto.ContentDetailsResponseDto;
-import com.gsm.blabla.content.dto.ContentsResponseDto;
+import com.gsm.blabla.content.dto.*;
+import com.gsm.blabla.crew.dto.ScheduleRequestDto;
 import com.gsm.blabla.global.ControllerTestSupport;
 import com.gsm.blabla.global.WithCustomMockUser;
-import com.gsm.blabla.content.dto.ContentDetailResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -69,7 +75,7 @@ class ContentControllerTest extends ControllerTestSupport {
                 .contentDetails(List.of(contentDetailDto1, contentDetailDto2))
                 .build();
 
-        given(contentService.getContentDetails(1L)).willReturn(contentDetailsResponseDto);
+        given(contentService.getContentDetails(any(Long.class))).willReturn(contentDetailsResponseDto);
 
         // when // then
         mockMvc.perform(
@@ -109,7 +115,7 @@ class ContentControllerTest extends ControllerTestSupport {
                 .stoppedAtSec(42020)
                 .endedAtSec(42025)
                 .build();
-        given(contentService.getContentDetail(1L)).willReturn(contentDetailsResponseDto);
+        given(contentService.getContentDetail(any(Long.class))).willReturn(contentDetailsResponseDto);
 
         // when // then
         mockMvc.perform(
@@ -129,6 +135,99 @@ class ContentControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.data.startedAtSec").value(42010))
                 .andExpect(jsonPath("$.data.stoppedAtSec").value(42020))
                 .andExpect(jsonPath("$.data.endedAtSec").value(42025));
+    }
+
+    @DisplayName("연습실 피드백을 생성한다.")
+    @Test
+    @WithCustomMockUser
+    void createFeedback() throws Exception {
+        // given
+        MemberContentDetailResponseDto memberContentDetailResponseDto = MemberContentDetailResponseDto.builder()
+                        .contextRating(2)
+                        .userSentence("I am Jules Ostin. I'm the ceo of About the Fit.")
+                        .targetSentence("I'm Jules Ostin. I'm the founder of About the Fit.")
+                        .longFeedback("test long feedback")
+                        .build();
+        UserSentenceRequestDto userSentenceRequestDto = UserSentenceRequestDto.builder()
+                .userSentence("I am Jules Ostin. I'm the ceo of About the Fit.")
+                .build();
+        given(contentService.createFeedback(any(Long.class), any(UserSentenceRequestDto.class))).willReturn(memberContentDetailResponseDto);
+
+        // when // then
+        mockMvc.perform(
+                        post("/api/v1/contents/detail/{contentDetailId}/feedback", 1L)
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .content(objectMapper.writeValueAsString(userSentenceRequestDto))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(jsonPath("$.data").isMap())
+                .andExpect(jsonPath("$.data.contextRating").value(2))
+                .andExpect(jsonPath("$.data.userSentence").value("I am Jules Ostin. I'm the ceo of About the Fit."))
+                .andExpect(jsonPath("$.data.targetSentence").value("I'm Jules Ostin. I'm the founder of About the Fit."))
+                .andExpect(jsonPath("$.data.longFeedback").value("test long feedback"));
+    }
+
+    @DisplayName("연습실 피드백을 조회한다.")
+    @Test
+    @WithCustomMockUser
+    void getFeedback() throws Exception {
+        // given
+        MemberContentDetailResponseDto memberContentDetailResponseDto = MemberContentDetailResponseDto.builder()
+                .contextRating(2)
+                .userSentence("I am Jules Ostin. I'm the ceo of About the Fit.")
+                .targetSentence("I'm Jules Ostin. I'm the founder of About the Fit.")
+                .longFeedback("test long feedback")
+                .build();
+        given(contentService.getFeedback(any(Long.class))).willReturn(memberContentDetailResponseDto);
+
+        // when // then
+        mockMvc.perform(
+                        get("/api/v1/contents/detail/{contentDetailId}/feedback", 1L)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(jsonPath("$.data").isMap())
+                .andExpect(jsonPath("$.data.contextRating").value(2))
+                .andExpect(jsonPath("$.data.userSentence").value("I am Jules Ostin. I'm the ceo of About the Fit."))
+                .andExpect(jsonPath("$.data.targetSentence").value("I'm Jules Ostin. I'm the founder of About the Fit."))
+                .andExpect(jsonPath("$.data.longFeedback").value("test long feedback"));
+    }
+
+    @DisplayName("연습 기록을 저장한다.")
+    @Test
+    @WithCustomMockUser
+    void createPracticeHistory() throws Exception {
+        // given
+        MockMultipartFile file1 = new MockMultipartFile("files", "test1.wav", "audio/wav", "test1".getBytes());
+        MockMultipartFile file2 = new MockMultipartFile("files", "test2.wav", "audio/wav", "test2".getBytes());
+        MockMultipartFile file3 = new MockMultipartFile("files", "test3.wav", "audio/wav", "test3".getBytes());
+
+        given(contentService.savePracticeHistory(any(Long.class), ArgumentMatchers.<MultipartFile>anyList()))
+                .willReturn(Collections.singletonMap("message", "연습 기록 음성 파일이 저장 완료되었습니다."));
+
+        // when // then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.multipart("/api/v1/contents/detail/{contentDetailId}/practice", 1L)
+                                .file(file1)
+                                .file(file2)
+                                .file(file3)
+                                .with(csrf())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("OK"))
+                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(jsonPath("$.data").isMap())
+                .andExpect(jsonPath("$.data.message").value("연습 기록 음성 파일이 저장 완료되었습니다."));
     }
 
 }

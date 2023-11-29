@@ -9,6 +9,7 @@ import com.gsm.blabla.content.application.ContentService;
 import com.gsm.blabla.content.dao.ContentDetailRepository;
 import com.gsm.blabla.content.dao.ContentRepository;
 import com.gsm.blabla.content.dao.MemberContentDetailRepository;
+import com.gsm.blabla.content.dao.PracticeHistoryRepository;
 import com.gsm.blabla.content.domain.Content;
 import com.gsm.blabla.content.domain.ContentDetail;
 import com.gsm.blabla.content.domain.MemberContentDetail;
@@ -96,6 +97,9 @@ public abstract class IntegrationTestSupport {
 
     @Autowired
     protected AccuseRepository accuseRepository;
+
+    @Autowired
+    protected PracticeHistoryRepository practiceHistoryRepository;
 
     @AfterEach
     void cleanUpDatabase() {
