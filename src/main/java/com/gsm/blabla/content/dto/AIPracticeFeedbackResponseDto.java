@@ -2,10 +2,11 @@ package com.gsm.blabla.content.dto;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class AIPracticeFeedbackResponseDto {
 
     private Double contextScore;
